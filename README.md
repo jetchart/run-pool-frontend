@@ -18,8 +18,8 @@ A modern, minimal, and responsive React + Vite + TypeScript starter project with
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/base-web.git
-cd base-web
+git clone https://github.com/jetchart/run-pool-frontend.git
+cd run-pool-frontend
 ```
 
 ### 2. Install dependencies
