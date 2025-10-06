@@ -78,7 +78,7 @@ function App() {
                           )}
                           {race.raceType == RaceType.TRAIL && (
                             <Badge variant="outline">
-                                <ChevronsUp className="w-4 h-4" />{RaceType.TRAIL}
+                                <Mountain className="w-4 h-4" />{RaceType.TRAIL}
                               </Badge>
                           )}
                       {distances.map((dist: string, i: number) => (
