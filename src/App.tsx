@@ -12,6 +12,7 @@ import { SkeletonCard } from './components/SkeletonCard';
 import { Calendar, MapPin, CheckCircle, ExternalLink, CarFront, HandMetal, Mountain, HandHelping, Construction, Equal, ChevronsUp } from 'lucide-react';
 import { RaceType } from './enums/race-type.enum';
 import { Badge } from './components/ui/badge';
+import { Card, CardContent } from './components/ui/card';
 
 function App() {
   const [races, setRaces] = useState<any[]>([]);
@@ -33,13 +34,13 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen dark:bg-neutral-950 p-2 sm:p-6">
-        <div className="max-w-7xl mx-auto mt-10">
+    <div className="min-h-screen p-8">
+        <div className="max-w-7xl mx-auto">
           <h3 className="text-left">Próximas Carreras</h3>
           <div className="muted mt-2 mb-6 flex items-center gap-2">
             <span>{races.length} carrera{races.length === 1 ? '' : 's'} disponible{races.length === 1 ? '' : 's'}</span>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
             {isLoading ? (
               Array.from({ length: 3 }).map((_, index) => (
                 <SkeletonCard key={index} />
@@ -57,11 +58,11 @@ function App() {
               const inscriptionOpen = race.inscriptionStatus === 'open' || race.inscriptionOpen;
               const description = race.description?.length > 90 ? race.description.slice(0, 87) + '...' : race.description;
               return (
-                <div key={race.id} className="rounded-2xl bg-card shadow-md border flex flex-col overflow-hidden transition hover:shadow-lg">
+                <Card key={race.id} className="rounded-2xl flex flex-col overflow-hidden transition hover:shadow-lg">
                   <img src={imgSrc} alt={race.name} className="h-48 w-full object-cover object-center" />
-                  <div className="flex-1 flex flex-col p-5">
+                  <CardContent className="flex-1 flex flex-col p-5">
                     <div className="flex items-center gap-2 mb-1">
-                      <span>{race.name}</span>
+                      <span className="text-base font-semibold">{race.name}</span>
                       {inscriptionOpen && (
                         <span className="ml-2 flex items-center gap-1 text-green-600 small">
                           <CheckCircle className="w-3 h-3 text-green-500" />
@@ -69,7 +70,7 @@ function App() {
                         </span>
                       )}
                     </div>
-                    <span className="muted">{description}</span>
+                    <span className="text-sm font-normal">{description}</span>
                     <div className="flex flex-wrap gap-2 mt-3 mb-3">
                           {race.raceType == RaceType.STREET && (
                               <Badge variant="outline">
@@ -109,8 +110,8 @@ function App() {
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               );
             })}
               </>
