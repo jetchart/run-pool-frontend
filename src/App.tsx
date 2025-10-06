@@ -86,15 +86,17 @@ function App() {
                          <Badge variant="secondary">{dist}</Badge>
                       ))}
                     </div>
-                    <div className="flex items-center gap-3 muted mb-1">
-                      <span className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 mb-2">
                         <Calendar className="w-4 h-4 text-black" />
-                        {dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}
+                        <span className="text-xs text-muted-foreground">
+                          {dateStr.charAt(0).toUpperCase() + dateStr.slice(1)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1 muted mb-2">
+                    <div className="flex items-center gap-1 mb-2">
                       <MapPin className="w-4 h-4 text-black" />
-                      {race.location}
+                      <span className="text-xs text-muted-foreground">
+                        {race.location}
+                      </span>
                     </div>
                     <div className="flex pt-2 items-center justify-around">
                       {race.website && (
