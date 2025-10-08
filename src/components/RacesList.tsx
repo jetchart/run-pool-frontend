@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SkeletonCard } from './SkeletonCard';
+import { RaceDialog } from './RaceDialog';
 import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp } from 'lucide-react';
 import { RaceType } from '../enums/race-type.enum';
 import { Badge } from './ui/badge';
@@ -96,14 +97,19 @@ export function RacesList() {
                     <div className="flex pt-2 items-center justify-around">
                       {race.website && (
                         <div className="flex items-center gap-2">
-                          <button className="text-primary bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border">
-                            <HandHelping className="w-5 h-5" />
-                            Quiero ir
-                          </button>
-                          <button className="text-primary bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border">
-                            <CarFront className="w-5 h-5" />
-                            Voy en auto
-                          </button>
+                          <RaceDialog race={race} type="passenger">
+                            <button className="text-primary bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
+                              <HandHelping className="w-5 h-5" />
+                              Quiero ir
+                            </button>
+                          </RaceDialog>
+                          
+                          <RaceDialog race={race} type="driver">
+                            <button className="text-primary bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
+                              <CarFront className="w-5 h-5" />
+                              Voy en auto
+                            </button>
+                          </RaceDialog>
                         </div>
                       )}
                     </div>
