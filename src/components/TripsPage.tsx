@@ -111,21 +111,21 @@ export function TripsPage() {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {trips.map((trip) => (
           <Card key={trip.id} className="p-4">
             {/* Imagen/gráfico de ruta */}
             <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-              <svg className="w-20 h-12" viewBox="0 0 120 60">
+              <svg className="w-24 h-12" viewBox="0 0 140 60">
                 <path 
-                  d="M10 40 Q60 10 110 40" 
+                  d="M10 45 Q40 15 70 35 Q100 50 130 25" 
                   stroke="currentColor" 
-                  strokeWidth="2" 
+                  strokeWidth="2.5" 
                   fill="none"
-                  className="text-gray-600"
+                  className="text-gray-800"
                 />
-                <circle cx="10" cy="40" r="3" fill="currentColor" className="text-gray-600" />
-                <circle cx="110" cy="40" r="3" fill="currentColor" className="text-gray-600" />
+                <circle cx="10" cy="45" r="6" stroke="black" fill="white" className="text-gray-800" />
+                <circle cx="130" cy="25" r="6" stroke="black" fill="white" className="text-gray-800" />
               </svg>
             </div>
 
