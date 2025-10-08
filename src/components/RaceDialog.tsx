@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -12,6 +13,7 @@ interface RaceDialogProps {
 }
 
 export function RaceDialog({ children, race, type }: RaceDialogProps) {
+  const navigate = useNavigate();
   const startDate = new Date(race.startDate);
   const dateStr = startDate.toLocaleDateString('es-AR', { 
     weekday: 'long', 
@@ -26,6 +28,10 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
       return `¿Quieres ir a esta carrera?`;
     }
     return `¿Ofreces viaje en auto?`;
+  };
+
+  const handleViewTrips = () => {
+    navigate('/trips', { state: { race } });
   };
 
   return (
@@ -98,7 +104,10 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
         </div>
 
         {/* Botón principal */}
-        <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white">
+        <Button 
+          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+          onClick={handleViewTrips}
+        >
           Ver viajes disponibles
         </Button>
       </DialogContent>

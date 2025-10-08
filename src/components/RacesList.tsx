@@ -25,7 +25,7 @@ export function RacesList() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto mt-8">
+    <div className="container mx-auto px-4 py-6">
       <h3 className="text-left">Próximas Carreras</h3>
       <div className="muted mt-2 mb-6 flex items-center gap-2">
         <span>{races.length} carrera{races.length === 1 ? '' : 's'} disponible{races.length === 1 ? '' : 's'}</span>

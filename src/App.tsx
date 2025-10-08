@@ -10,6 +10,7 @@ declare global {
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { RacesList } from './components/RacesList';
+import { TripsPage } from './components/TripsPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<RacesList />} />
+            <Route path="/trips" element={<TripsPage />} />
             {/* Página 404 */}
             <Route path="*" element={
               <div className="container mx-auto px-4 py-16 text-center">
