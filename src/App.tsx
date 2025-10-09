@@ -11,6 +11,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { RacesList } from './components/RacesList';
 import { TripsPage } from './components/TripsPage';
+import StyleGuide from './components/StyleGuide';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Routes>
             <Route path="/" element={<RacesList />} />
             <Route path="/trips" element={<TripsPage />} />
+            <Route path="/style-guide" element={<StyleGuide />} />
             {/* Página 404 */}
             <Route path="*" element={
               <div className="container mx-auto px-4 py-16 text-center">
