@@ -160,3 +160,55 @@ export interface CreateCompleteUserProfileDto {
   preferredRaceTypes?: CreateUserProfileRaceTypeDto[];
   preferredDistances?: CreateUserProfileDistanceDto[];
 }
+
+// Response DTOs
+export interface UserProfileCarResponse {
+  id: number;
+  brand: string;
+  model: string;
+  year: number;
+  color: string;
+  seats: number;
+  licensePlate: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserProfileRaceTypeResponse {
+  id: number;
+  raceType: RaceType;
+}
+
+export interface UserProfileDistanceResponse {
+  id: number;
+  distance: Distance;
+}
+
+export interface UserResponse {
+  id: number;
+  name: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+  pictureUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserProfileResponse {
+  id: number;
+  name: string;
+  surname: string;
+  email: string;
+  birthYear: number;
+  gender: Gender;
+  runningExperience: RunningExperience;
+  usuallyTravelRace: UsuallyTravelRace;
+  imageName?: string;
+  user: UserResponse;
+  cars: UserProfileCarResponse[];
+  preferredRaceTypes: UserProfileRaceTypeResponse[];
+  preferredDistances: UserProfileDistanceResponse[];
+  createdAt: Date;
+  updatedAt: Date;
+}

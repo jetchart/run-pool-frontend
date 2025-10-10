@@ -14,6 +14,7 @@ import { TripsPage } from './components/TripsPage';
 import StyleGuide from './components/StyleGuide';
 import { Login } from './components/Login';
 import { UserProfile } from './components/UserProfile';
+import { UserProfileView } from './components/UserProfileView';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/trips" element={<TripsPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/profile/view/:userId" element={<UserProfileView />} />
             <Route path="/style-guide" element={<StyleGuide />} />
             {/* Página 404 */}
             <Route path="*" element={

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Camera } from 'lucide-react';
@@ -10,13 +10,32 @@ interface UserBasicInfoProps {
 
 export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
   const [formData, setFormData] = useState({
-    firstName: 'Juan',
-    lastName: 'Pérez',
+    firstName: '',
+    lastName: '',
     birthYear: '',
     gender: '',
     experience: '',
-    email: 'juanmartin@gmail.com'
+    email: ''
   });
+
+  useEffect(() => {
+    // Cargar datos del localStorage
+    const storedUser = localStorage.getItem('userCredential');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        
+        setFormData(prev => ({
+          ...prev,
+          firstName: parsedUser.given_name || parsedUser.givenName || '',
+          lastName: parsedUser.family_name || parsedUser.familyName || '',
+          email: parsedUser.email || ''
+        }));
+      } catch (error) {
+        console.error('Error parsing user credential:', error);
+      }
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

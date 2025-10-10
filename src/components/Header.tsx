@@ -70,6 +70,16 @@ export function Header() {
                     {userCredential.name || 'Usuario'}
                   </span>
                 </div>
+                <Link to={`/profile/view/${userCredential.id || userCredential.userId || 1}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                  >
+                    <User className="h-4 w-4" />
+                    <span>Mi Perfil</span>
+                  </Button>
+                </Link>
                 <Button
                   onClick={handleLogout}
                   variant="outline"
@@ -92,14 +102,25 @@ export function Header() {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             {userCredential ? (
-              <Button
-                onClick={handleLogout}
-                variant="ghost"
-                size="sm"
-                className="flex items-center space-x-1"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
+              <>
+                <Link to={`/profile/view/${userCredential.id || userCredential.userId || 1}`}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1"
+                  >
+                    <User className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center space-x-1"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
             ) : (
               <Link to="/login">
                 <Button variant="ghost" size="sm">
