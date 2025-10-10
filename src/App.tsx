@@ -12,6 +12,7 @@ import { Header } from './components/Header';
 import { RacesList } from './components/RacesList';
 import { TripsPage } from './components/TripsPage';
 import StyleGuide from './components/StyleGuide';
+import { Login } from './components/Login';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<RacesList />} />
             <Route path="/trips" element={<TripsPage />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/style-guide" element={<StyleGuide />} />
             {/* Página 404 */}
             <Route path="*" element={
