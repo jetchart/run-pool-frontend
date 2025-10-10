@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Camera } from 'lucide-react';
+import { GENDER_INFO, Gender, RUNNING_EXPERIENCE_INFO, RunningExperience } from '../types/userProfile.types';
 
 interface UserBasicInfoProps {
   onNext: (data: any) => void;
@@ -142,10 +143,11 @@ export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
               >
                 <option value="">Selecciona una opción</option>
-                <option value="masculino">Masculino</option>
-                <option value="femenino">Femenino</option>
-                <option value="no-binario">No binario</option>
-                <option value="prefiero-no-decir">Prefiero no decir</option>
+                {Object.values(Gender).filter(value => typeof value === 'number').map((genderValue) => (
+                  <option key={genderValue} value={GENDER_INFO[genderValue as Gender].description.toLowerCase()}>
+                    {GENDER_INFO[genderValue as Gender].description}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -155,25 +157,29 @@ export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
                 Nivel de experiencia en running
               </label>
               <div className="grid grid-cols-3 gap-3">
-                {[
-                  { id: 'principiante', label: 'Principiante', icon: '🏃‍♂️' },
-                  { id: 'intermedio', label: 'Intermedio', icon: '🏃‍♀️' },
-                  { id: 'avanzado', label: 'Avanzado', icon: '🏃‍♂️' }
-                ].map((level) => (
-                  <button
-                    key={level.id}
-                    type="button"
-                    onClick={() => handleExperienceSelect(level.id)}
-                    className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                      formData.experience === level.id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="text-2xl mb-1">{level.icon}</div>
-                    <div className="text-xs font-medium">{level.label}</div>
-                  </button>
-                ))}
+                {Object.values(RunningExperience).filter(value => typeof value === 'number').map((experienceValue) => {
+                  const experienceInfo = RUNNING_EXPERIENCE_INFO[experienceValue as RunningExperience];
+                  const experienceKey = experienceInfo.description.toLowerCase();
+                  
+                  return (
+                    <button
+                      key={experienceValue}
+                      type="button"
+                      onClick={() => handleExperienceSelect(experienceKey)}
+                      className={`p-3 border-2 rounded-lg text-center transition-colors ${
+                        formData.experience === experienceKey
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="text-2xl mb-1">
+                        {experienceValue === RunningExperience.BEGINNER ? '🏃‍♂️' : 
+                         experienceValue === RunningExperience.INTERMEDIATE ? '🏃‍♀️' : '🏃‍♂️'}
+                      </div>
+                      <div className="text-xs font-medium">{experienceInfo.description}</div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

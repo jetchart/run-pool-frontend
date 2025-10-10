@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Car, Users, MessageSquare } from 'lucide-react';
+import { USUALLY_TRAVEL_RACE_INFO, UsuallyTravelRace, RaceType, Distance, DISTANCE_INFO } from '../types/userProfile.types';
 
 interface UserPreferencesProps {
   onNext: (data: any) => void;
@@ -76,24 +77,27 @@ export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
                 Podés seleccionar más de una opción
               </p>
               <div className="space-y-2">
-                {[
-                  { id: 'calle', label: 'Calle', icon: Car },
-                  { id: 'trail', label: 'Trail', icon: Users }
-                ].map((type) => (
-                  <button
-                    key={type.id}
-                    type="button"
-                    onClick={() => handleRaceTypeToggle(type.id)}
-                    className={`w-full p-3 border-2 rounded-lg text-left transition-colors flex items-center gap-3 ${
-                      formData.raceTypes.includes(type.id)
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <type.icon className="w-5 h-5" />
-                    <span className="font-medium">{type.label}</span>
-                  </button>
-                ))}
+                {Object.values(RaceType).map((raceType) => {
+                  const raceKey = raceType === RaceType.STREET ? 'calle' : 'trail';
+                  const icon = raceType === RaceType.STREET ? Car : Users;
+                  const IconComponent = icon;
+                  
+                  return (
+                    <button
+                      key={raceType}
+                      type="button"
+                      onClick={() => handleRaceTypeToggle(raceKey)}
+                      className={`w-full p-3 border-2 rounded-lg text-left transition-colors flex items-center gap-3 ${
+                        formData.raceTypes.includes(raceKey)
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                      <span className="font-medium">{raceType}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -106,20 +110,23 @@ export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
                 Podés seleccionar más de una opción
               </p>
               <div className="grid grid-cols-2 gap-3">
-                {['5K', '10K', '21K', '42K'].map((distance) => (
-                  <button
-                    key={distance}
-                    type="button"
-                    onClick={() => handleDistanceToggle(distance)}
-                    className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                      formData.distances.includes(distance)
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="font-medium">{distance}</div>
-                  </button>
-                ))}
+                {Object.values(Distance).filter(value => typeof value === 'number').map((distanceValue) => {
+                  const distanceInfo = DISTANCE_INFO[distanceValue as Distance];
+                  return (
+                    <button
+                      key={distanceValue}
+                      type="button"
+                      onClick={() => handleDistanceToggle(distanceInfo.shortDescription)}
+                      className={`p-3 border-2 rounded-lg text-center transition-colors ${
+                        formData.distances.includes(distanceInfo.shortDescription)
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="font-medium">{distanceInfo.shortDescription}</div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -129,25 +136,30 @@ export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
                 ¿Cómo solés viajar a las carreras?
               </label>
               <div className="space-y-2">
-                {[
-                  { id: 'solo', label: 'Voy solo', icon: '🏃‍♂️' },
-                  { id: 'amigos', label: 'Voy con amigos/familia', icon: '👥' },
-                  { id: 'gente', label: 'Suelo llevar gente', icon: '💬' }
-                ].map((style) => (
-                  <button
-                    key={style.id}
-                    type="button"
-                    onClick={() => handleTravelStyleSelect(style.id)}
-                    className={`w-full p-4 border-2 rounded-lg text-left transition-colors flex items-center gap-3 ${
-                      formData.travelStyle === style.id
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <span className="text-xl">{style.icon}</span>
-                    <span className="font-medium">{style.label}</span>
-                  </button>
-                ))}
+                {Object.values(UsuallyTravelRace).filter(value => typeof value === 'number').map((travelValue) => {
+                  const travelInfo = USUALLY_TRAVEL_RACE_INFO[travelValue as UsuallyTravelRace];
+                  const travelKey = travelValue === UsuallyTravelRace.GO_ALONE ? 'solo' :
+                                   travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY ? 'amigos' : 'gente';
+                  
+                  const icon = travelValue === UsuallyTravelRace.GO_ALONE ? '🏃‍♂️' :
+                              travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY ? '👥' : '💬';
+                  
+                  return (
+                    <button
+                      key={travelValue}
+                      type="button"
+                      onClick={() => handleTravelStyleSelect(travelKey)}
+                      className={`w-full p-4 border-2 rounded-lg text-left transition-colors flex items-center gap-3 ${
+                        formData.travelStyle === travelKey
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <span className="text-xl">{icon}</span>
+                      <span className="font-medium">{travelInfo.description}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
