@@ -1,9 +1,29 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Menu, CarFront } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, Menu, CarFront, LogOut, User } from 'lucide-react';
 import { Button } from './ui/button';
+import { useState, useEffect } from 'react';
 
 export function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [userCredential, setUserCredential] = useState<any | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('userCredential');
+    if (stored) {
+      try {
+        setUserCredential(JSON.parse(stored));
+      } catch {
+        setUserCredential(null);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setUserCredential(null);
+    localStorage.removeItem('userCredential');
+    navigate('/login');
+  };
 
   const navigation = [
     { name: 'Inicio', href: '/', icon: Home },
@@ -40,10 +60,53 @@ export function Header() {
                 </Link>
               );
             })}
+            
+            {/* User section */}
+            {userCredential ? (
+              <div className="flex items-center space-x-2 ml-4">
+                <div className="flex items-center space-x-2 px-3 py-2 text-sm">
+                  <User className="h-4 w-4" />
+                  <span className="text-muted-foreground">
+                    {userCredential.name || 'Usuario'}
+                  </span>
+                </div>
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-1"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Salir</span>
+                </Button>
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button variant="outline" size="sm">
+                  Iniciar sesión
+                </Button>
+              </Link>
+            )}
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            {userCredential ? (
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                size="sm"
+                className="flex items-center space-x-1"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+              </Link>
+            )}
             <Button variant="ghost" size="icon">
               <Menu className="h-5 w-5" />
             </Button>

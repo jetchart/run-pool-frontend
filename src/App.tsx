@@ -13,6 +13,7 @@ import { RacesList } from './components/RacesList';
 import { TripsPage } from './components/TripsPage';
 import StyleGuide from './components/StyleGuide';
 import { Login } from './components/Login';
+import { UserProfile } from './components/UserProfile';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/" element={<RacesList />} />
             <Route path="/trips" element={<TripsPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<UserProfile />} />
             <Route path="/style-guide" element={<StyleGuide />} />
             {/* Página 404 */}
             <Route path="*" element={

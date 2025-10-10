@@ -1,74 +1,198 @@
+import { useState, useEffect } from 'react';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Zap } from 'lucide-react';
 
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_BACKEND_URL: any;
+      VITE_GOOGLE_CLIENT_ID: string;
+    };
+  }
+}
+
+interface UserCredential {
+  token?: string;
+  accessToken?: string;
+  name?: string;
+  email?: string;
+  [key: string]: any;
+}
+
 export function Login() {
-  const handleGoogleLogin = () => {
-    // Aquí irá la lógica de autenticación con Google
-    console.log('Iniciando sesión con Google...');
+  const [userCredential, setUserCredential] = useState<UserCredential | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('userCredential');
+    if (stored) {
+      try {
+        const parsedCredential = JSON.parse(stored);
+        setUserCredential(parsedCredential);
+        // Si ya está logueado, redirigir al perfil de usuario
+        navigate('/profile');
+      } catch {
+        setUserCredential(null);
+        localStorage.removeItem('userCredential');
+      }
+    }
+  }, [navigate]);
+
+  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
+    const token = credentialResponse.credential;
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/google/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+      
+      const data = await response.json();
+      
+      // Ensure token is present in userCredential for API calls
+      if (data && (data.token || data.accessToken)) {
+        const userData: UserCredential = {
+          ...data,
+          token: data.token || data.accessToken
+        };
+        setUserCredential(userData);
+        localStorage.setItem('userCredential', JSON.stringify(userData));
+        
+        // Redirigir al perfil de usuario
+        navigate('/profile');
+      }
+      
+      console.log('Login backend response:', data);
+    } catch (error) {
+      console.error('Error enviando token al backend:', error);
+      alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex justify-center p-4">
-      <div className="w-full max-w-md mt-12">
-        {/* Logo y título */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
-            <Zap className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">RunPool</h1>
-          <p className="text-gray-600 text-sm">
-            Encuentra transporte compartido a tus carreras
-          </p>
-        </div>
+  const handleGoogleLoginError = () => {
+    console.log("Login Failed");
+    alert('Error al iniciar sesión con Google. Por favor, intenta de nuevo.');
+  };
 
-        {/* Card de login */}
-        <Card className="p-8 shadow-sm">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Bienvenido
-            </h2>
+  const handleLogout = () => {
+    setUserCredential(null);
+    localStorage.removeItem('userCredential');
+    navigate('/login');
+  };
+
+  // Si ya está logueado, mostrar estado de usuario
+  if (userCredential) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
+              <Zap className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">RunPool</h1>
+          </div>
+
+          <Card className="p-8 shadow-sm">
+            <div className="text-center">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                ¡Hola, {userCredential.name}!
+              </h2>
+              <p className="text-gray-600 text-sm mb-6">
+                Sesión iniciada correctamente
+              </p>
+              
+              <div className="space-y-4">
+                <Button
+                  onClick={() => navigate('/profile')}
+                  className="w-full bg-black hover:bg-gray-800 text-white"
+                >
+                  Ir al perfil
+                </Button>
+                
+                <Button
+                  onClick={handleLogout}
+                  variant="outline"
+                  className="w-full border border-gray-300 hover:bg-gray-50"
+                >
+                  Cerrar sesión
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Logo y título */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
+              <Zap className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">RunPool</h1>
             <p className="text-gray-600 text-sm">
-              Inicia sesión para ver las carreras disponibles
+              Encuentra transporte compartido a tus carreras
             </p>
           </div>
 
-          {/* Botón de Google */}
-          <Button
-            onClick={handleGoogleLogin}
-            variant="outline"
-            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 hover:bg-gray-50"
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              />
-            </svg>
-            Continuar con Gmail
-          </Button>
+          {/* Card de login */}
+          <Card className="p-8 shadow-sm">
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Bienvenido
+              </h2>
+              <p className="text-gray-600 text-sm">
+                Inicia sesión para ver las carreras disponibles
+              </p>
+            </div>
 
-          {/* Términos y condiciones */}
-          <p className="text-xs text-gray-500 text-center mt-6 leading-relaxed">
-            Al continuar, aceptas nuestros{' '}
-            <a href="#" className="text-blue-600 hover:underline">
-              términos y condiciones
-            </a>
-          </p>
-        </Card>
+            {/* Google Login Component */}
+            <div className="flex justify-center">
+              {isLoading ? (
+                <Button
+                  disabled
+                  variant="outline"
+                  className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300"
+                >
+                  <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                  Iniciando sesión...
+                </Button>
+              ) : (
+                <GoogleLogin
+                  onSuccess={handleGoogleLoginSuccess}
+                  onError={handleGoogleLoginError}
+                  theme="outline"
+                  shape="rectangular"
+                  text="signin_with"
+                  width="100%"
+                />
+              )}
+            </div>
+
+            {/* Términos y condiciones */}
+            <p className="text-xs text-gray-500 text-center mt-6 leading-relaxed">
+              Al continuar, aceptas nuestros{' '}
+              <a href="#" className="text-blue-600 hover:underline">
+                términos y condiciones
+              </a>
+            </p>
+          </Card>
+        </div>
       </div>
-    </div>
+    </GoogleOAuthProvider>
   );
 }
