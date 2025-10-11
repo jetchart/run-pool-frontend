@@ -79,17 +79,12 @@ export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
     <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header con progreso */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
           <div className="text-sm text-gray-500 mb-2">Paso 1 de 3</div>
-          <div className="w-full bg-gray-200 rounded-full h-1 mb-6">
+          <div className="w-full bg-gray-200 rounded-full h-1 mb-4">
             <div className="bg-black h-1 rounded-full w-1/3"></div>
           </div>
           <div className="text-sm text-gray-500 mb-1">33%</div>
-        </div>
-
-        {/* Icono de mano */}
-        <div className="text-center mb-6">
-          <div className="text-4xl mb-4">👋</div>
         </div>
 
         <Card className="p-8 shadow-sm">
