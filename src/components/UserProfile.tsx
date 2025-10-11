@@ -9,7 +9,6 @@ import {
   RunningExperience, 
   UsuallyTravelRace,
   RaceType,
-  CreateUserProfileCarDto,
   CreateUserProfileRaceTypeDto,
   CreateUserProfileDistanceDto,
   Distance,
@@ -75,12 +74,6 @@ export function UserProfile() {
       setCurrentStep(1); // Asegurar que empezamos desde el primer paso
       const profile = location.state.profileData as UserProfileResponse;
       
-      // Mapear datos del perfil a formulario
-      console.log('preferredRaceTypes:', profile.preferredRaceTypes);
-      console.log('preferredDistances:', profile.preferredDistances);
-      console.log('usuallyTravelRace:', profile.usuallyTravelRace);
-      console.log('cars:', profile.cars);
-      
       const preloadedData = {
         basicInfo: {
           firstName: profile.name || '',
@@ -143,41 +136,39 @@ export function UserProfile() {
 
   const mapRaceTypeToForm = (raceType: any): string => {
     switch (raceType) {
-      case 0:
-      case 'STREET': return 'calle';
-      case 1:
-      case 'TRAIL': return 'trail';
-      default: return 'calle';
+      case 'STREET': return '1';
+      case 'TRAIL': return '2';
+      case 1: return '1';
+      case 2: return '2';
+      case RaceType.STREET: return '1';
+      case RaceType.TRAIL: return '2';
+      default: return '1';
     }
   };
 
   const mapDistanceToForm = (distance: any): string => {
     switch (distance) {
-      case 0:
-      case 'FIVE_K': return '5K';
-      case 1:
-      case 'TEN_K': return '10K';
-      case 2:
-      case 'HALF_MARATHON': return 'media-maraton';
-      case 3:
-      case 'MARATHON': return 'maraton';
-      case 4:
-      case 'ULTRA_MARATHON': return 'ultra-maraton';
-      default: return '5K';
+      case 5:
+      case 'FIVE_K': return '5';
+      case 20:
+      case 'TEN_K': return '20';
+      case 21:
+      case 'TWENTY_ONE_K': return '21';
+      case 42:
+      case 'FORTY_TWO_K': return '42';
+      default: return '5';
     }
   };
 
   const mapTravelStyleToForm = (travelStyle: any): string => {
     switch (travelStyle) {
-      case 0:
-      case 'ALONE': return 'solo';
       case 1:
-      case 'WITH_FRIENDS': return 'con-amigos';
+      case 'GO_ALONE': return '1';
       case 2:
-      case 'WITH_FAMILY': return 'con-familia';
+      case 'GO_WITH_FRIENDS_FAMILY': return '2';
       case 3:
-      case 'WITH_PARTNER': return 'con-pareja';
-      default: return 'solo';
+      case 'USUALLY_BRING_PEOPLE': return '3';
+      default: return '1';
     }
   };
 
@@ -206,26 +197,26 @@ export function UserProfile() {
 
   const mapTravelStyle = (style: string): UsuallyTravelRace => {
     switch (style) {
-      case 'solo': return UsuallyTravelRace.GO_ALONE;
-      case 'amigos': return UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY;
-      case 'gente': return UsuallyTravelRace.USUALLY_BRING_PEOPLE;
+      case '1': return UsuallyTravelRace.GO_ALONE;
+      case '2': return UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY;
+      case '3': return UsuallyTravelRace.USUALLY_BRING_PEOPLE;
       default: return UsuallyTravelRace.GO_ALONE;
     }
   };
 
   const mapRaceTypes = (raceTypes: string[]): CreateUserProfileRaceTypeDto[] => {
     return raceTypes.map(type => ({
-      raceType: type === 'calle' ? RaceType.STREET : RaceType.TRAIL
+      raceType: type === '1' || type === 'STREET' || type === 'calle' ? RaceType.STREET : RaceType.TRAIL
     }));
   };
 
   const mapDistances = (distances: string[]): CreateUserProfileDistanceDto[] => {
     // Mapeo de distancias usando los valores reales del enum Distance
     const distanceMap: { [key: string]: Distance } = {
-      '5K': Distance.FIVE_K,      // 5
-      '10K': Distance.TEN_K,      // 20
-      '21K': Distance.TWENTY_ONE_K, // 21
-      '42K': Distance.FORTY_TWO_K   // 42
+      '5': Distance.FIVE_K,      // 5
+      '20': Distance.TEN_K,      // 20
+      '21': Distance.TWENTY_ONE_K, // 21
+      '42': Distance.FORTY_TWO_K, // 42
     };
 
     return distances.map(distance => ({
@@ -362,17 +353,19 @@ export function UserProfile() {
       // Mostrar mensaje de éxito
       if (isEditMode) {
         alert('Perfil actualizado exitosamente');
-        // Redirigir de vuelta al perfil
         const storedUser = localStorage.getItem('userCredential');
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           const userId = parsedUser.id || parsedUser.userId;
-          navigate(`/profile/${userId}`);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          navigate(`/profile/view/${userId}`);
         } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           navigate('/');
         }
       } else {
         // Redirigir a la página principal después de crear el perfil
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate('/');
       }
     } catch (error) {

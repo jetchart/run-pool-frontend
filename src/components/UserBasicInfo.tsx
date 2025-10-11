@@ -42,9 +42,7 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
   }, [initialData, isEditMode]);
 
   useEffect(() => {
-    // Solo cargar datos del localStorage si NO estamos en modo edición
-    // o si no hay initialData
-    if (!isEditMode && !initialData) {
+    if (!isEditMode) {
       const storedUser = localStorage.getItem('userCredential');
       if (storedUser) {
         try {

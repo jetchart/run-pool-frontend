@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { Car, Users, MessageSquare } from 'lucide-react';
-import { USUALLY_TRAVEL_RACE_INFO, UsuallyTravelRace, RaceType, Distance, DISTANCE_INFO } from '../types/userProfile.types';
+import { Car, Users, MessageSquare, User, Bus } from 'lucide-react';
+import { USUALLY_TRAVEL_RACE_INFO, UsuallyTravelRace, RaceType, Distance, DISTANCE_INFO, RACE_TYPE_INFO } from '../types/userProfile.types';
 
 interface UserPreferencesProps {
   onNext: (data: any) => void;
@@ -106,24 +106,24 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                 Podés seleccionar más de una opción
               </p>
               <div className="space-y-2">
-                {Object.values(RaceType).map((raceType) => {
-                  const raceKey = raceType === RaceType.STREET ? 'calle' : 'trail';
-                  const icon = raceType === RaceType.STREET ? Car : Users;
+                {Object.values(RaceType).filter(value => typeof value === 'number').map((raceTypeValue) => {
+                  const raceTypeInfo = RACE_TYPE_INFO[raceTypeValue as RaceType];
+                  const icon = raceTypeValue === RaceType.STREET ? Car : Users;
                   const IconComponent = icon;
                   
                   return (
                     <button
-                      key={raceType}
+                      key={raceTypeValue}
                       type="button"
-                      onClick={() => handleRaceTypeToggle(raceKey)}
+                      onClick={() => handleRaceTypeToggle(raceTypeValue.toString())}
                       className={`w-full p-3 border-2 rounded-lg text-left transition-colors flex items-center gap-3 ${
-                        formData.raceTypes.includes(raceKey)
+                        formData.raceTypes.includes(raceTypeValue.toString())
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
                       <IconComponent className="w-5 h-5" />
-                      <span className="font-medium">{raceType}</span>
+                      <span className="font-medium">{raceTypeInfo.description}</span>
                     </button>
                   );
                 })}
@@ -145,9 +145,9 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                     <button
                       key={distanceValue}
                       type="button"
-                      onClick={() => handleDistanceToggle(distanceInfo.shortDescription)}
+                      onClick={() => handleDistanceToggle(distanceValue.toString())}
                       className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                        formData.distances.includes(distanceInfo.shortDescription)
+                        formData.distances.includes(distanceValue.toString())
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
@@ -167,8 +167,6 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
               <div className="space-y-2">
                 {Object.values(UsuallyTravelRace).filter(value => typeof value === 'number').map((travelValue) => {
                   const travelInfo = USUALLY_TRAVEL_RACE_INFO[travelValue as UsuallyTravelRace];
-                  const travelKey = travelValue === UsuallyTravelRace.GO_ALONE ? 'solo' :
-                                   travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY ? 'amigos' : 'gente';
                   
                   const icon = travelValue === UsuallyTravelRace.GO_ALONE ? '🏃‍♂️' :
                               travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY ? '👥' : '💬';
@@ -177,15 +175,19 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                     <button
                       key={travelValue}
                       type="button"
-                      onClick={() => handleTravelStyleSelect(travelKey)}
+                      onClick={() => handleTravelStyleSelect(travelValue.toString())}
                       className={`w-full p-4 border-2 rounded-lg text-left transition-colors flex items-center gap-3 ${
-                        formData.travelStyle === travelKey
+                        formData.travelStyle === travelValue.toString()
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <span className="text-xl">{icon}</span>
-                      <span className="font-medium">{travelInfo.description}</span>
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-medium">{travelInfo.description}</span>
+                        {travelValue === UsuallyTravelRace.GO_ALONE && (<User className="w-5 h-5" />)}
+                        {travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY && (<Users className="w-5 h-5" />)}
+                        {travelValue === UsuallyTravelRace.USUALLY_BRING_PEOPLE && (<Bus className="w-5 h-5" />)}
+                      </div>
                     </button>
                   );
                 })}

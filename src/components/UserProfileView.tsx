@@ -9,9 +9,10 @@ import {
   RUNNING_EXPERIENCE_INFO, 
   USUALLY_TRAVEL_RACE_INFO,
   DISTANCE_INFO,
-  RaceType
+  RaceType,
+  RACE_TYPE_INFO
 } from '../types/userProfile.types';
-import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit } from 'lucide-react';
+import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit, Mountain, ChevronsUp } from 'lucide-react';
 
 declare global {
   interface ImportMeta {
@@ -179,7 +180,8 @@ export function UserProfileView() {
               <div className="space-y-2">
                 {profile.preferredRaceTypes.map((raceType) => (
                   <Badge key={raceType.id} variant="outline" className="mr-2">
-                    {raceType.raceType === RaceType.STREET ? '🏃‍♂️ Calle' : '🏔️ Trail'}
+                    {raceType.raceType === RaceType.STREET && (<><ChevronsUp className="w-4 h-4" /> {RACE_TYPE_INFO[RaceType.STREET].description}</>)}
+                    {raceType.raceType === RaceType.TRAIL && (<><Mountain className="w-4 h-4" /> {RACE_TYPE_INFO[RaceType.TRAIL].description}</>)}
                   </Badge>
                 ))}
                 {profile.preferredRaceTypes.length === 0 && (
