@@ -203,19 +203,25 @@ export function UserProfileView() {
           <Card className="p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Car className="w-5 h-5" />
-              Vehículos registrados
+              Vehículos
             </h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {profile.cars.map((car) => (
                 <div key={car.id} className="border border-gray-200 rounded-lg p-4">
-                  <h3 className="font-medium text-gray-900 mb-2">
+                  <h4 className="font-medium text-gray-900 mb-2">
                     {car.brand} {car.model} ({car.year})
-                  </h3>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <p>Color: {car.color}</p>
-                    <p>Asientos: {car.seats}</p>
-                    <p>Patente: {car.licensePlate}</p>
+                  </h4>
+                  <div className="flex flex-col gap-2 text-sm text-gray-600">
+                    <div>
+                        <span className="font-medium">Color: </span> {car.color}
+                    </div>
+                    <div>
+                        <span className="font-medium">Asientos: </span> {car.seats}
+                    </div>
+                    <div>
+                        <span className="font-medium">Patente: </span> {car.licensePlate}
+                    </div>
                   </div>
                 </div>
               ))}

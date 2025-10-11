@@ -111,10 +111,11 @@ export function UserProfile() {
     }));
   };
 
-  const buildCompleteDTO = (): CreateCompleteUserProfileDto => {
-    const basicInfo = userData.basicInfo as BasicInfoData;
-    const preferences = userData.preferences as PreferencesData;
-    const finalization = userData.finalization as FinalizationData;
+  const buildCompleteDTO = (completeUserData?: any): CreateCompleteUserProfileDto => {
+    const data = completeUserData || userData;
+    const basicInfo = data.basicInfo as BasicInfoData;
+    const preferences = data.preferences as PreferencesData;
+    const finalization = data.finalization as FinalizationData;
 
     // Obtener userId del localStorage (del login)
     const storedUser = localStorage.getItem('userCredential');
@@ -212,15 +213,15 @@ export function UserProfile() {
   };
 
   const handleFinalizationComplete = async (data: FinalizationData) => {
-    // Actualizar los datos finales
+    // Crear los datos completos con los datos finales recibidos
     const completeUserData = {
       ...userData,
       finalization: data
     };
     setUserData(completeUserData);
 
-    // Construir el DTO completo
-    const dto = buildCompleteDTO();
+    // Construir el DTO completo con los datos actuales
+    const dto = buildCompleteDTO(completeUserData);
     
     try {
       // Enviar al backend

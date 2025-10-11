@@ -15,6 +15,7 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [] }: 
     carBrand: '',
     carModel: '',
     carColor: '',
+    carYear: '',
     availableSeats: '',
     fuelType: '',
     licensePlate: ''
@@ -50,6 +51,7 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [] }: 
       formData.carBrand.trim().length >= 1 &&
       formData.carModel.trim().length >= 1 &&
       formData.carColor.trim().length >= 1 &&
+      formData.carYear.trim().length === 4 &&
       formData.availableSeats !== '' &&
       parseInt(formData.availableSeats) >= 1 &&
       parseInt(formData.availableSeats) <= 8 &&
@@ -157,6 +159,21 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [] }: 
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
+                </div>
+
+                {/* Year */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Año
+                  </label>
+                  <input
+                    type="number"
+                    name="carYear"
+                    value={formData.carYear}
+                    onChange={handleInputChange}
+                    placeholder="Ej: 2025"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
                 </div>
 
                 {/* Color */}
