@@ -1,7 +1,23 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Menu, CarFront, LogOut, User } from 'lucide-react';
+import { Home, Menu, CarFront, LogOut, User, User2 } from 'lucide-react';
 import { Button } from './ui/button';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { useState, useEffect } from 'react';
+
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_BACKEND_URL: any;
+      VITE_GOOGLE_CLIENT_ID: string;
+    };
+  }
+}
 
 export function Header() {
   const location = useLocation();
@@ -23,6 +39,22 @@ export function Header() {
     setUserCredential(null);
     localStorage.removeItem('userCredential');
     navigate('/login');
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+    }
+    return name[0].toUpperCase();
+  };
+
+  const handleProfileClick = () => {
+    if (!userCredential) return;
+    
+    const userId = userCredential.id || userCredential.userId || 1;
+    navigate(`/profile/view/${userId}`);
   };
 
   const navigation = [
@@ -63,32 +95,36 @@ export function Header() {
             
             {/* User section */}
             {userCredential ? (
-              <div className="flex items-center space-x-2 ml-4">
-                <div className="flex items-center space-x-2 px-3 py-2 text-sm">
-                  <User className="h-4 w-4" />
-                  <span className="text-muted-foreground">
-                    {userCredential.name || 'Usuario'}
-                  </span>
-                </div>
-                <Link to={`/profile/view/${userCredential.id || userCredential.userId || 1}`}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center space-x-1"
-                  >
-                    <User className="h-4 w-4" />
-                    <span>Mi Perfil</span>
-                  </Button>
-                </Link>
-                <Button
-                  onClick={handleLogout}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-1"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Salir</span>
-                </Button>
+              <div className="ml-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" >
+                      <div className="flex items-center justify-center font-medium gap-2">
+                        <User2 className="w-5 h-5" />
+                        {getInitials(userCredential.name || 'Usuario')}
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <span className="font-medium">{userCredential.name || 'Usuario'}</span>
+                        <span className="w-[200px] truncate text-sm text-muted-foreground">
+                          {userCredential.email || 'No email'}
+                        </span>
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Mi perfil</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Cerrar sesión</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
               <Link to="/login">
@@ -102,25 +138,34 @@ export function Header() {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             {userCredential ? (
-              <>
-                <Link to={`/profile/view/${userCredential.id || userCredential.userId || 1}`}>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center space-x-1"
-                  >
-                    <User className="h-4 w-4" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white text-sm font-medium">
+                      {getInitials(userCredential.name || 'Usuario')}
+                    </div>
                   </Button>
-                </Link>
-                <Button
-                  onClick={handleLogout}
-                  variant="ghost"
-                  size="sm"
-                  className="flex items-center space-x-1"
-                >
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">{userCredential.name || 'Usuario'}</p>
+                      <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        {userCredential.email || 'No email'}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Mi perfil</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Cerrar sesión</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link to="/login">
                 <Button variant="ghost" size="sm">
