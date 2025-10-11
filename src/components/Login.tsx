@@ -107,7 +107,7 @@ export function Login() {
   // Si ya está logueado, mostrar estado de usuario
   if (userCredential) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
@@ -150,7 +150,7 @@ export function Login() {
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           {/* Logo y título */}
           <div className="text-center mb-8">

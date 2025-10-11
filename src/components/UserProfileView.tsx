@@ -80,7 +80,7 @@ export function UserProfileView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
           <p className="text-gray-600">Cargando perfil...</p>
@@ -91,7 +91,7 @@ export function UserProfileView() {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Perfil no encontrado'}</p>
           <Button onClick={() => navigate('/')} variant="outline">
@@ -103,7 +103,7 @@ export function UserProfileView() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
