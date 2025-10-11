@@ -131,15 +131,13 @@ export function UserProfile() {
 
   const mapExperienceToForm = (experience: any): string => {
     switch (experience) {
-      case 0:
-      case 'BEGINNER': return 'principiante';
       case 1:
-      case 'INTERMEDIATE': return 'intermedio';
+      case 'BEGINNER': return '1';
       case 2:
-      case 'ADVANCED': return 'avanzado';
+      case 'INTERMEDIATE': return '2';
       case 3:
-      case 'EXPERT': return 'experto';
-      default: return 'principiante';
+      case 'ADVANCED': return '3';
+      default: return '1';
     }
   };
 
@@ -196,6 +194,9 @@ export function UserProfile() {
 
   const mapExperience = (experience: string): RunningExperience => {
     switch (experience) {
+      case '1': return RunningExperience.BEGINNER;
+      case '2': return RunningExperience.INTERMEDIATE;
+      case '3': return RunningExperience.ADVANCED;
       case 'principiante': return RunningExperience.BEGINNER;
       case 'intermedio': return RunningExperience.INTERMEDIATE;
       case 'avanzado': return RunningExperience.ADVANCED;

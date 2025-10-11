@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { Camera } from 'lucide-react';
+import { Camera, Medal } from 'lucide-react';
 import { GENDER_INFO, Gender, RUNNING_EXPERIENCE_INFO, RunningExperience } from '../types/userProfile.types';
 
 interface UserBasicInfoProps {
@@ -71,10 +71,10 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
     }));
   };
 
-  const handleExperienceSelect = (level: string) => {
+  const handleExperienceSelect = (experienceId: string) => {
     setFormData(prev => ({
       ...prev,
-      experience: level
+      experience: experienceId
     }));
   };
 
@@ -213,24 +213,24 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
               <div className="grid grid-cols-3 gap-3">
                 {Object.values(RunningExperience).filter(value => typeof value === 'number').map((experienceValue) => {
                   const experienceInfo = RUNNING_EXPERIENCE_INFO[experienceValue as RunningExperience];
-                  const experienceKey = experienceInfo.description.toLowerCase();
                   
                   return (
                     <button
                       key={experienceValue}
                       type="button"
-                      onClick={() => handleExperienceSelect(experienceKey)}
+                      onClick={() => handleExperienceSelect(experienceValue.toString())}
                       className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                        formData.experience === experienceKey
+                        formData.experience === experienceValue.toString()
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="text-2xl mb-1">
-                        {experienceValue === RunningExperience.BEGINNER ? '🏃‍♂️' : 
-                         experienceValue === RunningExperience.INTERMEDIATE ? '🏃‍♀️' : '🏃‍♂️'}
+                      <div className='flex flex-col gap-1 justify-center items-center'>
+                        {experienceValue === RunningExperience.BEGINNER && (<Medal className="w-3 h-3" />)}
+                        {experienceValue === RunningExperience.INTERMEDIATE && (<Medal className="w-4 h-4" />)}
+                        {experienceValue === RunningExperience.ADVANCED && (<Medal className="w-5 h-5" />)}
+                        <div className="text-xs font-medium">{experienceInfo.description}</div>
                       </div>
-                      <div className="text-xs font-medium">{experienceInfo.description}</div>
                     </button>
                   );
                 })}
