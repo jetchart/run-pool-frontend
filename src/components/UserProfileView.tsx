@@ -32,27 +32,25 @@ export function UserProfileView() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const storedUser = localStorage.getItem('userCredential');
-        let token = '';
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          token = parsedUser.token || parsedUser.accessToken || '';
-        }
+        const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storedUser.token}`
           }
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        if (response.ok) {
         const data = await response.json();
         setProfile(data);
+        } else if (response.status === 404 && storedUser.userId == userId) {
+            console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
+            navigate('/profile');
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
       } catch (error) {
         console.error('Error fetching user profile:', error);
         setError('Error al cargar el perfil del usuario');
