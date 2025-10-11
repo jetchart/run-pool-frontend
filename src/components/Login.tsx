@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Zap } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 declare global {
   interface ImportMeta {
@@ -14,33 +15,56 @@ declare global {
   }
 }
 
-interface UserCredential {
-  token?: string;
-  accessToken?: string;
-  name?: string;
-  email?: string;
-  [key: string]: any;
-}
-
 export function Login() {
-  const [userCredential, setUserCredential] = useState<UserCredential | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { userCredential, setUserCredential } = useAuth();
 
   useEffect(() => {
-    const stored = localStorage.getItem('userCredential');
-    if (stored) {
-      try {
-        const parsedCredential = JSON.parse(stored);
-        setUserCredential(parsedCredential);
-        // Si ya está logueado, redirigir al perfil de usuario
-        navigate('/profile');
-      } catch {
-        setUserCredential(null);
-        localStorage.removeItem('userCredential');
-      }
+    // Si ya está logueado, verificar perfil y redirigir
+    if (userCredential) {
+      checkUserProfileAndRedirect(userCredential);
     }
-  }, [navigate]);
+  }, [navigate, userCredential]);
+
+  const checkUserProfileAndRedirect = async (userData: any) => {
+    try {
+      const userId = userData.id || userData.userId;
+      const token = userData.token || userData.accessToken;
+      
+      if (!userId) {
+        console.error('No se encontró userId en userData');
+        navigate('/profile');
+        return;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        // Usuario tiene perfil, redirigir a races
+        console.log('Usuario tiene perfil, redirigiendo a races...');
+        navigate('/');
+      } else if (response.status === 404) {
+        // Usuario no tiene perfil, redirigir a crear perfil
+        console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
+        navigate('/profile');
+      } else {
+        // Error inesperado, redirigir a crear perfil por seguridad
+        console.log('Error verificando perfil, redirigiendo a crear perfil...');
+        navigate('/profile');
+      }
+    } catch (error) {
+      console.error('Error verificando perfil del usuario:', error);
+      // En caso de error, redirigir a crear perfil por seguridad
+      navigate('/profile');
+    }
+  };
 
   const handleGoogleLoginSuccess = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
@@ -59,15 +83,16 @@ export function Login() {
       
       // Ensure token is present in userCredential for API calls
       if (data && (data.token || data.accessToken)) {
-        const userData: UserCredential = {
+        const userData: any = {
           ...data,
           token: data.token || data.accessToken
         };
-        setUserCredential(userData);
-        localStorage.setItem('userCredential', JSON.stringify(userData));
         
-        // Redirigir al perfil de usuario
-        navigate('/profile');
+        // Actualizar el contexto de autenticación (esto notificará automáticamente al Header)
+        setUserCredential(userData);
+        
+        // Verificar si el usuario tiene un perfil y redirigir apropiadamente
+        await checkUserProfileAndRedirect(userData);
       }
       
       console.log('Login backend response:', data);
@@ -86,7 +111,6 @@ export function Login() {
 
   const handleLogout = () => {
     setUserCredential(null);
-    localStorage.removeItem('userCredential');
     navigate('/login');
   };
 

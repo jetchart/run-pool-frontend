@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Menu, CarFront, LogOut, User, User2 } from 'lucide-react';
+import { Home, Menu, CarFront, LogOut, User } from 'lucide-react';
 import { Button } from './ui/button';
 import { 
   DropdownMenu,
@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 declare global {
   interface ImportMeta {
@@ -22,22 +22,10 @@ declare global {
 export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [userCredential, setUserCredential] = useState<any | null>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('userCredential');
-    if (stored) {
-      try {
-        setUserCredential(JSON.parse(stored));
-      } catch {
-        setUserCredential(null);
-      }
-    }
-  }, []);
+  const { userCredential, logout } = useAuth();
 
   const handleLogout = () => {
-    setUserCredential(null);
-    localStorage.removeItem('userCredential');
+    logout();
     navigate('/login');
   };
 
@@ -100,7 +88,7 @@ export function Header() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" >
                       <div className="flex items-center justify-center font-medium gap-2">
-                        <User2 className="w-5 h-5" />
+                        <User className="w-5 h-5" />
                         {getInitials(userCredential.name || 'Usuario')}
                       </div>
                     </Button>
