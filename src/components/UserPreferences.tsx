@@ -45,6 +45,15 @@ export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
     onNext(formData);
   };
 
+  // Validar si se puede habilitar el botón
+  const isFormValid = () => {
+    return (
+      formData.raceTypes.length > 0 &&
+      formData.distances.length > 0 &&
+      formData.travelStyle !== ''
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -176,7 +185,8 @@ export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
             
             <Button
               onClick={handleNext}
-              className="bg-gray-900 hover:bg-gray-800 text-white px-6"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={!isFormValid()}
             >
               Siguiente
             </Button>

@@ -6,9 +6,10 @@ import { Info } from 'lucide-react';
 interface UserFinalizationProps {
   onComplete: (data: any) => void;
   onBack: () => void;
+  validationErrors?: string[];
 }
 
-export function UserFinalization({ onComplete, onBack }: UserFinalizationProps) {
+export function UserFinalization({ onComplete, onBack, validationErrors = [] }: UserFinalizationProps) {
   const [formData, setFormData] = useState({
     driverMode: false,
     carBrand: '',
@@ -38,6 +39,24 @@ export function UserFinalization({ onComplete, onBack }: UserFinalizationProps) 
     onComplete(formData);
   };
 
+  // Validar si se puede habilitar el botón
+  const isFormValid = () => {
+    if (!formData.driverMode) {
+      return true; // Si no es conductor, siempre es válido
+    }
+    
+    // Si es conductor, validar campos del auto
+    return (
+      formData.carBrand.trim().length >= 2 &&
+      formData.carModel.trim().length >= 1 &&
+      formData.carColor.trim().length >= 2 &&
+      formData.availableSeats !== '' &&
+      parseInt(formData.availableSeats) >= 1 &&
+      parseInt(formData.availableSeats) <= 8 &&
+      formData.licensePlate.trim().length >= 6
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -49,6 +68,20 @@ export function UserFinalization({ onComplete, onBack }: UserFinalizationProps) 
           </div>
           <div className="text-sm text-gray-500 mb-1">100%</div>
         </div>
+
+        {/* Errores de validación */}
+        {validationErrors.length > 0 && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <h3 className="text-sm font-medium text-red-800 mb-2">
+              Por favor corrige los siguientes errores:
+            </h3>
+            <ul className="list-disc list-inside space-y-1">
+              {validationErrors.map((error, index) => (
+                <li key={index} className="text-sm text-red-700">{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <Card className="p-8 shadow-sm">
           <div className="text-center mb-6">
@@ -214,7 +247,8 @@ export function UserFinalization({ onComplete, onBack }: UserFinalizationProps) 
             
             <Button
               onClick={handleComplete}
-              className="bg-gray-900 hover:bg-gray-800 text-white px-6"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              disabled={!isFormValid()}
             >
               Guardar
             </Button>

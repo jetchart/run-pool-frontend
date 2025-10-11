@@ -60,6 +60,17 @@ export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
     onNext(formData);
   };
 
+  // Validar si se pueden habilitar los botones
+  const isFormValid = () => {
+    return (
+      formData.firstName.trim().length >= 1 &&
+      formData.lastName.trim().length >= 1 &&
+      formData.birthYear !== '' &&
+      formData.email.includes('@') &&
+      formData.experience !== ''
+    );
+  };
+
   // Generar opciones de años (desde 1950 hasta año actual)
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1949 }, (_, i) => currentYear - i);
@@ -232,16 +243,9 @@ export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
             
             <div className="flex gap-3">
               <Button
-                onClick={handleSkip}
-                variant="outline"
-                className="border-gray-300 text-gray-600 hover:bg-gray-50"
-              >
-                Omitir
-              </Button>
-              
-              <Button
                 onClick={handleNext}
-                className="bg-gray-900 hover:bg-gray-800 text-white px-6"
+                className="bg-gray-900 hover:bg-gray-800 text-white px-6 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled={!isFormValid()}
               >
                 Siguiente
               </Button>
