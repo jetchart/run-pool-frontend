@@ -110,7 +110,7 @@ export const RACE_TYPE_INFO: Record<RaceType, RaceTypeInfo> = {
 
 export enum Distance {
   FIVE_K = 5,
-  TEN_K = 20,
+  TEN_K = 10,
   TWENTY_ONE_K = 21,
   FORTY_TWO_K = 42,
 }
@@ -128,7 +128,7 @@ export const DISTANCE_INFO: Record<Distance, DistanceInfo> = {
     shortDescription: '5K',
   },
   [Distance.TEN_K]: {
-    id: 20,
+    id: 10,
     description: '10 kilómetros',
     shortDescription: '10K',
   },

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { SkeletonCard } from './SkeletonCard';
 import { RaceDialog } from './RaceDialog';
 import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp } from 'lucide-react';
-import { RaceType } from '../enums/race-type.enum';
+import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO } from '../types/userProfile.types';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 
@@ -49,7 +49,9 @@ export function RacesList() {
                 month: 'long', 
                 year: 'numeric' 
               });
-              const distances = (race.distances || []).map((d: any) => d.distance.shortDescription);
+              const distances = (race.distances || []).map((d: any) => {
+                return DISTANCE_INFO[d.distance as keyof typeof DISTANCE_INFO]?.shortDescription;
+              });
               const inscriptionOpen = race.inscriptionStatus === 'open' || race.inscriptionOpen;
               const description = race.description?.length > 90 ? race.description.slice(0, 87) + '...' : race.description;
               
@@ -70,12 +72,14 @@ export function RacesList() {
                     <div className="flex flex-wrap gap-2 mt-3 mb-3">
                       {race.raceType == RaceType.STREET && (
                         <Badge variant="outline">
-                          <ChevronsUp className="w-4 h-4" />{RaceType.STREET}
+                          <ChevronsUp className="w-4 h-4" />
+                          {RACE_TYPE_INFO[RaceType.STREET].description}
                         </Badge>
                       )}
                       {race.raceType == RaceType.TRAIL && (
                         <Badge variant="outline">
-                          <Mountain className="w-4 h-4" />{RaceType.TRAIL}
+                          <Mountain className="w-4 h-4" />
+                          {RACE_TYPE_INFO[RaceType.TRAIL].description}
                         </Badge>
                       )}
                       {distances.map((dist: string, i: number) => (

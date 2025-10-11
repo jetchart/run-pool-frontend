@@ -4,7 +4,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Calendar, MapPin, ExternalLink, Copy } from 'lucide-react';
-import { RaceType } from '../enums/race-type.enum';
+import { RaceType, RACE_TYPE_INFO, DISTANCE_INFO } from '../types/userProfile.types';
 
 interface RaceDialogProps {
   children: ReactNode;
@@ -21,7 +21,14 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     month: 'long', 
     year: 'numeric' 
   });
-  const distances = (race.distances || []).map((d: any) => d.distance.shortDescription);
+  const distances = (race.distances || []).map((d: any) => {
+    // Si distance es un enum, usar directamente DISTANCE_INFO
+    if (typeof d.distance === 'number') {
+      return DISTANCE_INFO[d.distance as keyof typeof DISTANCE_INFO]?.shortDescription || d.distance;
+    }
+    // Retrocompatibilidad con el formato anterior
+    return d.distance?.shortDescription || d.distance;
+  });
 
   const getTitle = () => {
     if (type === 'passenger') {
@@ -59,7 +66,12 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
         <div className="flex flex-wrap gap-2 mb-2">
           {race.raceType === RaceType.STREET && (
             <Badge variant="default" className="bg-gray-800 text-white text-xs">
-              Calle
+              {RACE_TYPE_INFO[RaceType.STREET].description}
+            </Badge>
+          )}
+          {race.raceType === RaceType.TRAIL && (
+            <Badge variant="default" className="bg-gray-800 text-white text-xs">
+              {RACE_TYPE_INFO[RaceType.TRAIL].description}
             </Badge>
           )}
           {distances.map((dist: string, i: number) => (
