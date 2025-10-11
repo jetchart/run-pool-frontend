@@ -194,6 +194,7 @@ export function UserProfile() {
       basicInfo: data
     }));
     setCurrentStep(2);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePreferencesNext = (data: PreferencesData) => {
@@ -202,10 +203,12 @@ export function UserProfile() {
       preferences: data
     }));
     setCurrentStep(3);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePreferencesBack = () => {
     setCurrentStep(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFinalizationComplete = async (data: FinalizationData) => {
@@ -235,6 +238,8 @@ export function UserProfile() {
 
   const handleFinalizationBack = () => {
     setCurrentStep(2);
+    // Scroll al top cuando se cambia de step
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Renderizar el componente correspondiente según el paso actual
