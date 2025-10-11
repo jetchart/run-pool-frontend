@@ -168,9 +168,6 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                 {Object.values(UsuallyTravelRace).filter(value => typeof value === 'number').map((travelValue) => {
                   const travelInfo = USUALLY_TRAVEL_RACE_INFO[travelValue as UsuallyTravelRace];
                   
-                  const icon = travelValue === UsuallyTravelRace.GO_ALONE ? '🏃‍♂️' :
-                              travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY ? '👥' : '💬';
-                  
                   return (
                     <button
                       key={travelValue}
