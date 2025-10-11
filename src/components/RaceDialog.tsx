@@ -1,10 +1,20 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Calendar, MapPin, ExternalLink, Copy } from 'lucide-react';
 import { RaceType, RACE_TYPE_INFO, DISTANCE_INFO } from '../types/userProfile.types';
+import { useAuth } from '../contexts/AuthContext';
+
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_BACKEND_URL: any;
+      VITE_GOOGLE_CLIENT_ID: string;
+    };
+  }
+}
 
 interface RaceDialogProps {
   children: ReactNode;
@@ -14,6 +24,8 @@ interface RaceDialogProps {
 
 export function RaceDialog({ children, race, type }: RaceDialogProps) {
   const navigate = useNavigate();
+  const { userCredential } = useAuth();
+  const [isCheckingProfile, setIsCheckingProfile] = useState(false);
   const startDate = new Date(race.startDate);
   const dateStr = startDate.toLocaleDateString('es-AR', { 
     weekday: 'long', 
@@ -37,8 +49,46 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     return `¿Ofreces viaje en auto?`;
   };
 
-  const handleViewTrips = () => {
-    navigate('/trips', { state: { race } });
+  const handleViewTrips = async () => {
+    // Verificar si el usuario está logueado
+    if (!userCredential) {
+      navigate('/login');
+      return;
+    }
+
+    setIsCheckingProfile(true);
+    
+    try {
+      // Verificar si el usuario tiene perfil
+      const userId = userCredential.id || userCredential.userId;
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userCredential.token}`
+        }
+      });
+
+      if (response.status === 404) {
+        // Usuario no tiene perfil, redirigir a crear perfil
+        navigate('/profile');
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Usuario tiene perfil, proceder a ver viajes
+      navigate('/trips', { state: { race } });
+      
+    } catch (error) {
+      console.error('Error checking user profile:', error);
+      // En caso de error, asumir que no tiene perfil y redirigir
+      navigate('/profile');
+    } finally {
+      setIsCheckingProfile(false);
+    }
   };
 
   return (
@@ -117,10 +167,11 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
 
         {/* Botón principal */}
         <Button 
-          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
+          className="w-full bg-gray-900 hover:bg-gray-800 text-white disabled:bg-gray-400"
           onClick={handleViewTrips}
+          disabled={isCheckingProfile}
         >
-          Ver viajes disponibles
+          {isCheckingProfile ? 'Verificando...' : 'Ver viajes disponibles'}
         </Button>
       </DialogContent>
     </Dialog>
