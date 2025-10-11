@@ -47,9 +47,9 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [] }: 
     
     // Si es conductor, validar campos del auto
     return (
-      formData.carBrand.trim().length >= 2 &&
+      formData.carBrand.trim().length >= 1 &&
       formData.carModel.trim().length >= 1 &&
-      formData.carColor.trim().length >= 2 &&
+      formData.carColor.trim().length >= 1 &&
       formData.availableSeats !== '' &&
       parseInt(formData.availableSeats) >= 1 &&
       parseInt(formData.availableSeats) <= 8 &&
