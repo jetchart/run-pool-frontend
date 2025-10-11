@@ -128,11 +128,12 @@ export function Header() {
             {userCredential ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white text-sm font-medium">
-                      {getInitials(userCredential.name || 'Usuario')}
-                    </div>
-                  </Button>
+                  <Button variant="outline" >
+                      <div className="flex items-center justify-center font-medium gap-2">
+                        <User className="w-5 h-5" />
+                        {getInitials(userCredential.name || 'Usuario')}
+                      </div>
+                    </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">

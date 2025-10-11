@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Zap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { UserCredentialDto } from '@/dtos/user-credential.dto';
 
 declare global {
   interface ImportMeta {
@@ -31,12 +32,7 @@ export function Login() {
     try {
       const userId = userData.id || userData.userId;
       const token = userData.token || userData.accessToken;
-      
-      if (!userId) {
-        console.error('No se encontró userId en userData');
-        navigate('/profile');
-        return;
-      }
+  
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
         method: 'GET',
@@ -69,6 +65,8 @@ export function Login() {
   const handleGoogleLoginSuccess = async (credentialResponse: any) => {
     const token = credentialResponse.credential;
     setIsLoading(true);
+
+    let userData: UserCredentialDto;
     
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/google/login`, {
@@ -79,23 +77,15 @@ export function Login() {
         body: JSON.stringify({ token }),
       });
       
-      const data = await response.json();
-      
-      // Ensure token is present in userCredential for API calls
-      if (data && (data.token || data.accessToken)) {
-        const userData: any = {
-          ...data,
-          token: data.token || data.accessToken
-        };
+      userData = await response.json();
         
         // Actualizar el contexto de autenticación (esto notificará automáticamente al Header)
         setUserCredential(userData);
         
         // Verificar si el usuario tiene un perfil y redirigir apropiadamente
         await checkUserProfileAndRedirect(userData);
-      }
       
-      console.log('Login backend response:', data);
+      console.log('Login backend response:', userData);
     } catch (error) {
       console.error('Error enviando token al backend:', error);
       alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
