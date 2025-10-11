@@ -7,13 +7,19 @@ import { USUALLY_TRAVEL_RACE_INFO, UsuallyTravelRace, RaceType, Distance, DISTAN
 interface UserPreferencesProps {
   onNext: (data: any) => void;
   onBack: () => void;
+  initialData?: {
+    raceTypes: string[];
+    distances: string[];
+    travelStyle: string;
+  };
+  isEditMode?: boolean;
 }
 
-export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
+export function UserPreferences({ onNext, onBack, initialData, isEditMode = false }: UserPreferencesProps) {
   const [formData, setFormData] = useState({
-    raceTypes: [] as string[],
-    distances: [] as string[],
-    travelStyle: ''
+    raceTypes: initialData?.raceTypes || [] as string[],
+    distances: initialData?.distances || [] as string[],
+    travelStyle: initialData?.travelStyle || ''
   });
 
   const handleRaceTypeToggle = (type: string) => {
@@ -69,10 +75,13 @@ export function UserPreferences({ onNext, onBack }: UserPreferencesProps) {
         <Card className="p-8 shadow-sm">
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Contanos un poco sobre cómo corrés
+              {isEditMode ? 'Actualiza tus preferencias' : 'Contanos un poco sobre cómo corrés'}
             </h2>
             <p className="text-gray-600 text-sm">
-              Tus preferencias nos ayudan a recomendarte viajes y grupos que encajen con vos.
+              {isEditMode 
+                ? 'Modifica tus preferencias de running según como hayas evolucionado.'
+                : 'Tus preferencias nos ayudan a recomendarte viajes y grupos que encajen con vos.'
+              }
             </p>
           </div>
 

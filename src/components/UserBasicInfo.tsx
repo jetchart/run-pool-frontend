@@ -6,36 +6,62 @@ import { GENDER_INFO, Gender, RUNNING_EXPERIENCE_INFO, RunningExperience } from 
 
 interface UserBasicInfoProps {
   onNext: (data: any) => void;
+  initialData?: {
+    firstName: string;
+    lastName: string;
+    birthYear: string;
+    gender: string;
+    experience: string;
+    email: string;
+  };
+  isEditMode?: boolean;
 }
 
-export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
+export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserBasicInfoProps) {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    birthYear: '',
-    gender: '',
-    experience: '',
-    email: ''
+    firstName: initialData?.firstName || '',
+    lastName: initialData?.lastName || '',
+    birthYear: initialData?.birthYear || '',
+    gender: initialData?.gender || '',
+    experience: initialData?.experience || '',
+    email: initialData?.email || ''
   });
 
+  // Actualizar formData cuando cambien los initialData
   useEffect(() => {
-    // Cargar datos del localStorage
-    const storedUser = localStorage.getItem('userCredential');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        
-        setFormData(prev => ({
-          ...prev,
-          firstName: parsedUser.given_name || parsedUser.givenName || '',
-          lastName: parsedUser.family_name || parsedUser.familyName || '',
-          email: parsedUser.email || ''
-        }));
-      } catch (error) {
-        console.error('Error parsing user credential:', error);
+    if (initialData && isEditMode) {
+      setFormData({
+        firstName: initialData.firstName || '',
+        lastName: initialData.lastName || '',
+        birthYear: initialData.birthYear || '',
+        gender: initialData.gender || '',
+        experience: initialData.experience || '',
+        email: initialData.email || ''
+      });
+    }
+  }, [initialData, isEditMode]);
+
+  useEffect(() => {
+    // Solo cargar datos del localStorage si NO estamos en modo edición
+    // o si no hay initialData
+    if (!isEditMode && !initialData) {
+      const storedUser = localStorage.getItem('userCredential');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          
+          setFormData(prev => ({
+            ...prev,
+            firstName: parsedUser.given_name || parsedUser.givenName || '',
+            lastName: parsedUser.family_name || parsedUser.familyName || '',
+            email: parsedUser.email || ''
+          }));
+        } catch (error) {
+          console.error('Error parsing user credential:', error);
+        }
       }
     }
-  }, []);
+  }, [isEditMode, initialData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -90,10 +116,13 @@ export function UserBasicInfo({ onNext }: UserBasicInfoProps) {
         <Card className="p-8 shadow-sm">
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              ¡Queremos conocerte!
+              {isEditMode ? '¡Actualiza tu información!' : '¡Queremos conocerte!'}
             </h2>
             <p className="text-gray-600 text-sm">
-              Esto nos ayuda a conectarte con otros runners que comparten tu ritmo y energía.
+              {isEditMode 
+                ? 'Modifica los campos que desees actualizar en tu perfil.'
+                : 'Esto nos ayuda a conectarte con otros runners que comparten tu ritmo y energía.'
+              }
             </p>
           </div>
 

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { UserBasicInfo } from './UserBasicInfo';
 import { UserPreferences } from './UserPreferences';
 import { UserFinalization } from './UserFinalization';
@@ -12,7 +12,8 @@ import {
   CreateUserProfileCarDto,
   CreateUserProfileRaceTypeDto,
   CreateUserProfileDistanceDto,
-  Distance
+  Distance,
+  UserProfileResponse
 } from '../types/userProfile.types';
 
 declare global {
@@ -51,6 +52,8 @@ interface FinalizationData {
 
 export function UserProfile() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [userData, setUserData] = useState<{
     basicInfo: BasicInfoData | {};
     preferences: PreferencesData | {};
@@ -61,6 +64,106 @@ export function UserProfile() {
     finalization: {}
   });
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Efecto para detectar modo edición y precargar datos
+  useEffect(() => {
+    if (location.state?.editMode && location.state?.profileData) {
+      setIsLoadingProfile(true);
+      setIsEditMode(true);
+      setCurrentStep(1); // Asegurar que empezamos desde el primer paso
+      const profile = location.state.profileData as UserProfileResponse;
+      
+      // Mapear datos del perfil a formulario
+      const preloadedData = {
+        basicInfo: {
+          firstName: profile.name || '',
+          lastName: profile.surname || '',
+          birthYear: profile.birthYear?.toString() || '',
+          gender: mapGenderToForm(profile.gender),
+          experience: mapExperienceToForm(profile.runningExperience),
+          email: profile.email || ''
+        },
+        preferences: {
+          raceTypes: profile.preferredRaceTypes?.map((rt: any) => mapRaceTypeToForm(rt.raceType)) || [],
+          distances: profile.preferredDistances?.map((d: any) => mapDistanceToForm(d.distance)) || [],
+          travelStyle: mapTravelStyleToForm(profile.usuallyTravelRace)
+        },
+        finalization: {
+          driverMode: profile.cars && profile.cars.length > 0,
+          carBrand: profile.cars?.[0]?.brand || '',
+          carModel: profile.cars?.[0]?.model || '',
+          carColor: profile.cars?.[0]?.color || '',
+          availableSeats: profile.cars?.[0]?.seats?.toString() || '',
+          fuelType: '', // No tenemos esta información en el perfil
+          licensePlate: profile.cars?.[0]?.licensePlate || ''
+        }
+      };
+      
+      setUserData(preloadedData);
+      setIsLoadingProfile(false);
+    }
+  }, [location.state]);
+
+  // Funciones para mapear de enum a formulario
+  const mapGenderToForm = (gender: any): string => {
+    switch (gender) {
+      case 1:
+      case 'MASCULINE': return 'masculino';
+      case 2:
+      case 'FEMININE': return 'femenino';
+      case 3:
+      case 'NON_BINARY': return 'no-binario';
+      case 4:
+      case 'OTHER': return 'otro';
+      case 0:
+      case 'PREFER_NOT_TO_SAY':
+      default: return 'prefiero-no-decir';
+    }
+  };
+
+  const mapExperienceToForm = (experience: any): string => {
+    switch (experience) {
+      case 0:
+      case 'BEGINNER': return 'principiante';
+      case 1:
+      case 'INTERMEDIATE': return 'intermedio';
+      case 2:
+      case 'ADVANCED': return 'avanzado';
+      case 3:
+      case 'EXPERT': return 'experto';
+      default: return 'principiante';
+    }
+  };
+
+  const mapRaceTypeToForm = (raceType: any): string => {
+    switch (raceType) {
+      case 'STREET': return 'calle';
+      case 'TRAIL': return 'trail';
+      default: return 'calle';
+    }
+  };
+
+  const mapDistanceToForm = (distance: any): string => {
+    switch (distance) {
+      case 'FIVE_K': return '5K';
+      case 'TEN_K': return '10K';
+      case 'HALF_MARATHON': return 'media-maraton';
+      case 'MARATHON': return 'maraton';
+      case 'ULTRA_MARATHON': return 'ultra-maraton';
+      default: return '5K';
+    }
+  };
+
+  const mapTravelStyleToForm = (travelStyle: any): string => {
+    switch (travelStyle) {
+      case 'ALONE': return 'solo';
+      case 'WITH_FRIENDS': return 'con-amigos';
+      case 'WITH_FAMILY': return 'con-familia';
+      case 'WITH_PARTNER': return 'con-pareja';
+      default: return 'solo';
+    }
+  };
 
   // Mapeo de valores del formulario a enums
   const mapGender = (gender: string): Gender => {
@@ -162,13 +265,21 @@ export function UserProfile() {
     try {
       const storedUser = localStorage.getItem('userCredential');
       let token = '';
+      let userId = '';
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
         token = parsedUser.token || parsedUser.accessToken || '';
+        userId = parsedUser.id || parsedUser.userId || '';
       }
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles`, {
-        method: 'POST',
+      // Usar PUT para actualizar, POST para crear
+      const method = isEditMode ? 'PUT' : 'POST';
+      const url = isEditMode 
+        ? `${import.meta.env.VITE_BACKEND_URL}/user-profiles/${userId}`
+        : `${import.meta.env.VITE_BACKEND_URL}/user-profiles`;
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -181,10 +292,10 @@ export function UserProfile() {
       }
 
       const result = await response.json();
-      console.log('Profile created successfully:', result);
+      console.log(`Profile ${isEditMode ? 'updated' : 'created'} successfully:`, result);
       return result;
     } catch (error) {
-      console.error('Error creating user profile:', error);
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} user profile:`, error);
       throw error;
     }
   };
@@ -229,10 +340,25 @@ export function UserProfile() {
       
       console.log('Datos completos enviados al backend:', dto);
       
-      // Redirigir a la página principal después de completar el perfil
-      navigate('/');
+      // Mostrar mensaje de éxito
+      if (isEditMode) {
+        alert('Perfil actualizado exitosamente');
+        // Redirigir de vuelta al perfil
+        const storedUser = localStorage.getItem('userCredential');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          const userId = parsedUser.id || parsedUser.userId;
+          navigate(`/profile/${userId}`);
+        } else {
+          navigate('/');
+        }
+      } else {
+        // Redirigir a la página principal después de crear el perfil
+        navigate('/');
+      }
     } catch (error) {
-      alert('Error al guardar el perfil. Por favor, intenta de nuevo.');
+      const action = isEditMode ? 'actualizar' : 'guardar';
+      alert(`Error al ${action} el perfil. Por favor, intenta de nuevo.`);
       console.error('Error sending profile to backend:', error);
     }
   };
@@ -243,15 +369,35 @@ export function UserProfile() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Mostrar loading si estamos en modo edición y aún cargando los datos
+  if (isEditMode && isLoadingProfile) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando datos del perfil...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Renderizar el componente correspondiente según el paso actual
   switch (currentStep) {
     case 1:
-      return <UserBasicInfo onNext={handleBasicInfoNext} />;
+      return (
+        <UserBasicInfo 
+          onNext={handleBasicInfoNext} 
+          initialData={userData.basicInfo as any}
+          isEditMode={isEditMode}
+        />
+      );
     case 2:
       return (
         <UserPreferences 
           onNext={handlePreferencesNext} 
           onBack={handlePreferencesBack} 
+          initialData={userData.preferences as any}
+          isEditMode={isEditMode}
         />
       );
     case 3:
@@ -259,6 +405,8 @@ export function UserProfile() {
         <UserFinalization 
           onComplete={handleFinalizationComplete} 
           onBack={handleFinalizationBack} 
+          initialData={userData.finalization as any}
+          isEditMode={isEditMode}
         />
       );
     default:

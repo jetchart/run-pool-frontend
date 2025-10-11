@@ -7,18 +7,28 @@ interface UserFinalizationProps {
   onComplete: (data: any) => void;
   onBack: () => void;
   validationErrors?: string[];
+  initialData?: {
+    driverMode: boolean;
+    carBrand: string;
+    carModel: string;
+    carColor: string;
+    availableSeats: string;
+    fuelType: string;
+    licensePlate: string;
+  };
+  isEditMode?: boolean;
 }
 
-export function UserFinalization({ onComplete, onBack, validationErrors = [] }: UserFinalizationProps) {
+export function UserFinalization({ onComplete, onBack, validationErrors = [], initialData, isEditMode = false }: UserFinalizationProps) {
   const [formData, setFormData] = useState({
-    driverMode: false,
-    carBrand: '',
-    carModel: '',
-    carColor: '',
+    driverMode: initialData?.driverMode || false,
+    carBrand: initialData?.carBrand || '',
+    carModel: initialData?.carModel || '',
+    carColor: initialData?.carColor || '',
     carYear: '',
-    availableSeats: '',
-    fuelType: '',
-    licensePlate: ''
+    availableSeats: initialData?.availableSeats || '',
+    fuelType: initialData?.fuelType || '',
+    licensePlate: initialData?.licensePlate || ''
   });
 
   const handleDriverModeToggle = () => {
@@ -88,10 +98,13 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [] }: 
         <Card className="p-8 shadow-sm">
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              ¿Tenés auto para compartir?
+              {isEditMode ? 'Actualiza tu información de vehículo' : '¿Tenés auto para compartir?'}
             </h2>
             <p className="text-gray-600 text-sm">
-              Compartí tu auto con otros runners y ayudá a más personas a llegar a la largada 🚗💨
+              {isEditMode 
+                ? 'Modifica los datos de tu vehículo o cambia si querés ser conductor.'
+                : 'Compartí tu auto con otros runners y ayudá a más personas a llegar a la largada 🚗💨'
+              }
             </p>
           </div>
 

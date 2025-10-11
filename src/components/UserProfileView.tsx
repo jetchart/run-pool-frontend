@@ -108,6 +108,13 @@ export function UserProfileView() {
           <Button onClick={() => navigate('/')} variant="outline">
             ← Volver
           </Button>
+          <Button 
+            onClick={() => navigate('/profile', { state: { editMode: true, profileData: profile } })} 
+            className="flex items-center gap-2"
+          >
+            <Edit className="w-4 h-4" />
+            Editar Perfil
+          </Button>
         </div>
 
         {/* Información Personal */}
