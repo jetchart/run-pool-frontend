@@ -45,6 +45,7 @@ interface FinalizationData {
   carBrand: string;
   carModel: string;
   carColor: string;
+  carYear: string;
   availableSeats: string;
   fuelType: string;
   licensePlate: string;
@@ -75,6 +76,11 @@ export function UserProfile() {
       const profile = location.state.profileData as UserProfileResponse;
       
       // Mapear datos del perfil a formulario
+      console.log('preferredRaceTypes:', profile.preferredRaceTypes);
+      console.log('preferredDistances:', profile.preferredDistances);
+      console.log('usuallyTravelRace:', profile.usuallyTravelRace);
+      console.log('cars:', profile.cars);
+      
       const preloadedData = {
         basicInfo: {
           firstName: profile.name || '',
@@ -94,6 +100,7 @@ export function UserProfile() {
           carBrand: profile.cars?.[0]?.brand || '',
           carModel: profile.cars?.[0]?.model || '',
           carColor: profile.cars?.[0]?.color || '',
+          carYear: profile.cars?.[0]?.year?.toString() || '',
           availableSeats: profile.cars?.[0]?.seats?.toString() || '',
           fuelType: '', // No tenemos esta información en el perfil
           licensePlate: profile.cars?.[0]?.licensePlate || ''
@@ -138,7 +145,9 @@ export function UserProfile() {
 
   const mapRaceTypeToForm = (raceType: any): string => {
     switch (raceType) {
+      case 0:
       case 'STREET': return 'calle';
+      case 1:
       case 'TRAIL': return 'trail';
       default: return 'calle';
     }
@@ -146,10 +155,15 @@ export function UserProfile() {
 
   const mapDistanceToForm = (distance: any): string => {
     switch (distance) {
+      case 0:
       case 'FIVE_K': return '5K';
+      case 1:
       case 'TEN_K': return '10K';
+      case 2:
       case 'HALF_MARATHON': return 'media-maraton';
+      case 3:
       case 'MARATHON': return 'maraton';
+      case 4:
       case 'ULTRA_MARATHON': return 'ultra-maraton';
       default: return '5K';
     }
@@ -157,9 +171,13 @@ export function UserProfile() {
 
   const mapTravelStyleToForm = (travelStyle: any): string => {
     switch (travelStyle) {
+      case 0:
       case 'ALONE': return 'solo';
+      case 1:
       case 'WITH_FRIENDS': return 'con-amigos';
+      case 2:
       case 'WITH_FAMILY': return 'con-familia';
+      case 3:
       case 'WITH_PARTNER': return 'con-pareja';
       default: return 'solo';
     }
@@ -275,7 +293,7 @@ export function UserProfile() {
       // Usar PUT para actualizar, POST para crear
       const method = isEditMode ? 'PUT' : 'POST';
       const url = isEditMode 
-        ? `${import.meta.env.VITE_BACKEND_URL}/user-profiles/${userId}`
+        ? `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`
         : `${import.meta.env.VITE_BACKEND_URL}/user-profiles`;
 
       const response = await fetch(url, {

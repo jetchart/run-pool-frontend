@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Car, Users, MessageSquare } from 'lucide-react';
@@ -21,6 +21,17 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
     distances: initialData?.distances || [] as string[],
     travelStyle: initialData?.travelStyle || ''
   });
+
+  // Actualizar formData cuando cambien los initialData
+  useEffect(() => {
+    if (initialData && isEditMode) {
+      setFormData({
+        raceTypes: initialData.raceTypes || [],
+        distances: initialData.distances || [],
+        travelStyle: initialData.travelStyle || ''
+      });
+    }
+  }, [initialData, isEditMode]);
 
   const handleRaceTypeToggle = (type: string) => {
     setFormData(prev => ({

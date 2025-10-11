@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Info } from 'lucide-react';
@@ -12,6 +12,7 @@ interface UserFinalizationProps {
     carBrand: string;
     carModel: string;
     carColor: string;
+    carYear: string;
     availableSeats: string;
     fuelType: string;
     licensePlate: string;
@@ -25,11 +26,27 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
     carBrand: initialData?.carBrand || '',
     carModel: initialData?.carModel || '',
     carColor: initialData?.carColor || '',
-    carYear: '',
+    carYear: initialData?.carYear || '',
     availableSeats: initialData?.availableSeats || '',
     fuelType: initialData?.fuelType || '',
     licensePlate: initialData?.licensePlate || ''
   });
+
+  // Actualizar formData cuando cambien los initialData
+  useEffect(() => {
+    if (initialData && isEditMode) {
+      setFormData({
+        driverMode: initialData.driverMode || false,
+        carBrand: initialData.carBrand || '',
+        carModel: initialData.carModel || '',
+        carColor: initialData.carColor || '',
+        carYear: initialData.carYear || '',
+        availableSeats: initialData.availableSeats || '',
+        fuelType: initialData.fuelType || '',
+        licensePlate: initialData.licensePlate || ''
+      });
+    }
+  }, [initialData, isEditMode]);
 
   const handleDriverModeToggle = () => {
     setFormData(prev => ({
