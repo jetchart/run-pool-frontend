@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { Camera, Medal } from 'lucide-react';
+import { Camera, Medal, X } from 'lucide-react';
 import { GENDER_INFO, Gender, RUNNING_EXPERIENCE_INFO, RunningExperience } from '../types/userProfile.types';
+import { toast } from 'sonner';
 
 interface UserBasicInfoProps {
   onNext: (data: any) => void;
@@ -13,6 +14,8 @@ interface UserBasicInfoProps {
     gender: string;
     experience: string;
     email: string;
+    imageFile?: File;
+    imageName?: string;
   };
   isEditMode?: boolean;
 }
@@ -27,6 +30,10 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
     email: initialData?.email || ''
   });
 
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageName, setImageName] = useState<string>('');
+
   // Actualizar formData cuando cambien los initialData
   useEffect(() => {
     if (initialData && isEditMode) {
@@ -38,6 +45,13 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
         experience: initialData.experience || '',
         email: initialData.email || ''
       });
+      
+      // Si hay datos de imagen en initialData
+      if (initialData.imageName) {
+        setImageName(initialData.imageName);
+        // En modo edición, podrías cargar la imagen desde el servidor si tienes la URL
+        // setImagePreview(imageUrl); // si tienes la URL de la imagen
+      }
     }
   }, [initialData, isEditMode]);
 
@@ -76,8 +90,55 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
     }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        toast.error('Archivo inválido', {
+          description: 'Por favor selecciona un archivo de imagen válido'
+        });
+        return;
+      }
+      
+      // Validar tamaño (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Archivo muy grande', {
+          description: 'La imagen debe ser menor a 5MB'
+        });
+        return;
+      }
+
+      setSelectedImage(file);
+      
+      // Generar nombre único para la imagen
+      const timestamp = Date.now();
+      const extension = file.name.split('.').pop() || 'jpg';
+      const generatedName = `profile_${timestamp}.${extension}`;
+      setImageName(generatedName);
+      
+      // Crear preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    setImageName('');
+  };
+
   const handleNext = () => {
-    onNext(formData);
+    const dataToSend = {
+      ...formData,
+      imageFile: selectedImage,
+      imageName: imageName
+    };
+    onNext(dataToSend);
   };
 
   const handleSkip = () => {
@@ -125,15 +186,48 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
           </div>
 
           {/* Avatar */}
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
-                <span className="text-white text-xl font-bold">?</span>
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative mb-2">
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center overflow-hidden">
+                {imagePreview ? (
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white text-xl font-bold">?</span>
+                )}
               </div>
-              <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
-                <Camera className="w-3 h-3 text-white" />
-              </button>
+              
+              <input
+                type="file"
+                id="imageUpload"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              
+              {imagePreview ? (
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                >
+                  <X className="w-3 h-3 text-white" />
+                </button>
+              ) : (
+                <label
+                  htmlFor="imageUpload"
+                  className="absolute -bottom-1 -right-1 w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-700 transition-colors"
+                >
+                  <Camera className="w-3 h-3 text-white" />
+                </label>
+              )}
             </div>
+            <span className="text-xs text-gray-500 text-center">
+              {imagePreview ? 'Clic en X para quitar' : 'Clic en la cámara para subir foto'}
+            </span>
           </div>
 
           <div className="space-y-4">

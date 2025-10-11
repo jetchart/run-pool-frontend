@@ -6,6 +6,7 @@ import { Card } from './ui/card';
 import { Zap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { UserCredentialDto } from '@/dtos/user-credential.dto';
+import { toast } from 'sonner';
 
 declare global {
   interface ImportMeta {
@@ -21,12 +22,6 @@ export function Login() {
   const navigate = useNavigate();
   const { userCredential, setUserCredential } = useAuth();
 
-  useEffect(() => {
-    // Si ya está logueado, verificar perfil y redirigir
-    if (userCredential) {
-      checkUserProfileAndRedirect(userCredential);
-    }
-  }, [navigate, userCredential]);
 
   const checkUserProfileAndRedirect = async (userData: any) => {
     try {
@@ -43,10 +38,16 @@ export function Login() {
       });
 
       if (response.ok) {
+        toast.success('¡Login exitoso!', {
+          description: 'Te has logueado correctamente'
+        });
         // Usuario tiene perfil, redirigir a races
         console.log('Usuario tiene perfil, redirigiendo a races...');
         navigate('/');
       } else if (response.status === 404) {
+        toast.warning('¡Login exitoso!', {
+          description: 'Queremos conocerte mejor, por favor completa tu perfil'
+        });
         // Usuario no tiene perfil, redirigir a crear perfil
         console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
         navigate('/profile');
@@ -88,7 +89,9 @@ export function Login() {
       console.log('Login backend response:', userData);
     } catch (error) {
       console.error('Error enviando token al backend:', error);
-      alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
+      toast.error('Error al iniciar sesión', {
+        description: 'No se pudo completar el login. Por favor, intenta de nuevo.'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +99,9 @@ export function Login() {
 
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
-    alert('Error al iniciar sesión con Google. Por favor, intenta de nuevo.');
+    toast.error('Error con Google', {
+      description: 'No se pudo iniciar sesión con Google. Por favor, intenta de nuevo.'
+    });
   };
 
   const handleLogout = () => {

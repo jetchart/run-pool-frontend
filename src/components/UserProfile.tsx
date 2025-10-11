@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { UserBasicInfo } from './UserBasicInfo';
 import { UserPreferences } from './UserPreferences';
 import { UserFinalization } from './UserFinalization';
+import { toast } from 'sonner';
 import { 
   CreateCompleteUserProfileDto, 
   Gender, 
@@ -352,7 +353,9 @@ export function UserProfile() {
       
       // Mostrar mensaje de éxito
       if (isEditMode) {
-        alert('Perfil actualizado exitosamente');
+        toast.success('¡Perfil actualizado!', {
+          description: 'Los cambios se han guardado exitosamente'
+        });
         const storedUser = localStorage.getItem('userCredential');
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
@@ -364,13 +367,18 @@ export function UserProfile() {
           navigate('/');
         }
       } else {
+        toast.success('¡Perfil creado!', {
+          description: 'Tu perfil se ha creado exitosamente'
+        });
         // Redirigir a la página principal después de crear el perfil
         window.scrollTo({ top: 0, behavior: 'smooth' });
         navigate('/');
       }
     } catch (error) {
       const action = isEditMode ? 'actualizar' : 'guardar';
-      alert(`Error al ${action} el perfil. Por favor, intenta de nuevo.`);
+      toast.error('Error al procesar', {
+        description: `No se pudo ${action} el perfil. Por favor, intenta de nuevo.`
+      });
       console.error('Error sending profile to backend:', error);
     }
   };

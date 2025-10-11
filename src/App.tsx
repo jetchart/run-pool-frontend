@@ -16,6 +16,7 @@ import { Login } from './components/Login';
 import { UserProfile } from './components/UserProfile';
 import { UserProfileView } from './components/UserProfileView';
 import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from './components/ui/sonner';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
               } />
             </Routes>
           </main>
+          <Toaster />
         </div>
       </Router>
     </AuthProvider>
