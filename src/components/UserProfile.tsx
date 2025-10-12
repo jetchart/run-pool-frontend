@@ -86,7 +86,9 @@ export function UserProfile() {
           birthYear: profile.birthYear?.toString() || '',
           gender: mapGenderToForm(profile.gender),
           experience: mapExperienceToForm(profile.runningExperience),
-          email: profile.email || ''
+          email: profile.email || '',
+          phoneCountryCode: profile.phoneCountryCode || '54',
+          phoneNumber: profile.phoneNumber || ''
         },
         preferences: {
           raceTypes: profile.preferredRaceTypes?.map((rt: any) => mapRaceTypeToForm(rt.raceType)) || [],
