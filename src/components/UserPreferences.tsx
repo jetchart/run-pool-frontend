@@ -99,13 +99,13 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
           <div className="space-y-6">
             {/* Tipo de carrera preferida */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700">
                 Tipo de carrera preferida
               </label>
-              <p className="text-xs text-gray-500 mb-3">
+              <span className="text-xs text-gray-500">
                 Podés seleccionar más de una opción
-              </p>
-              <div className="space-y-2">
+              </span>
+              <div className="space-y-2 mt-2">
                 {Object.values(RaceType).filter(value => typeof value === 'number').map((raceTypeValue) => {
                   const raceTypeInfo = RACE_TYPE_INFO[raceTypeValue as RaceType];
                   const IconComponent = raceTypeValue === RaceType.STREET ? ChevronsUp : Mountain;
@@ -122,7 +122,7 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                       }`}
                     >
                       <IconComponent className="w-5 h-5" />
-                      <span className="font-medium">{raceTypeInfo.description}</span>
+                      <span className="text-sm font-medium">{raceTypeInfo.description}</span>
                     </button>
                   );
                 })}
@@ -131,13 +131,13 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
 
             {/* Distancias favoritas */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-70">
                 Distancias favoritas
               </label>
-              <p className="text-xs text-gray-500 mb-3">
+              <span className="text-xs text-gray-500">
                 Podés seleccionar más de una opción
-              </p>
-              <div className="grid grid-cols-2 gap-3">
+              </span>
+              <div className="mt-2 grid grid-cols-2 gap-3">
                 {Object.values(Distance).filter(value => typeof value === 'number').map((distanceValue) => {
                   const distanceInfo = DISTANCE_INFO[distanceValue as Distance];
                   return (
@@ -151,7 +151,7 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="font-medium">{distanceInfo.shortDescription}</div>
+                      <div className="text-sm font-medium">{distanceInfo.shortDescription}</div>
                     </button>
                   );
                 })}
@@ -179,7 +179,7 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                       }`}
                     >
                       <div className="flex items-center justify-between w-full">
-                        <span className="font-medium">{travelInfo.description}</span>
+                        <span className="text-sm font-medium">{travelInfo.description}</span>
                         {travelValue === UsuallyTravelRace.GO_ALONE && (<User className="w-5 h-5" />)}
                         {travelValue === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY && (<Users className="w-5 h-5" />)}
                         {travelValue === UsuallyTravelRace.USUALLY_BRING_PEOPLE && (<Bus className="w-5 h-5" />)}
