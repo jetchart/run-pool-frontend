@@ -14,6 +14,8 @@ interface UserBasicInfoProps {
     gender: string;
     experience: string;
     email: string;
+    phoneCountryCode?: string;
+    phoneNumber?: string;
     imageFile?: File;
     imageName?: string;
   };
@@ -27,7 +29,9 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
     birthYear: initialData?.birthYear || '',
     gender: initialData?.gender || '',
     experience: initialData?.experience || '',
-    email: initialData?.email || ''
+    email: initialData?.email || '',
+    phoneCountryCode: initialData?.phoneCountryCode || '54',
+    phoneNumber: initialData?.phoneNumber || ''
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -43,7 +47,9 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
         birthYear: initialData.birthYear || '',
         gender: initialData.gender || '',
         experience: initialData.experience || '',
-        email: initialData.email || ''
+        email: initialData.email || '',
+        phoneCountryCode: initialData.phoneCountryCode || '54',
+        phoneNumber: initialData.phoneNumber || ''
       });
       
       // Si hay datos de imagen en initialData
@@ -152,7 +158,8 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
       formData.lastName.trim().length >= 1 &&
       formData.birthYear !== '' &&
       formData.email.includes('@') &&
-      formData.experience !== ''
+      formData.experience !== '' &&
+      formData.phoneNumber.length >= 8 
     );
   };
 
@@ -326,6 +333,37 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
                     </button>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* WhatsApp */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                WhatsApp
+              </label>
+              <div className="flex gap-2">
+                {/* Código de país fijo */}
+                <div className="flex-shrink-0">
+                  <input
+                    type="text"
+                    value="+54"
+                    disabled
+                    className="w-16 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 text-center"
+                  />
+                </div>
+                
+                {/* Número de teléfono */}
+                <div className="flex-1">
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChange}
+                    placeholder="11 2345 6789"
+                    maxLength={15}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
 

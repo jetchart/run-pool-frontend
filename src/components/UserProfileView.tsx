@@ -13,7 +13,7 @@ import {
   RACE_TYPE_INFO,
   UsuallyTravelRace
 } from '../types/userProfile.types';
-import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit, Mountain, ChevronsUp, Users, Bus } from 'lucide-react';
+import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit, Mountain, ChevronsUp, Users, Bus, MessageCircle } from 'lucide-react';
 
 declare global {
   interface ImportMeta {
@@ -146,6 +146,19 @@ export function UserProfileView() {
                   <Mail className="w-4 h-4" />
                   <span>{profile.email}</span>
                 </div>
+                {profile.phoneNumber && (
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4" />
+                    <a
+                      href={`https://wa.me/${profile.phoneCountryCode || '54'}${profile.phoneNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline transition-colors"
+                    >
+                      +{profile.phoneCountryCode || '54'} {profile.phoneNumber}
+                    </a>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
                   <span>{calculateAge(profile.birthYear)} años (nacido en {profile.birthYear})</span>

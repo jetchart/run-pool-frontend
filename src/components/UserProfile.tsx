@@ -32,6 +32,10 @@ interface BasicInfoData {
   gender: string;
   experience: string;
   email: string;
+  phoneCountryCode?: string;
+  phoneNumber?: string;
+  imageFile?: File;
+  imageName?: string;
 }
 
 interface PreferencesData {
@@ -251,6 +255,8 @@ export function UserProfile() {
       gender: mapGender(basicInfo.gender),
       runningExperience: mapExperience(basicInfo.experience),
       usuallyTravelRace: mapTravelStyle(preferences.travelStyle),
+      phoneCountryCode: basicInfo.phoneCountryCode || '54',
+      phoneNumber: basicInfo.phoneNumber || '',
       preferredRaceTypes: mapRaceTypes(preferences.raceTypes || []),
       preferredDistances: mapDistances(preferences.distances || [])
     };

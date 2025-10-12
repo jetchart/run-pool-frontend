@@ -171,6 +171,8 @@ export interface CreateCompleteUserProfileDto {
   gender: Gender;
   runningExperience: RunningExperience;
   usuallyTravelRace: UsuallyTravelRace;
+  phoneCountryCode?: string;
+  phoneNumber?: string;
   imageName?: string;
   cars?: CreateUserProfileCarDto[];
   preferredRaceTypes?: CreateUserProfileRaceTypeDto[];
@@ -220,6 +222,8 @@ export interface UserProfileResponse {
   gender: Gender;
   runningExperience: RunningExperience;
   usuallyTravelRace: UsuallyTravelRace;
+  phoneCountryCode?: string;
+  phoneNumber?: string;
   imageName?: string;
   user: UserResponse;
   cars: UserProfileCarResponse[];
