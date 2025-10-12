@@ -368,7 +368,7 @@ export function UserProfile() {
           const parsedUser = JSON.parse(storedUser);
           const userId = parsedUser.id || parsedUser.userId;
           window.scrollTo({ top: 0, behavior: 'smooth' });
-          navigate(`/profile/view/${userId}`);
+          navigate(`/profile/view`);
         } else {
           window.scrollTo({ top: 0, behavior: 'smooth' });
           navigate('/');

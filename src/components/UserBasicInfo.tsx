@@ -4,6 +4,7 @@ import { Card } from './ui/card';
 import { Camera, Medal, X } from 'lucide-react';
 import { GENDER_INFO, Gender, RUNNING_EXPERIENCE_INFO, RunningExperience } from '../types/userProfile.types';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface UserBasicInfoProps {
   onNext: (data: any) => void;
@@ -37,6 +38,8 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageName, setImageName] = useState<string>('');
+
+  const navigate = useNavigate();
 
   // Actualizar formData cuando cambien los initialData
   useEffect(() => {
@@ -138,6 +141,10 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
     setImageName('');
   };
 
+  const handleCancel = () => {
+    navigate(`/profile/view/`);
+  };
+  
   const handleNext = () => {
     const dataToSend = {
       ...formData,
@@ -145,10 +152,6 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
       imageName: imageName
     };
     onNext(dataToSend);
-  };
-
-  const handleSkip = () => {
-    onNext(formData);
   };
 
   // Validar si se pueden habilitar los botones
@@ -391,8 +394,9 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
             <Button
               variant="ghost"
               className="text-gray-600 hover:text-gray-800"
+              onClick={handleCancel}
             >
-              Atrás
+              Cancelar
             </Button>
             
             <div className="flex gap-3">

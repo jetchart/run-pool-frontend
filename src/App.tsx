@@ -30,6 +30,7 @@ function App() {
               <Route path="/trips" element={<TripsPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<UserProfile />} />
+              <Route path="/profile/view" element={<UserProfileView />} />
               <Route path="/profile/view/:userId" element={<UserProfileView />} />
               <Route path="/style-guide" element={<StyleGuide />} />
               {/* Página 404 */}

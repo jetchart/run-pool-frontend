@@ -29,14 +29,19 @@ export function UserProfileView() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [ownProfile, setOwnProfile] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
+        
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
+        const targetUserId = userId || storedUser.userId;
+        setOwnProfile(!userId || (storedUser && (userId.toString() == storedUser.userId)));
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${targetUserId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -47,7 +52,7 @@ export function UserProfileView() {
         if (response.ok) {
         const data = await response.json();
         setProfile(data);
-        } else if (response.status === 404 && storedUser.userId == userId) {
+        } else if (response.status === 404 && ownProfile) {
             console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
             navigate('/profile');
         } else {
@@ -61,10 +66,8 @@ export function UserProfileView() {
       }
     };
 
-    if (userId) {
-      fetchUserProfile();
-    }
-  }, [userId]);
+    fetchUserProfile();
+  }, [userId, navigate]);
 
   const calculateAge = (birthYear: number) => {
     return new Date().getFullYear() - birthYear;
@@ -94,9 +97,9 @@ export function UserProfileView() {
       <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Perfil no encontrado'}</p>
-          <Button onClick={() => navigate('/')} variant="outline">
-            Volver al inicio
-          </Button>
+            <Button onClick={() => navigate('/')} variant="outline">
+              Volver al inicio
+            </Button>
         </div>
       </div>
     );
@@ -110,13 +113,13 @@ export function UserProfileView() {
           <Button onClick={() => navigate('/')} variant="outline">
             ← Volver
           </Button>
-          <Button 
+          {ownProfile && (<Button 
             onClick={() => navigate('/profile', { state: { editMode: true, profileData: profile } })} 
             className="flex items-center gap-2"
           >
             <Edit className="w-4 h-4" />
             Editar Perfil
-          </Button>
+          </Button>)}
         </div>
 
         {/* Información Personal */}

@@ -40,9 +40,7 @@ export function Header() {
 
   const handleProfileClick = () => {
     if (!userCredential) return;
-    
-    const userId = userCredential.id || userCredential.userId || 1;
-    navigate(`/profile/view/${userId}`);
+    navigate(`/profile/view/`);
   };
 
 
