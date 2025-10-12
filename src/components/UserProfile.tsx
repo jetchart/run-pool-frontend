@@ -212,10 +212,9 @@ export function UserProfile() {
   };
 
   const mapDistances = (distances: string[]): CreateUserProfileDistanceDto[] => {
-    // Mapeo de distancias usando los valores reales del enum Distance
     const distanceMap: { [key: string]: Distance } = {
       '5': Distance.FIVE_K,      // 5
-      '20': Distance.TEN_K,      // 20
+      '10': Distance.TEN_K,      // 10
       '21': Distance.TWENTY_ONE_K, // 21
       '42': Distance.FORTY_TWO_K, // 42
     };
