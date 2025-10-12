@@ -10,9 +10,10 @@ import {
   USUALLY_TRAVEL_RACE_INFO,
   DISTANCE_INFO,
   RaceType,
-  RACE_TYPE_INFO
+  RACE_TYPE_INFO,
+  UsuallyTravelRace
 } from '../types/userProfile.types';
-import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit, Mountain, ChevronsUp } from 'lucide-react';
+import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit, Mountain, ChevronsUp, Users, Bus } from 'lucide-react';
 
 declare global {
   interface ImportMeta {
@@ -151,7 +152,7 @@ export function UserProfileView() {
                 </div>
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4" />
-                  <span>{GENDER_INFO[profile.gender]?.description || 'No especificado'}</span>
+                  <span>{GENDER_INFO[profile.gender].description}</span>
                 </div>
               </div>
 
@@ -161,7 +162,9 @@ export function UserProfileView() {
                   {RUNNING_EXPERIENCE_INFO[profile.runningExperience]?.description}
                 </Badge>
                 <Badge variant="outline" className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
+                  {profile.usuallyTravelRace === UsuallyTravelRace.GO_ALONE && (<User className="w-5 h-5" />)}
+                  {profile.usuallyTravelRace === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY && (<Users className="w-5 h-5" />)}
+                  {profile.usuallyTravelRace === UsuallyTravelRace.USUALLY_BRING_PEOPLE && (<Bus className="w-5 h-5" />)}
                   {USUALLY_TRAVEL_RACE_INFO[profile.usuallyTravelRace]?.description}
                 </Badge>
               </div>
@@ -196,7 +199,7 @@ export function UserProfileView() {
               <div className="space-y-2">
                 {profile.preferredDistances.map((distance) => (
                   <Badge key={distance.id} variant="outline" className="mr-2">
-                    {DISTANCE_INFO[distance.distance]?.shortDescription || `${distance.distance}K`}
+                    {DISTANCE_INFO[distance.distance].shortDescription}
                   </Badge>
                 ))}
                 {profile.preferredDistances.length === 0 && (

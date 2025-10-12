@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { Car, Users, MessageSquare, User, Bus } from 'lucide-react';
+import { Car, Users, MessageSquare, User, Bus, ChevronsUp, Mountain } from 'lucide-react';
 import { USUALLY_TRAVEL_RACE_INFO, UsuallyTravelRace, RaceType, Distance, DISTANCE_INFO, RACE_TYPE_INFO } from '../types/userProfile.types';
 
 interface UserPreferencesProps {
@@ -108,8 +108,7 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
               <div className="space-y-2">
                 {Object.values(RaceType).filter(value => typeof value === 'number').map((raceTypeValue) => {
                   const raceTypeInfo = RACE_TYPE_INFO[raceTypeValue as RaceType];
-                  const icon = raceTypeValue === RaceType.STREET ? Car : Users;
-                  const IconComponent = icon;
+                  const IconComponent = raceTypeValue === RaceType.STREET ? ChevronsUp : Mountain;
                   
                   return (
                     <button
