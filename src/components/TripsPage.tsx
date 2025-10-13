@@ -33,7 +33,7 @@ export function TripsPage() {
     
     setIsLoading(true);
     try {
-      const raceId = parseInt(race.id);
+      const raceId = typeof race.id === 'string' ? parseInt(race.id) : race.id;
       
       const response = await fetch(`http://localhost:3000/trips?raceId=${raceId}`, {});
 
