@@ -36,10 +36,15 @@ export function UserProfileView() {
     const fetchUserProfile = async () => {
       try {
         const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
-        
+
+        if (!storedUser) {
+          navigate('/login');
+          return;
+        }
 
         const targetUserId = userId || storedUser.userId;
-        setOwnProfile(!userId || (storedUser && (userId.toString() == storedUser.userId)));
+        const ownProfileValue = !userId || (storedUser && (userId.toString() == storedUser.userId));
+        setOwnProfile(ownProfileValue);
 
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${targetUserId}`, {
           method: 'GET',
@@ -52,7 +57,7 @@ export function UserProfileView() {
         if (response.ok) {
         const data = await response.json();
         setProfile(data);
-        } else if (response.status === 404 && ownProfile) {
+        } else if (response.status === 404 && ownProfileValue) {
             console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
             navigate('/profile');
         } else {
