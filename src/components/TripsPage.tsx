@@ -127,13 +127,6 @@ export function TripsPage() {
             No hay viajes disponibles para esta carrera
           </div>
           <p className="text-gray-400 mb-6">Sé el primero en crear un viaje</p>
-          <Button 
-            onClick={() => navigate('/trips/create', { state: { race } })}
-            className="flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Crear Primer Viaje
-          </Button>
         </div>
       )}
 
