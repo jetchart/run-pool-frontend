@@ -71,46 +71,106 @@ export function UserProfile() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Función para precargar datos del perfil
+  const preloadProfileData = (profile: UserProfileResponse) => {
+    const preloadedData = {
+      basicInfo: {
+        firstName: profile.name || '',
+        lastName: profile.surname || '',
+        birthYear: profile.birthYear?.toString() || '',
+        gender: mapGenderToForm(profile.gender),
+        experience: mapExperienceToForm(profile.runningExperience),
+        email: profile.email || '',
+        phoneCountryCode: profile.phoneCountryCode || '54',
+        phoneNumber: profile.phoneNumber || ''
+      },
+      preferences: {
+        raceTypes: profile.preferredRaceTypes?.map((rt: any) => mapRaceTypeToForm(rt.raceType)) || [],
+        distances: profile.preferredDistances?.map((d: any) => mapDistanceToForm(d.distance)) || [],
+        travelStyle: mapTravelStyleToForm(profile.usuallyTravelRace)
+      },
+      finalization: {
+        driverMode: profile.cars && profile.cars.length > 0,
+        carBrand: profile.cars?.[0]?.brand || '',
+        carModel: profile.cars?.[0]?.model || '',
+        carColor: profile.cars?.[0]?.color || '',
+        carYear: profile.cars?.[0]?.year?.toString() || '',
+        availableSeats: profile.cars?.[0]?.seats?.toString() || '',
+        fuelType: '', // No tenemos esta información en el perfil
+        licensePlate: profile.cars?.[0]?.licensePlate || ''
+      }
+    };
+    
+    setUserData(preloadedData);
+    setIsEditMode(true);
+    setCurrentStep(1);
+  };
+
   // Efecto para detectar modo edición y precargar datos
   useEffect(() => {
+    const loadExistingProfile = async () => {
+      try {
+        const storedUser = localStorage.getItem('userCredential');
+        
+        // Si no está logueado, redirigir a login
+        if (!storedUser) {
+          console.log('Usuario no logueado, redirigiendo a login...');
+          navigate('/login');
+          return;
+        }
+
+        const parsedUser = JSON.parse(storedUser);
+        const userId = parsedUser.id || parsedUser.userId;
+        const token = parsedUser.token || parsedUser.accessToken || '';
+
+        if (!userId || !token) {
+          console.log('Datos de usuario incompletos, redirigiendo a login...');
+          navigate('/login');
+          return;
+        }
+
+        setIsLoadingProfile(true);
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const profile = await response.json() as UserProfileResponse;
+          console.log('Perfil existente encontrado, entrando en modo edición:', profile);
+          preloadProfileData(profile);
+        } else if (response.status === 404) {
+          // No existe perfil, mantener modo creación
+          console.log('No existe perfil para este usuario, modo creación activado');
+          setIsEditMode(false);
+        } else {
+          console.error('Error al cargar perfil:', response.status);
+          setIsEditMode(false);
+        }
+      } catch (error) {
+        console.error('Error al verificar perfil existente:', error);
+        // En caso de error, mantener modo creación
+        setIsEditMode(false);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    // Si viene desde navegación con datos específicos (modo edición manual desde ProfileView)
     if (location.state?.editMode && location.state?.profileData) {
       setIsLoadingProfile(true);
-      setIsEditMode(true);
-      setCurrentStep(1); // Asegurar que empezamos desde el primer paso
       const profile = location.state.profileData as UserProfileResponse;
-      
-      const preloadedData = {
-        basicInfo: {
-          firstName: profile.name || '',
-          lastName: profile.surname || '',
-          birthYear: profile.birthYear?.toString() || '',
-          gender: mapGenderToForm(profile.gender),
-          experience: mapExperienceToForm(profile.runningExperience),
-          email: profile.email || '',
-          phoneCountryCode: profile.phoneCountryCode || '54',
-          phoneNumber: profile.phoneNumber || ''
-        },
-        preferences: {
-          raceTypes: profile.preferredRaceTypes?.map((rt: any) => mapRaceTypeToForm(rt.raceType)) || [],
-          distances: profile.preferredDistances?.map((d: any) => mapDistanceToForm(d.distance)) || [],
-          travelStyle: mapTravelStyleToForm(profile.usuallyTravelRace)
-        },
-        finalization: {
-          driverMode: profile.cars && profile.cars.length > 0,
-          carBrand: profile.cars?.[0]?.brand || '',
-          carModel: profile.cars?.[0]?.model || '',
-          carColor: profile.cars?.[0]?.color || '',
-          carYear: profile.cars?.[0]?.year?.toString() || '',
-          availableSeats: profile.cars?.[0]?.seats?.toString() || '',
-          fuelType: '', // No tenemos esta información en el perfil
-          licensePlate: profile.cars?.[0]?.licensePlate || ''
-        }
-      };
-      
-      setUserData(preloadedData);
+      preloadProfileData(profile);
       setIsLoadingProfile(false);
+    } else {
+      // Si no viene desde navegación, verificar login y perfil existente
+      loadExistingProfile();
     }
-  }, [location.state]);
+  }, [location.state, navigate]);
 
   // Funciones para mapear de enum a formulario
   const mapGenderToForm = (gender: any): string => {
@@ -396,13 +456,15 @@ export function UserProfile() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Mostrar loading si estamos en modo edición y aún cargando los datos
-  if (isEditMode && isLoadingProfile) {
+  // Mostrar loading si estamos cargando datos del perfil
+  if (isLoadingProfile) {
     return (
       <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando datos del perfil...</p>
+          <p className="text-gray-600">
+            {isEditMode ? 'Cargando datos del perfil...' : 'Verificando perfil existente...'}
+          </p>
         </div>
       </div>
     );
