@@ -1,11 +1,14 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { MapPin, Calendar, Star, Users } from 'lucide-react';
+import { MapPin, Calendar, Star, Users, Plus } from 'lucide-react';
+import { TripResponse } from '../types/trip.types';
+import { toast } from 'sonner';
 
 interface Race {
-  id: string;
+  id: number | string;
   name: string;
   location: string;
   startDate: string;
@@ -16,82 +19,57 @@ interface Race {
   raceType?: any;
 }
 
-interface Trip {
-  id: string;
-  driver: {
-    name: string;
-    initials: string;
-    rating: number;
-    reviews: number;
-  };
-  route: {
-    from: string;
-    fromSubtitle: string;
-    to: string;
-    toSubtitle: string;
-  };
-  datetime: string;
-  availableSeats: number;
-}
-
 export function TripsPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const race = location.state?.race as Race;
+  
+  const [trips, setTrips] = useState<TripResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Datos hardcodeados basados en la imagen
-  const trips: Trip[] = [
-    {
-      id: '1',
-      driver: {
-        name: 'Tomás Zona Norte',
-        initials: 'TZ',
-        rating: 4.8,
-        reviews: 3
-      },
-      route: {
-        from: 'Palermo',
-        fromSubtitle: 'CABA',
-        to: 'Comodoro Rivadavia',
-        toSubtitle: 'Comodoro Rivadavia, Chubut'
-      },
-      datetime: 'DOM. 10 noviembre • 06:00 hs',
-      availableSeats: 4
-    },
-    {
-      id: '2',
-      driver: {
-        name: 'Ayelen Serifo',
-        initials: 'AS',
-        rating: 4.9,
-        reviews: 11
-      },
-      route: {
-        from: 'Rosario Centro',
-        fromSubtitle: 'Otra provincia',
-        to: 'Comodoro Rivadavia',
-        toSubtitle: 'Comodoro Rivadavia, Chubut'
-      },
-      datetime: 'DOM. 10 noviembre • 04:00 hs',
-      availableSeats: 2
-    },
-    {
-      id: '3',
-      driver: {
-        name: 'Karina Méndez Delfino',
-        initials: 'KM',
-        rating: 5.0,
-        reviews: 35
-      },
-      route: {
-        from: 'Belgrano',
-        fromSubtitle: 'CABA',
-        to: 'Comodoro Rivadavia',
-        toSubtitle: 'Comodoro Rivadavia, Chubut'
-      },
-      datetime: 'DOM. 10 noviembre • 06:30 hs',
-      availableSeats: 3
+  // Función para cargar viajes desde el backend
+  const loadTrips = async () => {
+    if (!race?.id) return;
+    
+    setIsLoading(true);
+    try {
+      const raceId = parseInt(race.id);
+      
+      const response = await fetch(`http://localhost:3000/trips?raceId=${raceId}`, {});
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al cargar los viajes');
+      }
+
+      const data = await response.json();
+      setTrips(data);
+    } catch (error) {
+      console.error('Error cargando viajes:', error);
+      toast.error(error instanceof Error ? error.message : 'Error al cargar los viajes');
+      setTrips([]);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    loadTrips();
+  }, [race?.id]);
+
+  // Función para formatear la fecha
+  const formatDateTime = (departureDay: Date, departureHour: string) => {
+    const date = new Date(departureDay);
+    const dayNames = ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
+    const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    
+    const dayName = dayNames[date.getDay()];
+    const day = date.getDate();
+    const month = monthNames[date.getMonth()];
+    
+    return `${dayName}. ${day} ${month} • ${departureHour} hs`;
+  };
 
   if (!race) {
     return (
@@ -105,84 +83,149 @@ export function TripsPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <div className="mb-6">
-        <div className="muted mt-2">
-          {trips.length} viajes disponibles
+      {/* Header con título y botón crear viaje */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            {race.name || 'Viajes disponibles'}
+          </h1>
+          <div className="text-gray-600">
+            {isLoading ? 'Cargando...' : `${trips.length} viajes disponibles`}
+          </div>
         </div>
+        <Button 
+          onClick={() => navigate('/trips/create', { state: { race } })}
+          className="mt-4 sm:mt-0 flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Crear Viaje
+        </Button>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {trips.map((trip) => (
-          <Card key={trip.id} className="p-4">
-            {/* Imagen/gráfico de ruta */}
-            <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-              <svg className="w-24 h-12" viewBox="0 0 140 60">
-                <path 
-                  d="M10 45 Q40 15 70 35 Q100 50 130 25" 
-                  stroke="currentColor" 
-                  strokeWidth="2.5" 
-                  fill="none"
-                  className="text-gray-800"
-                />
-                <circle cx="10" cy="45" r="6" stroke="black" fill="white" className="text-gray-800" />
-                <circle cx="130" cy="25" r="6" stroke="black" fill="white" className="text-gray-800" />
-              </svg>
-            </div>
 
-            {/* Origen */}
-            <div className="flex items-start mb-3">
-              <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500" />
-              <div>
-                <div className="font-medium text-sm">{trip.route.from}</div>
-                <div className="text-xs text-gray-500">{trip.route.fromSubtitle}</div>
+      {/* Estado de carga */}
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-4 animate-pulse">
+              <div className="h-24 bg-gray-200 rounded-lg mb-4"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
               </div>
-            </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
-            {/* Destino */}
-            <div className="flex items-start mb-3">
-              <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500" />
-              <div>
-                <div className="font-medium text-sm">{trip.route.to}</div>
-                <div className="text-xs text-gray-500">{trip.route.toSubtitle}</div>
+      {/* Lista de viajes */}
+      {!isLoading && trips.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-gray-500 mb-4">
+            <Users className="w-12 h-12 mx-auto mb-2" />
+            No hay viajes disponibles para esta carrera
+          </div>
+          <p className="text-gray-400 mb-6">Sé el primero en crear un viaje</p>
+          <Button 
+            onClick={() => navigate('/trips/create', { state: { race } })}
+            className="flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Crear Primer Viaje
+          </Button>
+        </div>
+      )}
+
+      {!isLoading && trips.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {trips.map((trip) => (
+            <Card key={trip.id} className="p-4">
+              {/* Imagen/gráfico de ruta */}
+              <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
+                <svg className="w-24 h-12" viewBox="0 0 140 60">
+                  <path 
+                    d="M10 45 Q40 15 70 35 Q100 50 130 25" 
+                    stroke="currentColor" 
+                    strokeWidth="2.5" 
+                    fill="none"
+                    className="text-gray-800"
+                  />
+                  <circle cx="10" cy="45" r="6" stroke="black" fill="white" className="text-gray-800" />
+                  <circle cx="130" cy="25" r="6" stroke="black" fill="white" className="text-gray-800" />
+                </svg>
               </div>
-            </div>
 
-            {/* Fecha y hora */}
-            <div className="flex items-center text-sm text-gray-600 mb-4">
-              <Calendar className="w-4 h-4 mr-2" />
-              {trip.datetime}
-            </div>
-
-            {/* Driver info */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium mr-3">
-                  {trip.driver.initials}
-                </div>
+              {/* Origen */}
+              <div className="flex items-start mb-3">
+                <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500" />
                 <div>
-                  <div className="font-medium text-sm">{trip.driver.name}</div>
-                  <div className="flex items-center text-xs text-gray-500">
-                    <Star className="w-3 h-3 mr-1 fill-current text-yellow-400" />
-                    {trip.driver.rating} ({trip.driver.reviews})
+                  <div className="font-medium text-sm">{trip.departureCity}</div>
+                  <div className="text-xs text-gray-500">{trip.departureProvince}</div>
+                </div>
+              </div>
+
+              {/* Destino */}
+              <div className="flex items-start mb-3">
+                <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500" />
+                <div>
+                  <div className="font-medium text-sm">
+                    {trip.arrivalCity}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {trip.arrivalProvince}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center text-sm text-gray-600">
-                <Users className="w-4 h-4 mr-1" />
-                {trip.availableSeats}
-              </div>
-            </div>
 
-            {/* Botón */}
-            <Button 
-              variant="outline" 
-              className="w-full"
-            >
-              Ver viaje
-            </Button>
-          </Card>
-        ))}
-      </div>
+              {/* Fecha y hora */}
+              <div className="flex items-center text-sm text-gray-600 mb-4">
+                <Calendar className="w-4 h-4 mr-2" />
+                {formatDateTime(trip.departureDay, trip.departureHour)}
+              </div>
+
+              {/* Driver info */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium mr-3">
+                    {trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}
+                  </div>
+                  <div>
+                    <div className="font-medium text-sm">{trip.driver.name}</div>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <Star className="w-3 h-3 mr-1 fill-current text-yellow-400" />
+                      5.0 (nuevo)
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center text-sm text-gray-600">
+                  <Users className="w-4 h-4 mr-1" />
+                  {trip.availableSeats}
+                </div>
+              </div>
+
+              {/* Descripción si existe */}
+              {trip.description && (
+                <div className="text-xs text-gray-500 mb-4 line-clamp-2">
+                  {trip.description}
+                </div>
+              )}
+
+              {/* Botón */}
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  // TODO: Implementar vista detallada del viaje
+                  toast.info('Vista detallada del viaje próximamente');
+                }}
+              >
+                Ver viaje
+              </Button>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
