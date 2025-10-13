@@ -33,9 +33,34 @@ export function TripsPage() {
     
     setIsLoading(true);
     try {
+      // Retrieve user credentials from localStorage
+      const storedUser = localStorage.getItem('userCredential');
+      let token = '';
+      
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          token = parsedUser.token || parsedUser.accessToken || '';
+        } catch (error) {
+          console.error('Error parsing user credential:', error);
+        }
+      }
+
       const raceId = typeof race.id === 'string' ? parseInt(race.id) : race.id;
       
-      const response = await fetch(`http://localhost:3000/trips?raceId=${raceId}`, {});
+      // Build headers with authentication if token is available
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips?raceId=${raceId}`, {
+        method: 'GET',
+        headers
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
