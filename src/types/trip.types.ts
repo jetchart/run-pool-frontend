@@ -55,6 +55,20 @@ export interface TripResponse {
   deletedAt?: Date;
 }
 
+// DTO for joining a trip
+export interface JoinTripDto {
+  tripId: number;
+  passengerId: number;
+}
+
+// Response interface for trip passenger
+export interface TripPassengerResponse {
+  id: number;
+  tripId: number;
+  passengerId: number;
+  createdAt: Date;
+}
+
 // Form data interface for the CreateTrip component
 export interface TripFormData {
   raceId: string;

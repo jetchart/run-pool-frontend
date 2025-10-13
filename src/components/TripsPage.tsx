@@ -215,10 +215,7 @@ export function TripsPage() {
               <Button 
                 variant="outline" 
                 className="w-full"
-                onClick={() => {
-                  // TODO: Implementar vista detallada del viaje
-                  toast.info('Vista detallada del viaje próximamente');
-                }}
+                onClick={() => navigate(`/trips/${trip.id}`)}
               >
                 Ver viaje
               </Button>
