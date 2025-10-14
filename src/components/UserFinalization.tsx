@@ -49,9 +49,21 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
   }, [initialData, isEditMode]);
 
   const handleDriverModeToggle = () => {
+    const newDriverMode = !formData.driverMode;
+    
     setFormData(prev => ({
       ...prev,
-      driverMode: !prev.driverMode
+      driverMode: newDriverMode,
+      // Si se desactiva el modo conductor, limpiar los datos del auto
+      ...(newDriverMode === false && {
+        carBrand: '',
+        carModel: '',
+        carColor: '',
+        carYear: '',
+        availableSeats: '',
+        fuelType: '',
+        licensePlate: ''
+      })
     }));
   };
 
@@ -64,7 +76,21 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
   };
 
   const handleComplete = () => {
-    onComplete(formData);
+    // Si el modo conductor está desactivado, enviar solo el flag sin datos del auto
+    const dataToSend = {
+      driverMode: formData.driverMode,
+      ...(formData.driverMode && {
+        carBrand: formData.carBrand,
+        carModel: formData.carModel,
+        carColor: formData.carColor,
+        carYear: formData.carYear,
+        availableSeats: formData.availableSeats,
+        fuelType: formData.fuelType,
+        licensePlate: formData.licensePlate
+      })
+    };
+    
+    onComplete(dataToSend);
   };
 
   // Validar si se puede habilitar el botón

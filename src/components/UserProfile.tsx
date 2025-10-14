@@ -335,17 +335,21 @@ export function UserProfile() {
       preferredDistances: mapDistances(preferences.distances || [])
     };
 
-    // Agregar información del auto si está en modo conductor
+    // Manejar información del auto basado en el modo conductor
     if (finalization.driverMode && finalization.carBrand) {
-      const currentYear = new Date().getFullYear();
+      // Si está en modo conductor y tiene datos del auto, agregarlo
+      const carYear = parseInt(finalization.carYear) || new Date().getFullYear();
       dto.cars = [{
         brand: finalization.carBrand,
         model: finalization.carModel || '',
-        year: currentYear, // Podrías pedir el año en el formulario
+        year: carYear,
         color: finalization.carColor || '',
         seats: parseInt(finalization.availableSeats) || 1,
         licensePlate: finalization.licensePlate || ''
       }];
+    } else {
+      // Si no está en modo conductor o no tiene datos del auto, enviar array vacío
+      dto.cars = [];
     }
 
     return dto;
@@ -483,7 +487,7 @@ export function UserProfile() {
           onNext={handleBasicInfoNext} 
           initialData={userData.basicInfo as any}
           isEditMode={isEditMode}
-          backTo={backTo}
+          backTo={backTo || undefined}
         />
       );
     case 2:
