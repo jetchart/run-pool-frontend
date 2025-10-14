@@ -73,6 +73,20 @@ export function UserProfile() {
   });
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Obtener el parámetro backTo de la URL
+  const searchParams = new URLSearchParams(location.search);
+  const backTo = searchParams.get('backTo');
+
+  // Función helper para manejar redirecciones
+  const handleRedirect = (fallbackRoute: string = '/') => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (backTo) {
+      navigate(backTo);
+    } else {
+      navigate(fallbackRoute);
+    }
+  };
 
   // Función para precargar datos del perfil
   const preloadProfileData = (profile: UserProfileResponse) => {
@@ -425,23 +439,12 @@ export function UserProfile() {
         toast.success('¡Perfil actualizado!', {
           description: 'Los cambios se han guardado exitosamente'
         });
-        const storedUser = localStorage.getItem('userCredential');
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          const userId = parsedUser.id || parsedUser.userId;
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          navigate(`/profile/view`);
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          navigate('/');
-        }
+        handleRedirect('/profile/view');
       } else {
         toast.success('¡Perfil creado!', {
           description: 'Tu perfil se ha creado exitosamente'
         });
-        // Redirigir a la página principal después de crear el perfil
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        navigate('/');
+        handleRedirect('/');
       }
     } catch (error) {
       const action = isEditMode ? 'actualizar' : 'guardar';
@@ -480,6 +483,7 @@ export function UserProfile() {
           onNext={handleBasicInfoNext} 
           initialData={userData.basicInfo as any}
           isEditMode={isEditMode}
+          backTo={backTo}
         />
       );
     case 2:

@@ -84,11 +84,12 @@ export function TripsPage() {
     }
 
     // Verificar que tenga al menos un vehículo
-    if (!userCredential.cars || userCredential.cars.length === 0) {
+    if (!userCredential.userProfile || !userCredential.userProfile.cars || userCredential.userProfile.cars.length === 0) {
+      const currentPath = window.location.pathname + window.location.search;
       toast.error('Necesitas tener al menos un vehículo registrado para crear un viaje', {
         action: {
           label: 'Ir al perfil',
-          onClick: () => navigate('/profile')
+          onClick: () => navigate(`/profile?backTo=${encodeURIComponent(currentPath)}`)
         }
       });
       return;

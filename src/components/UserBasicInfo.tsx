@@ -21,9 +21,10 @@ interface UserBasicInfoProps {
     imageName?: string;
   };
   isEditMode?: boolean;
+  backTo?: string;
 }
 
-export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserBasicInfoProps) {
+export function UserBasicInfo({ onNext, initialData, isEditMode = false, backTo }: UserBasicInfoProps) {
   const [formData, setFormData] = useState({
     firstName: initialData?.firstName || '',
     lastName: initialData?.lastName || '',
@@ -142,7 +143,11 @@ export function UserBasicInfo({ onNext, initialData, isEditMode = false }: UserB
   };
 
   const handleCancel = () => {
-    navigate(`/profile/view/`);
+    if (backTo) {
+      navigate(backTo);
+    } else {
+      navigate(`/profile/view/`);
+    }
   };
   
   const handleNext = () => {
