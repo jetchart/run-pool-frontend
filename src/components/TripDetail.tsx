@@ -57,6 +57,48 @@ const TripDetail: React.FC = () => {
     return `${dayName}. ${day} ${month} • ${departureHour} hs`;
   };
 
+  // Función para abandonar el viaje
+  const handleLeaveTrip = async () => {
+    if (!trip || isJoining) return;
+    
+    setIsJoining(true);
+    try {
+      const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
+      if (!storedUser) {
+        toast.error('No estás autenticado');
+        navigate('/login');
+        return;
+      }
+
+      const passengerId = storedUser.userId;
+
+      // Verificar que el usuario no sea el conductor del viaje
+      if (passengerId === trip.driver.id) {
+        toast.error('El conductor no puede abandonar su propio viaje');
+        return;
+      }
+
+      // Confirmar antes de abandonar
+      if (!window.confirm('¿Estás seguro de que quieres abandonar este viaje?')) {
+        return;
+      }
+
+      const response = await axiosAuth.delete(`/trips/${trip.id}/passengers/${passengerId}`);
+
+      toast.success('Has abandonado el viaje exitosamente');
+      
+      // Recargar los datos del viaje para mostrar el estado actualizado
+      await loadTripDetail();
+      
+    } catch (error: any) {
+      console.error('Error al abandonar el viaje:', error);
+      const errorMessage = error.response?.data?.message || 'Error al abandonar el viaje';
+      toast.error(errorMessage);
+    } finally {
+      setIsJoining(false);
+    }
+  };
+
   // Función para unirse al viaje
   const handleJoinTrip = async () => {
     if (!trip || isJoining) return;
@@ -257,8 +299,10 @@ const TripDetail: React.FC = () => {
                 </div>
               </div>
 
+              <hr/>
+
               {/* Lista de pasajeros */}
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3 mt-4">
                 {trip.passengers.map((passenger, index) => (
                   <div key={passenger.id} className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
@@ -272,15 +316,44 @@ const TripDetail: React.FC = () => {
                 ))}
               </div>
 
-              {/* Botón para unirse */}
-              <Button 
-                onClick={handleJoinTrip}
-                className="w-full"
-                disabled={trip.availableSeats === 0 || isJoining}
-              >
-                {isJoining ? 'Uniéndose...' : 
-                 trip.availableSeats === 0 ? 'Viaje completo' : 'Unirme al viaje'}
-              </Button>
+              {/* Botón para unirse o abandonar */}
+              {(() => {
+                const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
+                const currentUserId = storedUser?.userId;
+                
+                // Verificar si el usuario actual es el conductor
+                const isDriver = currentUserId === trip.driver.id;
+                
+                // Verificar si el usuario actual está en el viaje como pasajero
+                const isPassenger = trip.passengers.some(p => p.passenger.id === currentUserId);
+                
+                if (!isDriver && isPassenger) {
+                  return (
+                    <Button 
+                      onClick={handleLeaveTrip}
+                      variant="destructive"
+                      className="w-full mt-4"
+                      disabled={isJoining}
+                    >
+                      {isJoining ? 'Procesando...' : 'Abandonar viaje'}
+                    </Button>
+                  );
+                }
+                
+                // Usuario no está en el viaje, mostrar botón para unirse
+                if (!isPassenger) {
+                return (
+                  <Button 
+                    onClick={handleJoinTrip}
+                    className="w-full mt-4"
+                    disabled={trip.availableSeats === 0 || isJoining}
+                  >
+                    {isJoining ? 'Uniéndose...' : 
+                     trip.availableSeats === 0 ? 'Viaje completo' : 'Unirme al viaje'}
+                  </Button>
+                );
+              }
+              })()}
             </CardContent>
           </Card>
         </div>
