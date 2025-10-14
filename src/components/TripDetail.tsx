@@ -19,10 +19,15 @@ const TripDetail: React.FC = () => {
     
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
+            if (!storedUser) {
+              toast.error('No estás autenticado');
+              navigate('/login');
+              return;
+            }
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips/${tripId}`, {
         headers: {
-          'Authorization': token ? `Bearer ${token}` : '',
+          'Authorization': `Bearer ${storedUser.token}`,
         },
       });
 
