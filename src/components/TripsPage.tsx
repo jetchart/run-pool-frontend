@@ -187,7 +187,7 @@ export function TripsPage() {
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <Users className="w-4 h-4 mr-1" />
-                  {trip.availableSeats} / {trip.seats}
+                  {trip.seats - trip.availableSeats} / {trip.seats}
                 </div>
               </div>
 
