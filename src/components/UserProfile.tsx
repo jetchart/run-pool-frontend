@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axiosAuth from '../lib/axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { UserBasicInfo } from './UserBasicInfo';
 import { UserPreferences } from './UserPreferences';
 import { UserFinalization } from './UserFinalization';
@@ -57,6 +58,7 @@ interface FinalizationData {
 }
 
 export function UserProfile() {
+  const { updateUserProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -412,6 +414,9 @@ export function UserProfile() {
     try {
       // Enviar al backend
       await sendToBackend(dto);
+      
+      // Actualizar el userCredential en el contexto de autenticación
+      await updateUserProfile();
       
       console.log('Datos completos enviados al backend:', dto);
       

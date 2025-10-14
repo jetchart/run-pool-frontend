@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import axiosAuth from '../lib/axios';
 
 interface UserCredential {
   token?: string;
@@ -13,6 +14,7 @@ interface UserCredential {
 interface AuthContextType {
   userCredential: UserCredential | null;
   setUserCredential: (user: UserCredential | null) => void;
+  updateUserProfile: () => Promise<void>;
   logout: () => void;
 }
 
@@ -56,12 +58,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateUserProfile = async () => {
+    if (!userCredential?.userId && !userCredential?.id) {
+      console.warn('No hay usuario logueado para actualizar');
+      return;
+    }
+
+    try {
+      const userId = userCredential.userId || userCredential.id;
+      const response = await axiosAuth.get(`/users/${userId}`);
+      
+      // Actualizar el userCredential con la nueva información, pero manteniendo el token
+      const updatedCredential = {
+        ...(response.data as UserCredential),
+        accessToken: userCredential?.accessToken
+      };
+      
+      setUserCredential(updatedCredential);
+    } catch (error) {
+      console.error('Error al actualizar el perfil del usuario:', error);
+    }
+  };
+
   const logout = () => {
     setUserCredential(null);
   };
 
   return (
-    <AuthContext.Provider value={{ userCredential, setUserCredential, logout }}>
+    <AuthContext.Provider value={{ userCredential, setUserCredential, updateUserProfile, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axiosAuth, { axiosPublic } from '../lib/axios';
+import { useAuth } from '../contexts/AuthContext';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -21,6 +22,7 @@ interface Race {
 }
 
 export function TripsPage() {
+  const { userCredential } = useAuth();
   const { raceId } = useParams<{ raceId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,6 +74,30 @@ export function TripsPage() {
     return `${dayName}. ${day} ${month} • ${departureHour} hs`;
   };
 
+  // Función para manejar la creación del viaje con validación
+  const handleCreateTrip = () => {
+    // Verificar autenticación
+    if (!userCredential) {
+      toast.error('Debes iniciar sesión para crear un viaje');
+      navigate('/login');
+      return;
+    }
+
+    // Verificar que tenga al menos un vehículo
+    if (!userCredential.cars || userCredential.cars.length === 0) {
+      toast.error('Necesitas tener al menos un vehículo registrado para crear un viaje', {
+        action: {
+          label: 'Ir al perfil',
+          onClick: () => navigate('/profile')
+        }
+      });
+      return;
+    }
+
+    // Si tiene vehículos, proceder a crear el viaje
+    navigate('/trips/create', { state: { race, raceId } });
+  };
+
   if (!raceId) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -95,7 +121,7 @@ export function TripsPage() {
           </div>
         </div>
         <Button 
-          onClick={() => navigate('/trips/create', { state: { race, raceId } })}
+          onClick={handleCreateTrip}
           className="mt-4 sm:mt-0 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
