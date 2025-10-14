@@ -29,7 +29,7 @@ function App() {
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<RacesList />} />
-              <Route path="/trips" element={<TripsPage />} />
+              <Route path="/races/:raceId/trips" element={<TripsPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/profile/view" element={<UserProfileView />} />

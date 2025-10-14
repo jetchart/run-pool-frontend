@@ -51,21 +51,10 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
   };
 
   const handleViewTrips = async () => {
-    // Verificar si el usuario está logueado
-    if (!userCredential) {
-      navigate('/login');
-      return;
-    }
-
     setIsCheckingProfile(true);
     
     try {
-      // Verificar si el usuario tiene perfil
-      const userId = userCredential.id || userCredential.userId;
-      const response = await axiosAuth.get(`/user-profiles/user/${userId}`);
-
-      // Usuario tiene perfil, proceder a ver viajes
-      navigate('/trips', { state: { race } });
+      navigate(`/races/${race.id}/trips`, { state: { race } });
       
     } catch (error: any) {
       if (error.response && error.response.status === 404) {

@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { axiosPublic } from '../lib/axios';
 import { Badge } from './ui/badge';
@@ -21,6 +21,7 @@ interface Race {
 }
 
 export function TripsPage() {
+  const { raceId } = useParams<{ raceId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const race = location.state?.race as Race;
@@ -30,13 +31,13 @@ export function TripsPage() {
 
   // Función para cargar viajes desde el backend
   const loadTrips = async () => {
-    if (!race?.id) return;
+    if (!raceId) return;
     
     setIsLoading(true);
     try {
-      const raceId = typeof race.id === 'string' ? parseInt(race.id) : race.id;
+      const raceIdNum = parseInt(raceId);
       
-      const response = await axiosPublic.get(`/trips?raceId=${raceId}`);
+      const response = await axiosPublic.get(`/trips?raceId=${raceIdNum}`);
       
       setTrips(response.data as TripResponse[]);
     } catch (error: any) {
@@ -51,7 +52,7 @@ export function TripsPage() {
 
   useEffect(() => {
     loadTrips();
-  }, [race?.id]);
+  }, [raceId]);
 
   // Función para formatear la fecha
   const formatDateTime = (departureDay: Date, departureHour: string) => {
@@ -67,7 +68,7 @@ export function TripsPage() {
     return `${dayName}. ${day} ${month} • ${departureHour} hs`;
   };
 
-  if (!race) {
+  if (!raceId) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-4xl font-bold mb-4">Carrera no encontrada</h1>
@@ -83,14 +84,14 @@ export function TripsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {race.name || 'Viajes disponibles'}
+            {race?.name || 'Viajes disponibles'}
           </h1>
           <div className="text-gray-600">
             {isLoading ? 'Cargando...' : `${trips.length} viajes disponibles`}
           </div>
         </div>
         <Button 
-          onClick={() => navigate('/trips/create', { state: { race } })}
+          onClick={() => navigate('/trips/create', { state: { race, raceId } })}
           className="mt-4 sm:mt-0 flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />

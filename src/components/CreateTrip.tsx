@@ -117,7 +117,8 @@ const CreateTrip: React.FC = () => {
       toast.success('¡Viaje creado exitosamente!');
       
       // Redirigir de vuelta a la lista de viajes
-      navigate(`/races/${race.id}/trips`);
+      const raceIdFromState = location.state?.raceId || race?.id;
+      navigate(`/races/${raceIdFromState}/trips`);
       
     } catch (error: any) {
       console.error('Error creando viaje:', error);
