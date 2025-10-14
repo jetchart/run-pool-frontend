@@ -29,7 +29,15 @@ export interface TripResponse {
     startDate: Date;
     endDate: Date;
     location: string;
-    price: number;
+  };
+   car: {
+    id: number;
+    brand: string;
+    model: string;
+    year: number;
+    color: string;
+    seats: number;
+    licensePlate: string;
   };
   departureDay: Date;
   departureHour: string;
