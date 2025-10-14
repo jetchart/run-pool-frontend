@@ -20,7 +20,7 @@ const TripDetail: React.FC = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/trips/${tripId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips/${tripId}`, {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
         },
@@ -93,7 +93,7 @@ const TripDetail: React.FC = () => {
         passengerId: passengerId
       };
 
-      const response = await fetch('http://localhost:3000/trips/join', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -35,7 +35,7 @@ export function TripsPage() {
     try {
       const raceId = typeof race.id === 'string' ? parseInt(race.id) : race.id;
       
-      const response = await fetch(`http://localhost:3000/trips?raceId=${raceId}`, {});
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips?raceId=${raceId}`, {});
 
       if (!response.ok) {
         const errorData = await response.json();

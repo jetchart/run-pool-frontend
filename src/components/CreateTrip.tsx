@@ -109,11 +109,11 @@ const CreateTrip: React.FC = () => {
         driverId: driverId
       };
 
-      const response = await fetch('http://localhost:3000/trips', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${storedUser.token}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(tripData),
       });
