@@ -26,10 +26,28 @@ export function TripsPage() {
   const { raceId } = useParams<{ raceId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const race = location.state?.race as Race;
+  const raceFromState = location.state?.race as Race;
   
   const [trips, setTrips] = useState<TripResponse[]>([]);
+  const [race, setRace] = useState<Race | null>(raceFromState || null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingRace, setIsLoadingRace] = useState(!raceFromState);
+
+  // Función para cargar información de la carrera desde el backend
+  const loadRace = async () => {
+    if (!raceId || race) return; // Si ya tenemos la carrera, no cargarla
+    
+    setIsLoadingRace(true);
+    try {
+      const response = await axiosAuth.get(`/races/${raceId}`);
+      setRace(response.data as Race);
+    } catch (error: any) {
+      console.error('Error cargando información de la carrera:', error);
+      toast.error('Error al cargar la información de la carrera');
+    } finally {
+      setIsLoadingRace(false);
+    }
+  };
 
   // Función para cargar viajes desde el backend
   const loadTrips = async () => {
@@ -50,6 +68,7 @@ export function TripsPage() {
   };
 
   useEffect(() => {
+    loadRace();
     loadTrips();
   }, [raceId]);
 
@@ -118,7 +137,7 @@ export function TripsPage() {
             {race?.name || 'Viajes disponibles'}
           </h1>
           <div className="text-gray-600">
-            {isLoading ? 'Cargando...' : `${trips.length} viajes disponibles`}
+            {(isLoading || isLoadingRace) ? 'Cargando...' : `${trips.length} viajes disponibles`}
           </div>
         </div>
         <Button 
@@ -131,7 +150,7 @@ export function TripsPage() {
       </div>
 
       {/* Estado de carga */}
-      {isLoading && (
+      {(isLoading || isLoadingRace) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="p-4 animate-pulse">
@@ -148,7 +167,7 @@ export function TripsPage() {
       )}
 
       {/* Lista de viajes */}
-      {!isLoading && trips.length === 0 && (
+      {!isLoading && !isLoadingRace && trips.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-500 mb-4">
             <Users className="w-12 h-12 mx-auto mb-2" />
@@ -158,7 +177,7 @@ export function TripsPage() {
         </div>
       )}
 
-      {!isLoading && trips.length > 0 && (
+      {!isLoading && !isLoadingRace && trips.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {trips.map((trip) => (
             <Card key={trip.id} className="p-4">
