@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosAuth from '../lib/axios';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -48,15 +48,7 @@ export function UserProfileView() {
         setOwnProfile(ownProfileValue);
 
         try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${targetUserId}`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${storedUser.token}`
-              }
-            }
-          );
+          const response = await axiosAuth.get(`/user-profiles/user/${targetUserId}`);
           setProfile(response.data as UserProfileResponse);
         } catch (error: any) {
           if (error.response && error.response.status === 404 && ownProfileValue) {

@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosAuth from '../lib/axios';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -62,15 +62,7 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     try {
       // Verificar si el usuario tiene perfil
       const userId = userCredential.id || userCredential.userId;
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userCredential.token}`
-          }
-        }
-      );
+      const response = await axiosAuth.get(`/user-profiles/user/${userId}`);
 
       // Usuario tiene perfil, proceder a ver viajes
       navigate('/trips', { state: { race } });

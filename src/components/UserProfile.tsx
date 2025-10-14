@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosAuth from '../lib/axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserBasicInfo } from './UserBasicInfo';
 import { UserPreferences } from './UserPreferences';
@@ -133,15 +133,7 @@ export function UserProfile() {
         setIsLoadingProfile(true);
 
         try {
-          const axiosResponse = await axios.get(
-            `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`,
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
-            }
-          );
+          const axiosResponse = await axiosAuth.get(`/user-profiles/user/${userId}`);
           const profile = axiosResponse.data as UserProfileResponse;
           console.log('Perfil existente encontrado, entrando en modo edición:', profile);
           preloadProfileData(profile);
@@ -369,9 +361,9 @@ export function UserProfile() {
 
       let axiosResponse;
       if (method === 'put') {
-        axiosResponse = await axios.put(url, dto, axiosConfig);
+        axiosResponse = await axiosAuth.put(`/user-profiles/user/${userId}`, dto);
       } else {
-        axiosResponse = await axios.post(url, dto, axiosConfig);
+        axiosResponse = await axiosAuth.post('/user-profiles', dto);
       }
 
       const result = axiosResponse.data;

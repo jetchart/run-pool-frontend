@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { axiosPublic } from '../lib/axios';
 import { SkeletonCard } from './SkeletonCard';
 import { RaceDialog } from './RaceDialog';
 import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp } from 'lucide-react';
@@ -13,7 +13,7 @@ export function RacesList() {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/races`)
+    axiosPublic.get('/races')
       .then(response => {
         setRaces(response.data as any[]);
         setIsLoading(false);

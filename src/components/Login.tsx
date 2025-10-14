@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosAuth, { axiosPublic } from '../lib/axios';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Zap } from 'lucide-react';
@@ -29,15 +29,7 @@ export function Login() {
       const userId = userData.id || userData.userId;
       const token = userData.token || userData.accessToken;
   
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
+      const response = await axiosAuth.get(`/user-profiles/user/${userId}`);
 
       toast.success('¡Login exitoso!', {
         description: 'Te has logueado correctamente'
@@ -71,15 +63,7 @@ export function Login() {
     let userData: UserCredentialDto;
     
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/google/login`,
-        { token },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
+      const response = await axiosPublic.post('/auth/google/login', { token });
       
       userData = response.data as UserCredentialDto;
         

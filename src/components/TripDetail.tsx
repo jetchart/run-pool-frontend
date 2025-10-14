@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosAuth from '../lib/axios';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan } from 'lucide-react';
@@ -26,14 +26,7 @@ const TripDetail: React.FC = () => {
               navigate('/login');
               return;
             }
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/trips/${tripId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${storedUser.token}`,
-          }
-        }
-      );
+      const response = await axiosAuth.get(`/trips/${tripId}`);
 
       setTrip(response.data as TripResponse);
     } catch (error: any) {
@@ -97,16 +90,7 @@ const TripDetail: React.FC = () => {
         passengerId: passengerId
       };
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/trips/join`,
-        joinTripData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${storedUser.token}`,
-          }
-        }
-      );
+      const response = await axiosAuth.post('/trips/join', joinTripData);
 
       const result = response.data;
       toast.success('¡Te has unido al viaje exitosamente!');

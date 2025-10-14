@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { axiosPublic } from '../lib/axios';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -36,7 +36,7 @@ export function TripsPage() {
     try {
       const raceId = typeof race.id === 'string' ? parseInt(race.id) : race.id;
       
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/trips?raceId=${raceId}`);
+      const response = await axiosPublic.get(`/trips?raceId=${raceId}`);
       
       setTrips(response.data as TripResponse[]);
     } catch (error: any) {

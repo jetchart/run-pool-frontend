@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosAuth from '../lib/axios';
 import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { ArrowLeft, MapPin, Calendar, Clock, Users } from 'lucide-react';
@@ -110,16 +110,8 @@ const CreateTrip: React.FC = () => {
         driverId: driverId
       };
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/trips`,
-        tripData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${storedUser.token}`,
-          }
-        }
-      );
+      // El token se agrega automáticamente por el interceptor
+      const response = await axiosAuth.post('/trips', tripData);
 
       const result = response.data;
       toast.success('¡Viaje creado exitosamente!');
