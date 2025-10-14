@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { ArrowLeft, MapPin, Clock, Star, Users, User } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan } from 'lucide-react';
 import { TripResponse, JoinTripDto } from '../types/trip.types';
 import { toast } from 'sonner';
 
@@ -249,43 +249,25 @@ const TripDetail: React.FC = () => {
         <div>
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold">Lugares disponibles</h2>
-                <div className="flex items-center text-gray-600">
-                  <Users className="w-4 h-4 mr-1" />
-                  {trip.availableSeats} lugares disponibles
-                </div>
-              </div>
+              <h2 className="text-lg font-semibold">Lugares disponibles</h2>
 
-              {/* Diagrama del vehículo */}
-              <div className="mb-8">
-                <div className="relative mx-auto w-48">
-                  {/* Outline del carro */}
-                  <svg viewBox="0 0 200 120" className="w-full">
-                    {/* Cuerpo del carro */}
-                    <rect x="20" y="30" width="160" height="80" rx="15" fill="none" stroke="black" strokeWidth="2"/>
-                    
-                    {/* Conductor (siempre ocupado) */}
-                    <circle cx="50" cy="50" r="15" fill="black" stroke="none"/>
-                    <text x="50" y="55" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold">
-                      {trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}
-                    </text>
-                    <text x="50" y="25" textAnchor="middle" fontSize="8" fill="gray">Conductor</text>
-
-                    {/* Asiento del copiloto */}
-                    <circle cx="150" cy="50" r="15" fill={trip.availableSeats > 0 ? "white" : "lightgray"} stroke="black" strokeWidth="1"/>
-                    {trip.availableSeats > 0 && <text x="150" y="55" textAnchor="middle" fontSize="20" fill="gray">+</text>}
-                    <text x="150" y="25" textAnchor="middle" fontSize="8" fill="gray">Disponible</text>
-
-                    {/* Asientos traseros */}
-                    <circle cx="70" cy="90" r="15" fill={trip.availableSeats > 1 ? "white" : "lightgray"} stroke="black" strokeWidth="1"/>
-                    {trip.availableSeats > 1 && <text x="70" y="95" textAnchor="middle" fontSize="20" fill="gray">+</text>}
-                    <text x="70" y="135" textAnchor="middle" fontSize="8" fill="gray">Disponible</text>
-
-                    <circle cx="130" cy="90" r="15" fill={trip.availableSeats > 2 ? "white" : "lightgray"} stroke="black" strokeWidth="1"/>
-                    {trip.availableSeats > 2 && <text x="130" y="95" textAnchor="middle" fontSize="20" fill="gray">+</text>}
-                    <text x="130" y="135" textAnchor="middle" fontSize="8" fill="gray">Disponible</text>
-                  </svg>
+              {/* Ícono del vehículo */}
+              <div className="mb-8 text-center">
+                <div className="flex flex-col items-center">
+                  <Car className="w-24 h-24 text-gray-600 mb-4" />
+                  <div className="text-sm text-gray-600 mb-2">
+                    <span className="font-semibold">{trip.seats}</span> asientos totales
+                  </div>
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-gray-800"></div>
+                      <span className="text-xs text-gray-500">Ocupado/s ({trip.seats - trip.availableSeats})</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                      <span className="text-xs text-gray-500">Disponible/s ({trip.availableSeats})</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -296,7 +278,10 @@ const TripDetail: React.FC = () => {
                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
                       {passenger.passenger.givenName?.[0]}{passenger.passenger.familyName?.[0]}
                     </div>
-                    <div className="text-sm">{passenger.passenger.name}</div>
+                    <div className="text-sm">
+                        {passenger.passenger.name}
+                        {passenger.passenger.id === trip.driver.id && ' (Conductor)'}
+                        </div>
                   </div>
                 ))}
               </div>
