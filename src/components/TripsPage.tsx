@@ -37,7 +37,7 @@ export function TripsPage() {
     try {
       const raceIdNum = parseInt(raceId);
       
-      const response = await axiosAuth.get(`/trips?raceId=${raceIdNum}`);
+      const response = await axiosAuth.get(`/trips?raceId=${raceId}`);
       setTrips(response.data as TripResponse[]);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Error al cargar los viajes';
