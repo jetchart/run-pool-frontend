@@ -25,13 +25,21 @@ declare global {
   }
 }
 
-export function UserProfileView() {
-  const { userId } = useParams<{ userId: string }>();
+interface UserProfileViewProps {
+  userId?: string;
+  isModal?: boolean;
+}
+
+export function UserProfileView({ userId: propUserId, isModal = false }: UserProfileViewProps = {}) {
+  const { userId: paramUserId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [ownProfile, setOwnProfile] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Usar userId de props si está disponible, sino usar el de params
+  const userId = propUserId || paramUserId;
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -39,8 +47,11 @@ export function UserProfileView() {
         const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
 
         if (!storedUser) {
-          navigate('/login');
-          return;
+          if (!isModal) {
+            navigate('/login');
+            return;
+          }
+          // En modo modal, continuar sin autenticación para usuarios públicos
         }
 
         const targetUserId = userId || storedUser.userId;
@@ -93,6 +104,14 @@ export function UserProfileView() {
   }
 
   if (error || !profile) {
+    if (isModal) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-red-600">{error || 'Perfil no encontrado'}</p>
+        </div>
+      );
+    }
+    
     return (
       <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -106,21 +125,23 @@ export function UserProfileView() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gray-50 py-8">
+    <div className={isModal ? "space-y-6" : "min-h-[calc(100vh-4rem)] bg-gray-50 py-8"}>
       <div className="max-w-4xl mx-auto px-4 space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <Button onClick={() => navigate('/')} variant="outline">
-            ← Volver
-          </Button>
-          {ownProfile && (<Button 
-            onClick={() => navigate('/profile', { state: { editMode: true, profileData: profile } })} 
-            className="flex items-center gap-2"
-          >
-            <Edit className="w-4 h-4" />
-            Editar Perfil
-          </Button>)}
-        </div>
+        {/* Header - solo mostrar en modo no-modal */}
+        {!isModal && (
+          <div className="flex justify-between items-center">
+            <Button onClick={() => navigate('/')} variant="outline">
+              ← Volver
+            </Button>
+            {ownProfile && (<Button 
+              onClick={() => navigate('/profile', { state: { editMode: true, profileData: profile } })} 
+              className="flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Editar Perfil
+            </Button>)}
+          </div>
+        )}
 
         {/* Información Personal */}
         <Card className="p-6">

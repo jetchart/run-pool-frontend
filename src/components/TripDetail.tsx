@@ -3,8 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosAuth from '../lib/axios';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan, Mail, MessageCircle, CarFront } from 'lucide-react';
 import { TripResponse, JoinTripDto } from '../types/trip.types';
+import { UserProfileView } from './UserProfileView';
 import { toast } from 'sonner';
 
 const TripDetail: React.FC = () => {
@@ -13,6 +15,8 @@ const TripDetail: React.FC = () => {
   const [trip, setTrip] = useState<TripResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Función para cargar el detalle del viaje
   const loadTripDetail = async () => {
@@ -42,6 +46,18 @@ const TripDetail: React.FC = () => {
   useEffect(() => {
     loadTripDetail();
   }, [tripId]);
+
+  // Función para abrir el modal de perfil
+  const handleOpenProfile = (userId: number) => {
+    setSelectedUserId(userId);
+    setIsProfileModalOpen(true);
+  };
+
+  // Función para cerrar el modal de perfil
+  const handleCloseProfile = () => {
+    setIsProfileModalOpen(false);
+    setSelectedUserId(null);
+  };
 
   // Función para formatear la fecha
   const formatDateTime = (departureDay: Date, departureHour: string) => {
@@ -304,14 +320,19 @@ const TripDetail: React.FC = () => {
               {/* Lista de pasajeros */}
               <div className="space-y-3 mt-4">
                 {trip.passengers.map((passenger, index) => (
-                  <div key={passenger.id} className="flex items-center gap-3">
+                  <div 
+                    key={passenger.id} 
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200"
+                    onClick={() => handleOpenProfile(passenger.passenger.id)}
+                  >
                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
                       {passenger.passenger.givenName?.[0]}{passenger.passenger.familyName?.[0]}
                     </div>
-                    <div className="text-sm">
-                        {passenger.passenger.name}
-                        {passenger.passenger.id === trip.driver.id && ' (Conductor)'}
-                        </div>
+                    <div className="flex-1 text-sm">
+                      {passenger.passenger.name}
+                    </div>
+                    {passenger.passenger.id === trip.driver.id && <CarFront className="w-4 h-4 text-gray-400" />}
+                    {passenger.passenger.id !== trip.driver.id && <User className="w-4 h-4 text-gray-400" />}
                   </div>
                 ))}
               </div>
@@ -358,6 +379,20 @@ const TripDetail: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      {/* Modal de perfil de usuario */}
+      <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Perfil del Usuario</DialogTitle>
+          </DialogHeader>
+          {selectedUserId && (
+            <div className="mt-4">
+              <UserProfileView userId={selectedUserId.toString()} isModal={true} />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
