@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { axiosPublic } from '../lib/axios';
+import axiosAuth, { axiosPublic } from '../lib/axios';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -37,8 +37,7 @@ export function TripsPage() {
     try {
       const raceIdNum = parseInt(raceId);
       
-      const response = await axiosPublic.get(`/trips?raceId=${raceIdNum}`);
-      
+      const response = await axiosAuth.get(`/trips?raceId=${raceIdNum}`);
       setTrips(response.data as TripResponse[]);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Error al cargar los viajes';
