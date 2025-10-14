@@ -51,6 +51,13 @@ export function TripsPage() {
     loadTrips();
   }, [raceId]);
 
+  // Función para obtener el color según disponibilidad de asientos
+  const getAvailabilityColor = (availableSeats: number) => {
+    if (availableSeats >= 3) return 'text-green-600';
+    if (availableSeats > 0) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
   // Función para formatear la fecha
   const formatDateTime = (departureDay: Date, departureHour: string) => {
     const date = new Date(departureDay);
@@ -185,7 +192,7 @@ export function TripsPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
+                <div className={`flex items-center text-sm ${getAvailabilityColor(trip.availableSeats)}`}>
                   <Users className="w-4 h-4 mr-1" />
                   {trip.seats - trip.availableSeats} / {trip.seats}
                 </div>
