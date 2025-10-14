@@ -386,8 +386,7 @@ const TripDetail: React.FC = () => {
       {/* Modal de perfil de usuario */}
       <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
         <DialogContent className="w-[95vw] max-w-4xl h-[90vh] max-h-[90vh] overflow-y-auto p-0 sm:p-6">
-          <DialogHeader className="px-4 py-3 sm:px-0 sm:py-0 border-b sm:border-b-0">
-            <DialogTitle className="text-lg sm:text-xl">Perfil del Usuario</DialogTitle>
+          <DialogHeader className="px-4 py-3 sm:px-0 sm:py-0">
           </DialogHeader>
           {selectedUserId && (
             <div className="px-4 pb-4 sm:px-0 sm:pb-0">
