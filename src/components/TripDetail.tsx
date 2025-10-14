@@ -302,21 +302,127 @@ const TripDetail: React.FC = () => {
             <CardContent className="p-6">
               <h2 className="text-lg font-semibold">Lugares disponibles</h2>
 
-              {/* Ícono del vehículo */}
-              <div className="mb-8 text-center">
+              {/* Visualización del vehículo */}
+              <div className="mt-2 mb-8">
                 <div className="flex flex-col items-center">
-                  <Car className="w-24 h-24 text-gray-600 mb-4" />
-                  <div className="text-sm text-gray-600 mb-2">
+                  {/* Auto con asientos superpuestos */}
+                  <div className="relative">
+                    {/* Imagen del auto */}
+                    <img 
+                      src="/src/assets/car.png" 
+                      alt="Vista superior del auto" 
+                      className="w-48 h-auto"
+                    />
+                    
+                    {/* Asientos superpuestos sobre la imagen */}
+                    <div className="absolute inset-0">
+                      {(() => {
+                        // Posiciones de asientos basadas en la imagen del auto
+                        // Estas coordenadas son relativas al tamaño de la imagen (w-48 = 192px aprox)
+                        const seatPositions = [
+                          // Fila delantera
+                          { x: '30%', y: '35%', isDriver: true },  // Conductor (izquierda)
+                          { x: '70%', y: '35%', isDriver: false }, // Copiloto (derecha)
+                          // Fila trasera
+                          ...(trip.seats >= 3 ? [{ x: '30%', y: '70%', isDriver: false }] : []),  // Trasero izquierdo
+                          ...(trip.seats >= 4 ? [{ x: '70%', y: '70%', isDriver: false }] : []), // Trasero derecho
+                          ...(trip.seats >= 5 ? [{ x: '50%', y: '70%', isDriver: false }] : []),  // Trasero centro
+                          // Fila media (para vans/SUVs)
+                          ...(trip.seats >= 6 ? [{ x: '30%', y: '52%', isDriver: false }] : []),  // Media izquierda
+                          ...(trip.seats >= 7 ? [{ x: '70%', y: '52%', isDriver: false }] : []), // Media derecha
+                          ...(trip.seats >= 8 ? [{ x: '50%', y: '52%', isDriver: false }] : []),  // Media centro
+                        ];
+
+                        // Crear array de pasajeros para fácil acceso
+                        const passengerMap = new Map();
+                        trip.passengers.forEach((passenger, index) => {
+                          passengerMap.set(index, passenger);
+                        });
+
+                        return seatPositions.slice(0, trip.seats).map((position, index) => {
+                          const passenger = passengerMap.get(index);
+                          const isOccupied = !!passenger;
+                          const isDriver = position.isDriver;
+                          
+                          return (
+                            <div
+                              key={index}
+                              className={`
+                                absolute transform -translate-x-1/2 -translate-y-1/2 transition-transform
+                                ${isOccupied 
+                                  ? 'cursor-pointer hover:scale-110' 
+                                  : 'cursor-pointer hover:scale-125 hover:shadow-lg'
+                                }
+                              `}
+                              style={{
+                                left: position.x,
+                                top: position.y,
+                              }}
+                              onClick={() => {
+                                if (passenger) {
+                                  // Si hay un pasajero, abrir su perfil
+                                  handleOpenProfile(passenger.passenger.id);
+                                } else {
+                                  // Si es un asiento disponible, unirse al viaje
+                                  handleJoinTrip();
+                                }
+                              }}
+                            >
+                              {/* Círculo del asiento */}
+                              <div className={`
+                                w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold overflow-hidden
+                                ${isOccupied 
+                                  ? isDriver 
+                                    ? 'border-black' 
+                                    : 'border-green-600'
+                                  : 'bg-gray-100 border-gray-300 text-gray-400 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-500 transition-colors'
+                                }
+                              `}>
+                                {isOccupied ? (
+                                  passenger.passenger.pictureUrl ? (
+                                    <img 
+                                      src={passenger.passenger.pictureUrl} 
+                                      alt={passenger.passenger.name}
+                                      className="w-full h-full object-cover rounded-full"
+                                    />
+                                  ) : (
+                                    <div className={`
+                                      w-full h-full rounded-full flex items-center justify-center
+                                      ${isDriver ? 'bg-gray-800 text-white' : 'bg-green-500 text-white'}
+                                    `}>
+                                      <span>
+                                        {passenger.passenger.givenName?.[0]}{passenger.passenger.familyName?.[0]}
+                                      </span>
+                                    </div>
+                                  )
+                                ) : (
+                                  <span className="text-xl font-light">+</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
+                  </div>
+                  
+                  <div className="text-sm text-gray-600 mb-2 mt-4">
                     <span className="font-semibold">{trip.seats}</span> asientos totales
                   </div>
-                  <div className="flex items-center justify-center gap-4">
+                  <div className="flex items-center justify-center gap-4 text-xs">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-gray-800"></div>
-                      <span className="text-xs text-gray-500">Ocupado/s ({trip.seats - trip.availableSeats})</span>
+                      <div className="w-5 h-5 rounded-full bg-gray-800 border border-black"></div>
+                      <span className="text-gray-500">Conductor</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                      <span className="text-xs text-gray-500">Disponible/s ({trip.availableSeats})</span>
+                      <div className="w-5 h-5 rounded-full bg-green-500"></div>
+                      <span className="text-gray-500">Pasajero</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center">
+                        <span className="text-gray-400 text-xs">+</span>
+                      </div>
+                      <span className="text-gray-500">Disponible ({trip.availableSeats})</span>
                     </div>
                   </div>
                 </div>
