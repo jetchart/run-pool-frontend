@@ -35,8 +35,6 @@ export function TripsPage() {
     
     setIsLoading(true);
     try {
-      const raceIdNum = parseInt(raceId);
-      
       const response = await axiosAuth.get(`/trips?raceId=${raceId}`);
       setTrips(response.data as TripResponse[]);
     } catch (error: any) {
