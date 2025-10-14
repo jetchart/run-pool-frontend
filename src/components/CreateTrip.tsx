@@ -113,7 +113,7 @@ const CreateTrip: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${storedUser.token}`,
         },
         body: JSON.stringify(tripData),
       });
