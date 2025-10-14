@@ -4,7 +4,7 @@ import axiosAuth from '../lib/axios';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan, Mail, MessageCircle, CarFront } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan, Mail, MessageCircle, CarFront, Eye } from 'lucide-react';
 import { TripResponse, JoinTripDto } from '../types/trip.types';
 import { UserProfileView } from './UserProfileView';
 import { toast } from 'sonner';
@@ -218,7 +218,10 @@ const TripDetail: React.FC = () => {
             <Star className="w-4 h-4 mr-1 fill-current text-yellow-400" />
             4.8 • 3 calificaciones
           </div>
-          <button className="text-blue-600 text-sm hover:underline mt-1">
+          <button 
+            className="text-blue-600 text-sm hover:underline mt-1 flex items-center gap-1"
+            onClick={() => handleOpenProfile(trip.driver.id)}
+          >
             Ver perfil del conductor
           </button>
         </div>
@@ -382,12 +385,12 @@ const TripDetail: React.FC = () => {
 
       {/* Modal de perfil de usuario */}
       <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Perfil del Usuario</DialogTitle>
+        <DialogContent className="w-[95vw] max-w-4xl h-[90vh] max-h-[90vh] overflow-y-auto p-0 sm:p-6">
+          <DialogHeader className="px-4 py-3 sm:px-0 sm:py-0 border-b sm:border-b-0">
+            <DialogTitle className="text-lg sm:text-xl">Perfil del Usuario</DialogTitle>
           </DialogHeader>
           {selectedUserId && (
-            <div className="mt-4">
+            <div className="px-4 pb-4 sm:px-0 sm:pb-0">
               <UserProfileView userId={selectedUserId.toString()} isModal={true} />
             </div>
           )}

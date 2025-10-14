@@ -125,8 +125,8 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
   }
 
   return (
-    <div className={isModal ? "space-y-6" : "min-h-[calc(100vh-4rem)] bg-gray-50 py-8"}>
-      <div className="max-w-4xl mx-auto px-4 space-y-6">
+    <div className={isModal ? "space-y-4 sm:space-y-6" : "min-h-[calc(100vh-4rem)] bg-gray-50 py-4 sm:py-8"}>
+      <div className={isModal ? "space-y-4 sm:space-y-6" : "max-w-4xl mx-auto px-4 space-y-4 sm:space-y-6"}>
         {/* Header - solo mostrar en modo no-modal */}
         {!isModal && (
           <div className="flex justify-between items-center">
@@ -144,64 +144,64 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
         )}
 
         {/* Información Personal */}
-        <Card className="p-6">
-          <div className="flex items-start gap-6">
+        <Card className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
             <div className="flex-shrink-0">
               {profile.user.pictureUrl ? (
                 <img 
                   src={profile.user.pictureUrl} 
                   alt={`${profile.name} ${profile.surname}`}
-                  className="w-24 h-24 rounded-full object-cover"
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover"
                 />
               ) : (
-                <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center">
-                  <User className="w-12 h-12 text-gray-600" />
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-300 rounded-full flex items-center justify-center">
+                  <User className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600" />
                 </div>
               )}
             </div>
             
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 {profile.name} {profile.surname}
               </h1>
               
-              <div className="space-y-2 text-gray-600">
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>{profile.email}</span>
+              <div className="space-y-2 text-gray-600 text-sm sm:text-base">
+                <div className="flex items-center gap-2 justify-center sm:justify-start">
+                  <Mail className="w-4 h-4 flex-shrink-0" />
+                  <span className="break-all text-center sm:text-left">{profile.email}</span>
                 </div>
                 {profile.phoneNumber && (
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4" />
+                  <div className="flex items-center gap-2 justify-center sm:justify-start">
+                    <MessageCircle className="w-4 h-4 flex-shrink-0" />
                     <a
                       href={`https://wa.me/${profile.phoneCountryCode || '54'}${profile.phoneNumber}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline transition-colors"
+                      className="hover:underline transition-colors text-center sm:text-left"
                     >
                       +{profile.phoneCountryCode || '54'} {profile.phoneNumber}
                     </a>
                   </div>
                 )}
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
+                <div className="flex items-center gap-2 justify-center sm:justify-start">
+                  <Calendar className="w-4 h-4 flex-shrink-0" />
                   <span>{calculateAge(profile.birthYear)} años (nacido en {profile.birthYear})</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
+                <div className="flex items-center gap-2 justify-center sm:justify-start">
+                  <User className="w-4 h-4 flex-shrink-0" />
                   <span>{GENDER_INFO[profile.gender].description}</span>
                 </div>
               </div>
 
-              <div className="mt-4 flex gap-2">
-                <Badge variant="secondary" className="flex items-center gap-1">
+              <div className="mt-4 flex flex-wrap gap-2 justify-center sm:justify-start">
+                <Badge variant="secondary" className="flex items-center gap-1 text-xs sm:text-sm">
                   <Trophy className="w-3 h-3" />
                   {RUNNING_EXPERIENCE_INFO[profile.runningExperience]?.description}
                 </Badge>
-                <Badge variant="outline" className="flex items-center gap-1">
-                  {profile.usuallyTravelRace === UsuallyTravelRace.GO_ALONE && (<User className="w-5 h-5" />)}
-                  {profile.usuallyTravelRace === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY && (<Users className="w-5 h-5" />)}
-                  {profile.usuallyTravelRace === UsuallyTravelRace.USUALLY_BRING_PEOPLE && (<Bus className="w-5 h-5" />)}
+                <Badge variant="outline" className="flex items-center gap-1 text-xs sm:text-sm">
+                  {profile.usuallyTravelRace === UsuallyTravelRace.GO_ALONE && (<User className="w-3 h-3 sm:w-4 sm:h-4" />)}
+                  {profile.usuallyTravelRace === UsuallyTravelRace.GO_WITH_FRIENDS_FAMILY && (<Users className="w-3 h-3 sm:w-4 sm:h-4" />)}
+                  {profile.usuallyTravelRace === UsuallyTravelRace.USUALLY_BRING_PEOPLE && (<Bus className="w-3 h-3 sm:w-4 sm:h-4" />)}
                   {USUALLY_TRAVEL_RACE_INFO[profile.usuallyTravelRace]?.description}
                 </Badge>
               </div>
@@ -210,18 +210,18 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
         </Card>
 
         {/* Preferencias de Running */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Preferencias de Running</h2>
+        <Card className="p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Preferencias de Running</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0">
             {/* Tipos de carrera */}
             <div>
               <h3 className="text-sm font-medium text-gray-700 mb-3">Tipos de carrera preferidos</h3>
-              <div className="space-y-2">
+              <div className="flex flex-wrap gap-2">
                 {profile.preferredRaceTypes.map((raceType) => (
-                  <Badge key={raceType.id} variant="outline" className="mr-2">
-                    {raceType.raceType === RaceType.STREET && (<><ChevronsUp className="w-4 h-4" /> {RACE_TYPE_INFO[RaceType.STREET].description}</>)}
-                    {raceType.raceType === RaceType.TRAIL && (<><Mountain className="w-4 h-4" /> {RACE_TYPE_INFO[RaceType.TRAIL].description}</>)}
+                  <Badge key={raceType.id} variant="outline" className="text-xs sm:text-sm">
+                    {raceType.raceType === RaceType.STREET && (<><ChevronsUp className="w-3 h-3 sm:w-4 sm:h-4" /> {RACE_TYPE_INFO[RaceType.STREET].description}</>)}
+                    {raceType.raceType === RaceType.TRAIL && (<><Mountain className="w-3 h-3 sm:w-4 sm:h-4" /> {RACE_TYPE_INFO[RaceType.TRAIL].description}</>)}
                   </Badge>
                 ))}
                 {profile.preferredRaceTypes.length === 0 && (
@@ -233,9 +233,9 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
             {/* Distancias */}
             <div>
               <h3 className="text-sm font-medium text-gray-700 mb-3">Distancias favoritas</h3>
-              <div className="space-y-2">
+              <div className="flex flex-wrap gap-2">
                 {profile.preferredDistances.map((distance) => (
-                  <Badge key={distance.id} variant="outline" className="mr-2">
+                  <Badge key={distance.id} variant="outline" className="text-xs sm:text-sm">
                     {DISTANCE_INFO[distance.distance].shortDescription}
                   </Badge>
                 ))}
@@ -249,16 +249,16 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
 
         {/* Información de Vehículos */}
         {profile.cars && profile.cars.length > 0 && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Car className="w-5 h-5" />
+          <Card className="p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Car className="w-4 h-4 sm:w-5 sm:h-5" />
               Vehículos
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
               {profile.cars.map((car) => (
                 <div key={car.id} className="border border-gray-200 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-2">
+                  <h4 className="font-medium text-gray-900 mb-2 text-sm sm:text-base">
                     {car.brand} {car.model} ({car.year})
                   </h4>
                   <div className="flex flex-col gap-2 text-sm text-gray-600">
@@ -279,9 +279,9 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
         )}
 
         {/* Información del sistema */}
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Información del perfil</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+        <Card className="p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Información del perfil</h2>
+          <div className="space-y-3 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0 text-sm text-gray-600">
             <div>
               <span className="font-medium">Perfil creado:</span> {formatDate(profile.createdAt.toString())}
             </div>
