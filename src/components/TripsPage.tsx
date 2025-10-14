@@ -53,9 +53,9 @@ export function TripsPage() {
 
   // Función para obtener el color según disponibilidad de asientos
   const getAvailabilityColor = (availableSeats: number) => {
-    if (availableSeats >= 3) return 'text-green-600';
-    if (availableSeats > 0) return 'text-yellow-600';
-    return 'text-red-600';
+    if (availableSeats >= 3) return 'bg-green-600 text-white';
+    if (availableSeats > 0) return 'bg-yellow-300 text-white';
+    return 'bg-red-600 text-white';
   };
 
   // Función para formatear la fecha
@@ -192,10 +192,12 @@ export function TripsPage() {
                     </div>
                   </div>
                 </div>
-                <div className={`flex items-center text-sm ${getAvailabilityColor(trip.availableSeats)}`}>
+                 <Badge className={`${getAvailabilityColor(trip.availableSeats)}`}>
+                <div className={`flex items-center text-sm `}>
                   <Users className="w-4 h-4 mr-1" />
                   {trip.seats - trip.availableSeats} / {trip.seats}
                 </div>
+                </Badge>
               </div>
 
               {/* Descripción si existe */}
