@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { UserBasicInfo } from './UserBasicInfo';
 import { UserPreferences } from './UserPreferences';
@@ -131,25 +132,28 @@ export function UserProfile() {
 
         setIsLoadingProfile(true);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const profile = await response.json() as UserProfileResponse;
+        try {
+          const axiosResponse = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`,
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          const profile = axiosResponse.data as UserProfileResponse;
           console.log('Perfil existente encontrado, entrando en modo edición:', profile);
           preloadProfileData(profile);
-        } else if (response.status === 404) {
-          // No existe perfil, mantener modo creación
-          console.log('No existe perfil para este usuario, modo creación activado');
-          setIsEditMode(false);
-        } else {
-          console.error('Error al cargar perfil:', response.status);
-          setIsEditMode(false);
+        } catch (err: any) {
+          if (err.response && err.response.status === 404) {
+            // No existe perfil, mantener modo creación
+            console.log('No existe perfil para este usuario, modo creación activado');
+            setIsEditMode(false);
+          } else {
+            console.error('Error al cargar perfil:', err.response?.status || err.message);
+            setIsEditMode(false);
+          }
         }
       } catch (error) {
         console.error('Error al verificar perfil existente:', error);
@@ -351,25 +355,26 @@ export function UserProfile() {
       }
 
       // Usar PUT para actualizar, POST para crear
-      const method = isEditMode ? 'PUT' : 'POST';
+      const method = isEditMode ? 'put' : 'post';
       const url = isEditMode 
         ? `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`
         : `${import.meta.env.VITE_BACKEND_URL}/user-profiles`;
 
-      const response = await fetch(url, {
-        method: method,
+      const axiosConfig = {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(dto),
-      });
+        }
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      let axiosResponse;
+      if (method === 'put') {
+        axiosResponse = await axios.put(url, dto, axiosConfig);
+      } else {
+        axiosResponse = await axios.post(url, dto, axiosConfig);
       }
 
-      const result = await response.json();
+      const result = axiosResponse.data;
       console.log(`Profile ${isEditMode ? 'updated' : 'created'} successfully:`, result);
       return result;
     } catch (error) {

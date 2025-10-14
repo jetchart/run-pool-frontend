@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { ArrowLeft, MapPin, Calendar, Clock, Users } from 'lucide-react';
@@ -109,29 +110,27 @@ const CreateTrip: React.FC = () => {
         driverId: driverId
       };
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${storedUser.token}`,
-        },
-        body: JSON.stringify(tripData),
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/trips`,
+        tripData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${storedUser.token}`,
+          }
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al crear el viaje');
-      }
-
-      const result = await response.json();
+      const result = response.data;
       toast.success('¡Viaje creado exitosamente!');
       
       // Redirigir de vuelta a la lista de viajes
       navigate(`/races/${race.id}/trips`);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creando viaje:', error);
-      toast.error(error instanceof Error ? error.message : 'Error inesperado');
+      const errorMessage = error.response?.data?.message || 'Error inesperado';
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

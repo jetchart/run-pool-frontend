@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan } from 'lucide-react';
@@ -25,22 +26,20 @@ const TripDetail: React.FC = () => {
               navigate('/login');
               return;
             }
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips/${tripId}`, {
-        headers: {
-          'Authorization': `Bearer ${storedUser.token}`,
-        },
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/trips/${tripId}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${storedUser.token}`,
+          }
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al cargar el viaje');
-      }
-
-      const data = await response.json();
-      setTrip(data);
-    } catch (error) {
+      setTrip(response.data as TripResponse);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Error al cargar el viaje';
       console.error('Error cargando detalle del viaje:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al cargar el viaje');
+      toast.error(errorMessage);
       navigate(-1);
     } finally {
       setIsLoading(false);
@@ -98,29 +97,27 @@ const TripDetail: React.FC = () => {
         passengerId: passengerId
       };
 
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips/join`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${storedUser.token}`,
-        },
-        body: JSON.stringify(joinTripData),
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/trips/join`,
+        joinTripData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${storedUser.token}`,
+          }
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al unirse al viaje');
-      }
-
-      const result = await response.json();
+      const result = response.data;
       toast.success('¡Te has unido al viaje exitosamente!');
       
       // Recargar los datos del viaje para mostrar el estado actualizado
       await loadTripDetail();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al unirse al viaje:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al enviar la solicitud');
+      const errorMessage = error.response?.data?.message || 'Error al enviar la solicitud';
+      toast.error(errorMessage);
     } finally {
       setIsJoining(false);
     }

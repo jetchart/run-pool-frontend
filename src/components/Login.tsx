@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Zap } from 'lucide-react';
@@ -28,23 +29,24 @@ export function Login() {
       const userId = userData.id || userData.userId;
       const token = userData.token || userData.accessToken;
   
-
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${userId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         }
-      });
+      );
 
-      if (response.ok) {
-        toast.success('¡Login exitoso!', {
-          description: 'Te has logueado correctamente'
-        });
-        // Usuario tiene perfil, redirigir a races
-        console.log('Usuario tiene perfil, redirigiendo a races...');
-        navigate('/');
-      } else if (response.status === 404) {
+      toast.success('¡Login exitoso!', {
+        description: 'Te has logueado correctamente'
+      });
+      // Usuario tiene perfil, redirigir a races
+      console.log('Usuario tiene perfil, redirigiendo a races...');
+      navigate('/');
+    } catch (error: any) {
+      if (error.response && error.response.status === 404) {
         toast.warning('¡Login exitoso!', {
           description: 'Queremos conocerte mejor, por favor completa tu perfil'
         });
@@ -56,7 +58,6 @@ export function Login() {
         console.log('Error verificando perfil, redirigiendo a crear perfil...');
         navigate('/profile');
       }
-    } catch (error) {
       console.error('Error verificando perfil del usuario:', error);
       // En caso de error, redirigir a crear perfil por seguridad
       navigate('/profile');
@@ -70,15 +71,17 @@ export function Login() {
     let userData: UserCredentialDto;
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/google/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/google/login`,
+        { token },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
       
-      userData = await response.json();
+      userData = response.data as UserCredentialDto;
         
         // Actualizar el contexto de autenticación (esto notificará automáticamente al Header)
         setUserCredential(userData);

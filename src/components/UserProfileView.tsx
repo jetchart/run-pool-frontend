@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -46,22 +47,24 @@ export function UserProfileView() {
         const ownProfileValue = !userId || (storedUser && (userId.toString() == storedUser.userId));
         setOwnProfile(ownProfileValue);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${targetUserId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${storedUser.token}`
-          }
-        });
-
-        if (response.ok) {
-        const data = await response.json();
-        setProfile(data);
-        } else if (response.status === 404 && ownProfileValue) {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/user-profiles/user/${targetUserId}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${storedUser.token}`
+              }
+            }
+          );
+          setProfile(response.data as UserProfileResponse);
+        } catch (error: any) {
+          if (error.response && error.response.status === 404 && ownProfileValue) {
             console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
             navigate('/profile');
-        } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            throw error;
+          }
         }
       } catch (error) {
         console.error('Error fetching user profile:', error);

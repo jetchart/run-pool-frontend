@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
@@ -35,18 +36,13 @@ export function TripsPage() {
     try {
       const raceId = typeof race.id === 'string' ? parseInt(race.id) : race.id;
       
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/trips?raceId=${raceId}`, {});
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al cargar los viajes');
-      }
-
-      const data = await response.json();
-      setTrips(data);
-    } catch (error) {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/trips?raceId=${raceId}`);
+      
+      setTrips(response.data as TripResponse[]);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Error al cargar los viajes';
       console.error('Error cargando viajes:', error);
-      toast.error(error instanceof Error ? error.message : 'Error al cargar los viajes');
+      toast.error(errorMessage);
       setTrips([]);
     } finally {
       setIsLoading(false);
