@@ -209,8 +209,12 @@ const TripDetail: React.FC = () => {
 
       {/* Información del conductor */}
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-xl font-medium">
-          {trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}
+        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-xl font-medium">
+            <img 
+              src={trip.driver.pictureUrl} 
+              alt={trip.driver.name}
+              className="w-full h-full object-cover"
+            />
         </div>
         <div>
           <h1 className="text-2xl font-bold">{trip.driver.name}</h1>
@@ -321,15 +325,19 @@ const TripDetail: React.FC = () => {
               <hr/>
 
               {/* Lista de pasajeros */}
-              <div className="space-y-3 mt-4">
+              <div className="mt-4">
                 {trip.passengers.map((passenger, index) => (
                   <div 
                     key={passenger.id} 
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200"
                     onClick={() => handleOpenProfile(passenger.passenger.id)}
                   >
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
-                      {passenger.passenger.givenName?.[0]}{passenger.passenger.familyName?.[0]}
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-medium">
+                        <img 
+                          src={passenger.passenger.pictureUrl} 
+                          alt={passenger.passenger.name}
+                          className="w-full h-full object-cover"
+                        />
                     </div>
                     <div className="flex-1 text-sm">
                       {passenger.passenger.name}
