@@ -197,7 +197,7 @@ export function TripsPage() {
                   {/* Texto de ciudad de salida */}
                   <text 
                     x="35" 
-                    y="80" 
+                    y="76" 
                     textAnchor="middle" 
                     className="fill-gray-700"
                     fontSize="11"
@@ -210,7 +210,7 @@ export function TripsPage() {
                   {/* Texto de ciudad de llegada */}
                   <text 
                     x="205" 
-                    y="22" 
+                    y="24" 
                     textAnchor="middle" 
                     className="fill-gray-700"
                     fontSize="11"
