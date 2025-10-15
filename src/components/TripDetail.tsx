@@ -241,38 +241,28 @@ const TripDetail: React.FC = () => {
               <h2 className="text-lg font-semibold mb-4">Detalles del viaje</h2>
               
               {/* Gráfico de ruta */}
-              <div className="h-32 bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
-                <svg className="w-80 h-16" viewBox="0 0 320 80">
+              <div className="h-32 bg-gray-100 rounded-lg mb-6 flex items-center justify-center relative">
+                {/* SVG solo para línea y círculos */}
+                <svg width="240" height="60" viewBox="0 0 240 60" className="flex-shrink-0">
                   <path 
-                    d="M20 60 Q80 20 160 45 Q240 65 300 35" 
-                    stroke="currentColor" 
-                    strokeWidth="3" 
+                    d="M35 45 Q80 15 120 35 Q160 50 205 25" 
+                    stroke="#1f2937" 
+                    strokeWidth="4" 
                     fill="none"
-                    className="text-gray-800"
                   />
-                  <circle cx="20" cy="60" r="8" stroke="black" fill="white" strokeWidth="2" />
-                  <circle cx="300" cy="35" r="8" stroke="black" fill="white" strokeWidth="2" />
-                  
-                  {/* Texto de ciudad de salida */}
-                  <text 
-                    x="20" 
-                    y="78" 
-                    textAnchor="middle" 
-                    className="text-xs font-medium fill-gray-700"
-                  >
-                    {trip.departureCity}
-                  </text>
-                  
-                  {/* Texto de ciudad de llegada */}
-                  <text 
-                    x="300" 
-                    y="24" 
-                    textAnchor="middle" 
-                    className="text-xs font-medium fill-gray-700"
-                  >
-                    {trip.arrivalCity || trip.race.location}
-                  </text>
+                  <circle cx="35" cy="45" r="10" stroke="#000000" fill="#ffffff" strokeWidth="3" />
+                  <circle cx="205" cy="25" r="10" stroke="#000000" fill="#ffffff" strokeWidth="3" />
                 </svg>
+                
+                {/* Textos posicionados absolutamente cerca de los círculos */}
+                <span className="absolute text-sm font-medium text-gray-700 text-center" 
+                      style={{ left: '38px', bottom: '18px' }}>
+                  {trip.departureCity}
+                </span>
+                <span className="absolute text-sm font-medium text-gray-700 text-center" 
+                      style={{ right: '38px', top: '24px' }}>
+                  {trip.arrivalCity || trip.race.location}
+                </span>
               </div>
 
               {/* Origen */}
