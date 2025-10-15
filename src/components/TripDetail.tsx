@@ -252,6 +252,26 @@ const TripDetail: React.FC = () => {
                   />
                   <circle cx="20" cy="60" r="8" stroke="black" fill="white" strokeWidth="2" />
                   <circle cx="300" cy="35" r="8" stroke="black" fill="white" strokeWidth="2" />
+                  
+                  {/* Texto de ciudad de salida */}
+                  <text 
+                    x="20" 
+                    y="78" 
+                    textAnchor="middle" 
+                    className="text-xs font-medium fill-gray-700"
+                  >
+                    {trip.departureCity}
+                  </text>
+                  
+                  {/* Texto de ciudad de llegada */}
+                  <text 
+                    x="300" 
+                    y="25" 
+                    textAnchor="middle" 
+                    className="text-xs font-medium fill-gray-700"
+                  >
+                    {trip.arrivalCity || trip.race.location}
+                  </text>
                 </svg>
               </div>
 
