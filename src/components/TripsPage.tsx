@@ -197,9 +197,9 @@ export function TripsPage() {
                   {/* Texto de ciudad de salida */}
                   <text 
                     x="35" 
-                    y="76" 
+                    y="78" 
                     textAnchor="middle" 
-                    className="fill-gray-700"
+                    fill="#374151"
                     fontSize="11"
                     fontFamily="system-ui, -apple-system, sans-serif"
                     fontWeight="500"
@@ -210,9 +210,9 @@ export function TripsPage() {
                   {/* Texto de ciudad de llegada */}
                   <text 
                     x="205" 
-                    y="24" 
+                    y="22" 
                     textAnchor="middle" 
-                    className="fill-gray-700"
+                    fill="#374151"
                     fontSize="11"
                     fontFamily="system-ui, -apple-system, sans-serif"
                     fontWeight="500"
