@@ -227,8 +227,16 @@ export function TripsPage() {
               {/* Driver info */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium mr-3">
-                    {trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium mr-3 overflow-hidden">
+                    {trip.driver.pictureUrl ? (
+                      <img 
+                        src={trip.driver.pictureUrl} 
+                        alt={trip.driver.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>{trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}</span>
+                    )}
                   </div>
                   <div>
                     <div className="font-medium text-sm">{trip.driver.name}</div>
