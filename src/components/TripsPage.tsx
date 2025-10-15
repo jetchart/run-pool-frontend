@@ -182,43 +182,28 @@ export function TripsPage() {
           {trips.map((trip) => (
             <Card key={trip.id} className="p-4">
               {/* Imagen/gráfico de ruta */}
-              <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-                <svg width="180" height="64" viewBox="0 0 180 64">
+              <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative">
+                {/* SVG solo para línea y círculos */}
+                <svg width="180" height="40" viewBox="0 0 180 40" className="flex-shrink-0">
                   <path 
-                    d="M25 48 Q60 16 90 36 Q120 52 155 28" 
+                    d="M25 30 Q60 10 90 25 Q120 35 155 20" 
                     stroke="#1f2937" 
                     strokeWidth="3" 
                     fill="none"
                   />
-                  <circle cx="25" cy="48" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
-                  <circle cx="155" cy="28" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
-                  
-                  {/* Texto de ciudad de salida */}
-                  <text 
-                    x="25" 
-                    y="64" 
-                    textAnchor="middle" 
-                    fill="#374151"
-                    fontSize="10"
-                    fontFamily="Arial, sans-serif"
-                    fontWeight="bold"
-                  >
-                    {trip.departureCity}
-                  </text>
-                  
-                  {/* Texto de ciudad de llegada */}
-                  <text 
-                    x="155" 
-                    y="18" 
-                    textAnchor="middle" 
-                    fill="#374151"
-                    fontSize="10"
-                    fontFamily="Arial, sans-serif"
-                    fontWeight="bold"
-                  >
-                    {trip.arrivalCity}
-                  </text>
+                  <circle cx="25" cy="30" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
+                  <circle cx="155" cy="20" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
                 </svg>
+                
+                {/* Textos posicionados absolutamente cerca de los círculos */}
+                <span className="absolute text-xs font-medium text-gray-700 text-center" 
+                      style={{ left: '70px', bottom: '15px' }}>
+                  {trip.departureCity}
+                </span>
+                <span className="absolute text-xs font-medium text-gray-700 text-center" 
+                      style={{ right: '70px', top: '24px' }}>
+                  {trip.arrivalCity}
+                </span>
               </div>
 
               {/* Origen */}
