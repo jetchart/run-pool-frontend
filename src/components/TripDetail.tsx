@@ -8,6 +8,7 @@ import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan, Mail, Messag
 import { TripResponse, JoinTripDto } from '../types/trip.types';
 import { UserProfileView } from './UserProfileView';
 import { toast } from 'sonner';
+import carImage from '../assets/car.png';
 
 const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -303,13 +304,13 @@ const TripDetail: React.FC = () => {
               <h2 className="text-lg font-semibold">Lugares disponibles</h2>
 
               {/* Visualización del vehículo */}
-              <div className="mt-2 mb-8">
+              <div className="mt-4 mb-8">
                 <div className="flex flex-col items-center">
                   {/* Auto con asientos superpuestos */}
                   <div className="relative">
                     {/* Imagen del auto */}
                     <img 
-                      src="/src/assets/car.png" 
+                      src={carImage} 
                       alt="Vista superior del auto" 
                       className="w-48 h-auto"
                     />
