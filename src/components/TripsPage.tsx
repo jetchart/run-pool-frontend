@@ -198,12 +198,12 @@ export function TripsPage() {
                 </div>
                 
                 {/* Textos posicionados absolutamente cerca de los círculos */}
-                <span className="absolute text-xs font-medium text-gray-700 text-center transform -translate-x-1/2" 
+                <span className="absolute text-xs text-gray-700 text-center transform -translate-x-1/2" 
                       style={{ left: 'calc(50% - 95px)', bottom: '14px' }}>
                   {trip.departureCity}
                 </span>
-                <span className="absolute text-xs font-medium text-gray-700 text-center transform -translate-x-1/2" 
-                      style={{ left: 'calc(50% + 95px)', top: '20px' }}>
+                <span className="absolute text-xs text-gray-700 text-center transform -translate-x-1/2" 
+                      style={{ left: 'calc(50% + 95px)', top: '22px' }}>
                   {trip.arrivalCity}
                 </span>
               </div>

@@ -257,12 +257,12 @@ const TripDetail: React.FC = () => {
                 </div>
                 
                 {/* Textos posicionados absolutamente cerca de los círculos */}
-                <span className="absolute text-sm font-medium text-gray-700 text-center transform -translate-x-1/2" 
-                      style={{ left: 'calc(50% - 90px)', bottom: '18px' }}>
+                <span className="absolute text-xs text-gray-700 text-center transform -translate-x-1/2" 
+                      style={{ left: 'calc(50% - 88px)', bottom: '20px' }}>
                   {trip.departureCity}
                 </span>
-                <span className="absolute text-sm font-medium text-gray-700 text-center transform -translate-x-1/2" 
-                      style={{ left: 'calc(50% + 90px)', top: '24px' }}>
+                <span className="absolute text-xs text-gray-700 text-center transform -translate-x-1/2" 
+                      style={{ left: 'calc(50% + 88px)', top: '28px' }}>
                   {trip.arrivalCity || trip.race.location}
                 </span>
               </div>
