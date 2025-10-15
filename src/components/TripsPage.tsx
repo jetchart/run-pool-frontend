@@ -183,16 +183,38 @@ export function TripsPage() {
             <Card key={trip.id} className="p-4">
               {/* Imagen/gráfico de ruta */}
               <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-                <svg className="w-24 h-12" viewBox="0 0 140 60">
+                <svg className="w-44 h-16" viewBox="0 0 260 80">
                   <path 
-                    d="M10 45 Q40 15 70 35 Q100 50 130 25" 
+                    d="M40 60 Q90 20 130 45 Q170 65 220 35" 
                     stroke="currentColor" 
-                    strokeWidth="2.5" 
+                    strokeWidth="3" 
                     fill="none"
                     className="text-gray-800"
                   />
-                  <circle cx="10" cy="45" r="6" stroke="black" fill="white" className="text-gray-800" />
-                  <circle cx="130" cy="25" r="6" stroke="black" fill="white" className="text-gray-800" />
+                  <circle cx="40" cy="60" r="8" stroke="black" fill="white" strokeWidth="2" />
+                  <circle cx="220" cy="35" r="8" stroke="black" fill="white" strokeWidth="2" />
+                  
+                  {/* Texto de ciudad de salida */}
+                  <text 
+                    x="40" 
+                    y="80" 
+                    textAnchor="middle" 
+                    className="text-xs font-medium fill-gray-700"
+                    fontSize="9"
+                  >
+                    {trip.departureCity}
+                  </text>
+                  
+                  {/* Texto de ciudad de llegada */}
+                  <text 
+                    x="220" 
+                    y="22" 
+                    textAnchor="middle" 
+                    className="text-xs font-medium fill-gray-700"
+                    fontSize="9"
+                  >
+                    {trip.arrivalCity}
+                  </text>
                 </svg>
               </div>
 

@@ -256,7 +256,7 @@ const TripDetail: React.FC = () => {
                   {/* Texto de ciudad de salida */}
                   <text 
                     x="20" 
-                    y="78" 
+                    y="80" 
                     textAnchor="middle" 
                     className="text-xs font-medium fill-gray-700"
                   >
@@ -266,7 +266,7 @@ const TripDetail: React.FC = () => {
                   {/* Texto de ciudad de llegada */}
                   <text 
                     x="300" 
-                    y="25" 
+                    y="22" 
                     textAnchor="middle" 
                     className="text-xs font-medium fill-gray-700"
                   >
