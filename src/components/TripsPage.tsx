@@ -182,26 +182,28 @@ export function TripsPage() {
           {trips.map((trip) => (
             <Card key={trip.id} className="p-4">
               {/* Imagen/gráfico de ruta */}
-              <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative">
+              <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
                 {/* SVG solo para línea y círculos */}
-                <svg width="180" height="40" viewBox="0 0 180 40" className="flex-shrink-0">
-                  <path 
-                    d="M25 30 Q60 10 90 25 Q120 35 155 20" 
-                    stroke="#1f2937" 
-                    strokeWidth="3" 
-                    fill="none"
-                  />
-                  <circle cx="25" cy="30" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
-                  <circle cx="155" cy="20" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
-                </svg>
+                <div className="w-60 h-10 flex items-center justify-center flex-shrink-0">
+                  <svg width="240" height="40" viewBox="0 0 240 40" className="block" style={{ width: '240px', height: '40px' }}>
+                    <path 
+                      d="M25 30 Q80 5 120 25 Q160 40 215 20" 
+                      stroke="#1f2937" 
+                      strokeWidth="3" 
+                      fill="none"
+                    />
+                    <circle cx="25" cy="30" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
+                    <circle cx="215" cy="20" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
+                  </svg>
+                </div>
                 
                 {/* Textos posicionados absolutamente cerca de los círculos */}
-                <span className="absolute text-xs font-medium text-gray-700 text-center" 
-                      style={{ left: '70px', bottom: '15px' }}>
+                <span className="absolute text-xs font-medium text-gray-700 text-center transform -translate-x-1/2" 
+                      style={{ left: 'calc(50% - 95px)', bottom: '14px' }}>
                   {trip.departureCity}
                 </span>
-                <span className="absolute text-xs font-medium text-gray-700 text-center" 
-                      style={{ right: '70px', top: '24px' }}>
+                <span className="absolute text-xs font-medium text-gray-700 text-center transform -translate-x-1/2" 
+                      style={{ left: 'calc(50% + 95px)', top: '20px' }}>
                   {trip.arrivalCity}
                 </span>
               </div>
