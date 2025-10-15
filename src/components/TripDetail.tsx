@@ -322,15 +322,15 @@ const TripDetail: React.FC = () => {
                         // Estas coordenadas son relativas al tamaño de la imagen (w-48 = 192px aprox)
                         const seatPositions = [
                           // Fila delantera
-                          { x: '30%', y: '35%', isDriver: true },  // Conductor (izquierda)
-                          { x: '70%', y: '35%', isDriver: false }, // Copiloto (derecha)
+                          { x: '27%', y: '35%', isDriver: true },  // Conductor (izquierda)
+                          { x: '73%', y: '35%', isDriver: false }, // Copiloto (derecha)
                           // Fila trasera
-                          ...(trip.seats >= 3 ? [{ x: '30%', y: '70%', isDriver: false }] : []),  // Trasero izquierdo
-                          ...(trip.seats >= 4 ? [{ x: '70%', y: '70%', isDriver: false }] : []), // Trasero derecho
+                          ...(trip.seats >= 3 ? [{ x: '27%', y: '70%', isDriver: false }] : []),  // Trasero izquierdo
+                          ...(trip.seats >= 4 ? [{ x: '73%', y: '70%', isDriver: false }] : []), // Trasero derecho
                           ...(trip.seats >= 5 ? [{ x: '50%', y: '70%', isDriver: false }] : []),  // Trasero centro
                           // Fila media (para vans/SUVs)
-                          ...(trip.seats >= 6 ? [{ x: '30%', y: '52%', isDriver: false }] : []),  // Media izquierda
-                          ...(trip.seats >= 7 ? [{ x: '70%', y: '52%', isDriver: false }] : []), // Media derecha
+                          ...(trip.seats >= 6 ? [{ x: '27%', y: '52%', isDriver: false }] : []),  // Media izquierda
+                          ...(trip.seats >= 7 ? [{ x: '73%', y: '52%', isDriver: false }] : []), // Media derecha
                           ...(trip.seats >= 8 ? [{ x: '50%', y: '52%', isDriver: false }] : []),  // Media centro
                         ];
 
