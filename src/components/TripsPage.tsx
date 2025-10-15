@@ -183,39 +183,38 @@ export function TripsPage() {
             <Card key={trip.id} className="p-4">
               {/* Imagen/gráfico de ruta */}
               <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center">
-                <svg className="w-full h-full max-w-44" viewBox="0 0 240 80" preserveAspectRatio="xMidYMid meet">
+                <svg width="180" height="64" viewBox="0 0 180 64">
                   <path 
-                    d="M35 60 Q85 20 120 45 Q155 65 205 35" 
-                    stroke="currentColor" 
+                    d="M25 48 Q60 16 90 36 Q120 52 155 28" 
+                    stroke="#1f2937" 
                     strokeWidth="3" 
                     fill="none"
-                    className="text-gray-800"
                   />
-                  <circle cx="35" cy="60" r="7" stroke="black" fill="white" strokeWidth="2" />
-                  <circle cx="205" cy="35" r="7" stroke="black" fill="white" strokeWidth="2" />
+                  <circle cx="25" cy="48" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
+                  <circle cx="155" cy="28" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
                   
                   {/* Texto de ciudad de salida */}
                   <text 
-                    x="35" 
-                    y="78" 
+                    x="25" 
+                    y="64" 
                     textAnchor="middle" 
                     fill="#374151"
-                    fontSize="11"
-                    fontFamily="system-ui, -apple-system, sans-serif"
-                    fontWeight="500"
+                    fontSize="10"
+                    fontFamily="Arial, sans-serif"
+                    fontWeight="bold"
                   >
                     {trip.departureCity}
                   </text>
                   
                   {/* Texto de ciudad de llegada */}
                   <text 
-                    x="205" 
-                    y="22" 
+                    x="155" 
+                    y="18" 
                     textAnchor="middle" 
                     fill="#374151"
-                    fontSize="11"
-                    fontFamily="system-ui, -apple-system, sans-serif"
-                    fontWeight="500"
+                    fontSize="10"
+                    fontFamily="Arial, sans-serif"
+                    fontWeight="bold"
                   >
                     {trip.arrivalCity}
                   </text>
