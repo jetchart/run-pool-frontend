@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Clock, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CreateTripDto } from '../types/trip.types';
+import { ARGENTINE_PROVINCES } from '../constants/provinces';
 
 const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
@@ -215,16 +216,20 @@ const CreateTrip: React.FC = () => {
                   <MapPin className="w-4 h-4" />
                   Provincia de Salida *
                 </label>
-                <input
-                  type="text"
+                <select
                   name="departureProvince"
                   value={formData.departureProvince}
                   onChange={handleInputChange}
-                  placeholder="Ej: Montevideo"
                   required
-                  maxLength={100}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Selecciona una provincia</option>
+                  {ARGENTINE_PROVINCES.map((province) => (
+                    <option key={province} value={province}>
+                      {province}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -252,16 +257,20 @@ const CreateTrip: React.FC = () => {
                   <MapPin className="w-4 h-4" />
                   Provincia de Llegada *
                 </label>
-                <input
-                  type="text"
+                <select
                   name="arrivalProvince"
                   value={formData.arrivalProvince}
                   onChange={handleInputChange}
-                  placeholder="Ej: Provincia de la carrera"
                   required
-                  maxLength={100}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Selecciona una provincia</option>
+                  {ARGENTINE_PROVINCES.map((province) => (
+                    <option key={province} value={province}>
+                      {province}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

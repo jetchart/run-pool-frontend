@@ -14,7 +14,6 @@ interface UserFinalizationProps {
     carColor: string;
     carYear: string;
     availableSeats: string;
-    fuelType: string;
     licensePlate: string;
   };
   isEditMode?: boolean;
@@ -28,7 +27,6 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
     carColor: initialData?.carColor || '',
     carYear: initialData?.carYear || '',
     availableSeats: initialData?.availableSeats || '',
-    fuelType: initialData?.fuelType || '',
     licensePlate: initialData?.licensePlate || ''
   });
 
@@ -42,7 +40,6 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
         carColor: initialData.carColor || '',
         carYear: initialData.carYear || '',
         availableSeats: initialData.availableSeats || '',
-        fuelType: initialData.fuelType || '',
         licensePlate: initialData.licensePlate || ''
       });
     }
@@ -61,7 +58,6 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
         carColor: '',
         carYear: '',
         availableSeats: '',
-        fuelType: '',
         licensePlate: ''
       })
     }));
@@ -85,7 +81,6 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
         carColor: formData.carColor,
         carYear: formData.carYear,
         availableSeats: formData.availableSeats,
-        fuelType: formData.fuelType,
         licensePlate: formData.licensePlate
       })
     };
@@ -264,26 +259,6 @@ export function UserFinalization({ onComplete, onBack, validationErrors = [], in
                     <option value="3">3 asientos</option>
                     <option value="4">4 asientos</option>
                     <option value="5">5 asientos</option>
-                  </select>
-                </div>
-
-                {/* Tipo de combustible */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tipo de combustible <span className="text-gray-400">(opcional)</span>
-                  </label>
-                  <select
-                    name="fuelType"
-                    value={formData.fuelType}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-500"
-                  >
-                    <option value="">Selecciona tipo de combustible</option>
-                    <option value="nafta">Nafta</option>
-                    <option value="gasoil">Gasoil</option>
-                    <option value="gnc">GNC</option>
-                    <option value="electrico">Eléctrico</option>
-                    <option value="hibrido">Híbrido</option>
                   </select>
                 </div>
 
