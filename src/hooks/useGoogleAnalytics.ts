@@ -86,7 +86,7 @@ export const useGoogleAnalytics = () => {
 export const trackUserAction = (action: string, userId?: string, details?: any) => {
   ReactGA.event({
     action,
-    category: GACategory.USER_INTERACTION,
+    category: GACategory.USER,
     user_id: userId,
     ...details,
   });
@@ -95,7 +95,7 @@ export const trackUserAction = (action: string, userId?: string, details?: any) 
 export const trackTripAction = (action: string, tripId?: string, userId?: string, details?: any) => {
   ReactGA.event({
     action,
-    category: GACategory.TRIP_MANAGEMENT,
+    category: GACategory.TRIP,
     label: tripId,
     user_id: userId,
     ...details,
@@ -105,7 +105,7 @@ export const trackTripAction = (action: string, tripId?: string, userId?: string
 export const trackRaceAction = (action: string, raceId?: string, userId?: string, details?: any) => {
   ReactGA.event({
     action,
-    category: GACategory.RACE_INTERACTION,
+    category: GACategory.RACE,
     label: raceId,
     user_id: userId,
     ...details,

@@ -7,17 +7,16 @@ export enum GAHitType {
 }
 
 export enum GACategory {
-  USER_INTERACTION = 'user_interaction',
-  TRIP_MANAGEMENT = 'trip_management',
-  RACE_INTERACTION = 'race_interaction',
+  USER = 'user',
+  TRIP = 'trip',
+  RACE = 'race',
   PERFORMANCE = 'performance',
-  UI_INTERACTION = 'ui_interaction',
 }
 
 export enum GAAction {
-  LOGIN_SUCCESS = 'login_success',
-  LOGIN_ERROR = 'login_error',
-  LOGOUT = 'login_logout',
+  USER_LOGIN_SUCCESS = 'user_login_success',
+  USER_LOGIN_ERROR = 'user_login_error',
+  USER_LOGOUT = 'user_logout',
   PROFILE_COMPLETED = 'profile_completed',
   TRIP_CREATED = 'trip_created',
   TRIP_CREATION_ERROR = 'trip_creation_error',

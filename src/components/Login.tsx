@@ -10,6 +10,7 @@ import { UserCredentialDto } from '@/dtos/user-credential.dto';
 import { toast } from 'sonner';
 import { trackUserAction } from '../hooks/useGoogleAnalytics';
 import { GAAction } from '../constants/ga.enums';
+import { getStoredUser } from '@/utils/auth';
 
 declare global {
   interface ImportMeta {
@@ -29,7 +30,6 @@ export function Login() {
 
   const checkUserProfileAndRedirect = async (userData: any) => {
     const userId = userData.id || userData.userId;
-    const token = userData.token || userData.accessToken;
     
     try {
       const response = await axiosAuth.get(`/user-profiles/user/${userId}`);
@@ -39,7 +39,7 @@ export function Login() {
       });
       
       // Track successful login with complete profile
-  trackUserAction(GAAction.LOGIN_SUCCESS, userId, { 
+  trackUserAction(GAAction.USER_LOGIN_SUCCESS, userId, { 
         has_profile: true,
         login_method: 'google'
       });
@@ -53,7 +53,7 @@ export function Login() {
         });
         
         // Track successful login without complete profile
-  trackUserAction(GAAction.LOGIN_SUCCESS, userId, { 
+  trackUserAction(GAAction.USER_LOGIN_SUCCESS, userId, { 
           has_profile: false,
           login_method: 'google'
         });
@@ -92,7 +92,7 @@ export function Login() {
     } catch (error) {
       console.error('Error enviando token al backend:', error);
       // Track login error
-  trackUserAction(GAAction.LOGIN_ERROR, undefined, { 
+  trackUserAction(GAAction.USER_LOGIN_ERROR, undefined, { 
         error_type: 'backend_error' 
       });
       toast.error('Error al iniciar sesión', {
@@ -106,7 +106,7 @@ export function Login() {
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
     // Track Google login error
-  trackUserAction(GAAction.LOGIN_ERROR, undefined, { 
+  trackUserAction(GAAction.USER_LOGIN_ERROR, undefined, { 
       error_type: 'google_auth_error' 
     });
     toast.error('Error con Google', {
@@ -115,6 +115,11 @@ export function Login() {
   };
 
   const handleLogout = () => {
+    // Track logout
+  trackUserAction(GAAction.USER_LOGOUT, getStoredUser()?.id, { 
+        has_profile: true,
+        login_method: 'google'
+      });
     setUserCredential(null);
     navigate('/login');
   };
