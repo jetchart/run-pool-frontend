@@ -9,6 +9,8 @@ import { MapPin, Calendar, Star, Users, Plus } from 'lucide-react';
 import { TripResponse } from '../types/trip.types';
 import { toast } from 'sonner';
 import { formatDateTime } from '../constants/dates';
+import { checkAuthWithToast } from '../utils/auth';
+import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
 
 interface Race {
   id: number | string;
@@ -73,24 +75,15 @@ export function TripsPage() {
     loadTrips();
   }, [raceId]);
 
-  // Función para obtener el color según disponibilidad de asientos
-  const getAvailabilityColor = (availableSeats: number) => {
-    if (availableSeats >= 3) return 'bg-green-600 text-white';
-    if (availableSeats > 0) return 'bg-yellow-400 text-white';
-    return 'bg-red-600 text-white';
-  };
-
   // Función para manejar la creación del viaje con validación
   const handleCreateTrip = () => {
     // Verificar autenticación
-    if (!userCredential) {
-      toast.error('Debes iniciar sesión para crear un viaje');
-      navigate('/login');
+    if (!checkAuthWithToast(navigate, 'Debes iniciar sesión para crear un viaje')) {
       return;
     }
 
     // Verificar que tenga al menos un vehículo
-    if (!userCredential.userProfile || !userCredential.userProfile.cars || userCredential.userProfile.cars.length === 0) {
+    if (!userCredential || !userCredential.userProfile || !userCredential.userProfile.cars || userCredential.userProfile.cars.length === 0) {
       const currentPath = window.location.pathname + window.location.search;
       toast.error('Necesitas tener al menos un vehículo registrado para crear un viaje', {
         action: {
@@ -245,10 +238,10 @@ export function TripsPage() {
                     </div>
                   </div>
                 </div>
-                 <Badge className={`${getAvailabilityColor(trip.availableSeats)}`}>
-                <div className={`flex items-center text-sm `}>
+                 <Badge className={getAvailabilityColor(trip.availableSeats)}>
+                <div className="flex items-center text-sm">
                   <Users className="w-4 h-4 mr-1" />
-                  {trip.seats - trip.availableSeats} / {trip.seats}
+                  {getAvailabilityText(trip.availableSeats, trip.seats)}
                 </div>
                 </Badge>
               </div>

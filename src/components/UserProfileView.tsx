@@ -14,6 +14,7 @@ import {
   RACE_TYPE_INFO,
   UsuallyTravelRace
 } from '../types/userProfile.types';
+import { getStoredUser } from '../utils/auth';
 import { User, Car, MapPin, Trophy, Clock, Calendar, Mail, Edit, Mountain, ChevronsUp, Users, Bus, MessageCircle } from 'lucide-react';
 
 declare global {
@@ -44,7 +45,7 @@ export function UserProfileView({ userId: propUserId, isModal = false }: UserPro
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
+        const storedUser = getStoredUser();
 
         if (!storedUser) {
           if (!isModal) {

@@ -7,6 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CreateTripDto } from '../types/trip.types';
 import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
+import { getStoredUser, requireAuth } from '../utils/auth';
 
 const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
@@ -106,10 +107,9 @@ const CreateTrip: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
-      if (!storedUser) {
-        toast.error('No estás autenticado');
-        navigate('/login');
+      const storedUser = getStoredUser();
+      if (!requireAuth(navigate)) {
+        setIsLoading(false);
         return;
       }
 

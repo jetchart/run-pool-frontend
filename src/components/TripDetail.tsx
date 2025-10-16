@@ -10,6 +10,7 @@ import { UserProfileView } from './UserProfileView';
 import { toast } from 'sonner';
 import carImage from '../assets/car.png';
 import { formatDateTime } from '../constants/dates';
+import { getStoredUser, requireAuth } from '../utils/auth';
 
 const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -26,12 +27,10 @@ const TripDetail: React.FC = () => {
     
     setIsLoading(true);
     try {
-      const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
-            if (!storedUser) {
-              toast.error('No estás autenticado');
-              navigate('/login');
-              return;
-            }
+      if (!requireAuth(navigate)) {
+        setIsLoading(false);
+        return;
+      }
       const response = await axiosAuth.get(`/trips/${tripId}`);
 
       setTrip(response.data as TripResponse);
@@ -67,10 +66,9 @@ const TripDetail: React.FC = () => {
     
     setIsJoining(true);
     try {
-      const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
-      if (!storedUser) {
-        toast.error('No estás autenticado');
-        navigate('/login');
+      const storedUser = getStoredUser();
+      if (!requireAuth(navigate)) {
+        setIsJoining(false);
         return;
       }
 
@@ -109,12 +107,11 @@ const TripDetail: React.FC = () => {
     
     setIsJoining(true);
     try {
-      const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
-        if (!storedUser) {
-            toast.error('No estás autenticado');
-            navigate('/login');
-            return;
-        }
+      const storedUser = getStoredUser();
+      if (!requireAuth(navigate)) {
+        setIsJoining(false);
+        return;
+      }
 
       const passengerId = storedUser.userId;
 
@@ -456,7 +453,7 @@ const TripDetail: React.FC = () => {
 
               {/* Botón para unirse o abandonar */}
               {(() => {
-                const storedUser = localStorage.getItem('userCredential') ? JSON.parse(localStorage.getItem('userCredential')!) : null;
+                const storedUser = getStoredUser();
                 const currentUserId = storedUser?.userId;
                 
                 // Verificar si el usuario actual es el conductor
