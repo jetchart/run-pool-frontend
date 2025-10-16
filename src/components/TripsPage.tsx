@@ -8,6 +8,7 @@ import { Card } from './ui/card';
 import { MapPin, Calendar, Star, Users, Plus } from 'lucide-react';
 import { TripResponse } from '../types/trip.types';
 import { toast } from 'sonner';
+import { formatDateTime } from '../constants/dates';
 
 interface Race {
   id: number | string;
@@ -75,22 +76,8 @@ export function TripsPage() {
   // Función para obtener el color según disponibilidad de asientos
   const getAvailabilityColor = (availableSeats: number) => {
     if (availableSeats >= 3) return 'bg-green-600 text-white';
-    if (availableSeats > 0) return 'bg-yellow-300 text-white';
+    if (availableSeats > 0) return 'bg-yellow-400 text-white';
     return 'bg-red-600 text-white';
-  };
-
-  // Función para formatear la fecha
-  const formatDateTime = (departureDay: Date, departureHour: string) => {
-    const date = new Date(departureDay);
-    const dayNames = ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
-    const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-                       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    
-    const dayName = dayNames[date.getDay()];
-    const day = date.getDate();
-    const month = monthNames[date.getMonth()];
-    
-    return `${dayName}. ${day} ${month} • ${departureHour} hs`;
   };
 
   // Función para manejar la creación del viaje con validación

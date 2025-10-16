@@ -9,6 +9,7 @@ import { TripResponse, JoinTripDto } from '../types/trip.types';
 import { UserProfileView } from './UserProfileView';
 import { toast } from 'sonner';
 import carImage from '../assets/car.png';
+import { formatDateTime } from '../constants/dates';
 
 const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -58,20 +59,6 @@ const TripDetail: React.FC = () => {
   const handleCloseProfile = () => {
     setIsProfileModalOpen(false);
     setSelectedUserId(null);
-  };
-
-  // Función para formatear la fecha
-  const formatDateTime = (departureDay: Date, departureHour: string) => {
-    const date = new Date(departureDay);
-    const dayNames = ['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'];
-    const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-                       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    
-    const dayName = dayNames[date.getDay()];
-    const day = date.getDate();
-    const month = monthNames[date.getMonth()];
-    
-    return `${dayName}. ${day} ${month} • ${departureHour} hs`;
   };
 
   // Función para abandonar el viaje
