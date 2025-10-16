@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axiosAuth from '../lib/axios';
+import { clearUserId, setUserId } from '../hooks/useGoogleAnalytics';
 
 interface UserCredential {
   token?: string;
@@ -35,6 +36,23 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userCredential, setUserCredentialState] = useState<UserCredential | null>(null);
 
+  // Función para actualizar el userCredential y configurar GA
+  const setUserCredential = (credential: UserCredential | null) => {
+    setUserCredentialState(credential);
+    
+    if (credential?.userId) {
+      // Configurar userId en Google Analytics
+      setUserId(credential.userId.toString());
+      // Guardar en localStorage
+      localStorage.setItem('userCredential', JSON.stringify(credential));
+    } else {
+      // Limpiar userId de Google Analytics
+      clearUserId();
+      // Limpiar localStorage
+      localStorage.removeItem('userCredential');
+    }
+  };
+
   useEffect(() => {
     // Cargar usuario del localStorage al inicializar
     const stored = localStorage.getItem('userCredential');
@@ -42,21 +60,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const parsedCredential = JSON.parse(stored);
         setUserCredentialState(parsedCredential);
+        
+        // Configurar userId en Google Analytics para sesiones existentes
+        if (parsedCredential?.userId) {
+          setUserId(parsedCredential.userId.toString());
+        }
       } catch {
         setUserCredentialState(null);
         localStorage.removeItem('userCredential');
       }
     }
   }, []);
-
-  const setUserCredential = (user: UserCredential | null) => {
-    setUserCredentialState(user);
-    if (user) {
-      localStorage.setItem('userCredential', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('userCredential');
-    }
-  };
 
   const updateUserProfile = async () => {
     if (!userCredential?.userId && !userCredential?.id) {
@@ -82,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     setUserCredential(null);
+    clearUserId(); // Limpiar userId de Google Analytics
   };
 
   return (

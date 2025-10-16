@@ -7,12 +7,15 @@ import { Button } from './ui/button';
 import { Calendar, MapPin, ExternalLink, Copy } from 'lucide-react';
 import { RaceType, RACE_TYPE_INFO, DISTANCE_INFO } from '../types/userProfile.types';
 import { useAuth } from '../contexts/AuthContext';
+import { trackRaceAction } from '../hooks/useGoogleAnalytics';
+import { getStoredUser } from '../utils/auth';
 
 declare global {
   interface ImportMeta {
     env: {
       VITE_BACKEND_URL: any;
       VITE_GOOGLE_CLIENT_ID: string;
+      VITE_GOOGLE_GA4_MEASUREMENT_ID: string;
     };
   }
 }
@@ -52,6 +55,16 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
 
   const handleViewTrips = async () => {
     setIsCheckingProfile(true);
+    
+    const storedUser = getStoredUser();
+    const userId = storedUser?.userId?.toString();
+    
+    // Track race interaction
+    trackRaceAction('race_view_trips', race.id?.toString(), userId, {
+      race_name: race.name,
+      user_type: type, // 'passenger' or 'driver'
+      race_location: race.location
+    });
     
     try {
       navigate(`/races/${race.id}/trips`, { state: { race } });
@@ -129,7 +142,16 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
           <Button 
             variant="outline" 
             className="w-full" 
-            onClick={() => window.open(race.website, '_blank')}
+            onClick={() => {
+              const storedUser = getStoredUser();
+              const userId = storedUser?.userId?.toString();
+              
+              trackRaceAction('race_website_click', race.id?.toString(), userId, {
+                race_name: race.name,
+                website_url: race.website
+              });
+              window.open(race.website, '_blank');
+            }}
           >
             <ExternalLink className="w-4 h-4 mr-2" />
             Página del evento

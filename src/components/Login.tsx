@@ -8,12 +8,14 @@ import { Zap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { UserCredentialDto } from '@/dtos/user-credential.dto';
 import { toast } from 'sonner';
+import { trackUserAction } from '../hooks/useGoogleAnalytics';
 
 declare global {
   interface ImportMeta {
     env: {
       VITE_BACKEND_URL: any;
       VITE_GOOGLE_CLIENT_ID: string;
+      VITE_GOOGLE_GA4_MEASUREMENT_ID: string;
     };
   }
 }
@@ -25,14 +27,20 @@ export function Login() {
 
 
   const checkUserProfileAndRedirect = async (userData: any) => {
+    const userId = userData.id || userData.userId;
+    const token = userData.token || userData.accessToken;
+    
     try {
-      const userId = userData.id || userData.userId;
-      const token = userData.token || userData.accessToken;
-  
       const response = await axiosAuth.get(`/user-profiles/user/${userId}`);
 
       toast.success('¡Login exitoso!', {
         description: 'Te has logueado correctamente'
+      });
+      
+      // Track successful login with complete profile
+      trackUserAction('login_success', userId, { 
+        has_profile: true,
+        login_method: 'google'
       });
       // Usuario tiene perfil, redirigir a races
       console.log('Usuario tiene perfil, redirigiendo a races...');
@@ -41,6 +49,12 @@ export function Login() {
       if (error.response && error.response.status === 404) {
         toast.warning('¡Login exitoso!', {
           description: 'Queremos conocerte mejor, por favor completa tu perfil'
+        });
+        
+        // Track successful login without complete profile
+        trackUserAction('login_success', userId, { 
+          has_profile: false,
+          login_method: 'google'
         });
         // Usuario no tiene perfil, redirigir a crear perfil
         console.log('Usuario no tiene perfil, redirigiendo a crear perfil...');
@@ -76,6 +90,10 @@ export function Login() {
       console.log('Login backend response:', userData);
     } catch (error) {
       console.error('Error enviando token al backend:', error);
+      // Track login error
+      trackUserAction('login_error', undefined, { 
+        error_type: 'backend_error' 
+      });
       toast.error('Error al iniciar sesión', {
         description: 'No se pudo completar el login. Por favor, intenta de nuevo.'
       });
@@ -86,6 +104,10 @@ export function Login() {
 
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
+    // Track Google login error
+    trackUserAction('login_error', undefined, { 
+      error_type: 'google_auth_error' 
+    });
     toast.error('Error con Google', {
       description: 'No se pudo iniciar sesión con Google. Por favor, intenta de nuevo.'
     });

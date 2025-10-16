@@ -23,6 +23,7 @@ declare global {
     env: {
       VITE_BACKEND_URL: any;
       VITE_GOOGLE_CLIENT_ID: string;
+      VITE_GOOGLE_GA4_MEASUREMENT_ID: string;
     };
   }
 }

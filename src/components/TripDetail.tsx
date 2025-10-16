@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import carImage from '../assets/car.png';
 import { formatDateTime } from '../constants/dates';
 import { getStoredUser, requireAuth } from '../utils/auth';
+import { trackTripAction } from '@/hooks/useGoogleAnalytics';
 
 const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -63,7 +64,6 @@ const TripDetail: React.FC = () => {
   // Función para abandonar el viaje
   const handleLeaveTrip = async () => {
     if (!trip || isJoining) return;
-    
     setIsJoining(true);
     try {
       const storedUser = getStoredUser();
@@ -87,11 +87,17 @@ const TripDetail: React.FC = () => {
 
       const response = await axiosAuth.delete(`/trips/${trip.id}/passengers/${passengerId}`);
 
+      // Track GA4 event: passenger leaves trip
+      trackTripAction('passenger_left_trip', trip.id?.toString(), storedUser.userId?.toString(), {
+        race_id: trip.race.id,
+        passenger_id: passengerId,
+        departure_city: trip.departureCity,
+        arrival_city: trip.arrivalCity
+      });
+
       toast.success('Has abandonado el viaje exitosamente');
-      
       // Recargar los datos del viaje para mostrar el estado actualizado
       await loadTripDetail();
-      
     } catch (error: any) {
       console.error('Error al abandonar el viaje:', error);
       const errorMessage = error.response?.data?.message || 'Error al abandonar el viaje';
@@ -104,7 +110,6 @@ const TripDetail: React.FC = () => {
   // Función para unirse al viaje
   const handleJoinTrip = async () => {
     if (!trip || isJoining) return;
-    
     setIsJoining(true);
     try {
       const storedUser = getStoredUser();
@@ -135,12 +140,18 @@ const TripDetail: React.FC = () => {
 
       const response = await axiosAuth.post('/trips/join', joinTripData);
 
+      // Track GA4 event: passenger joins trip
+      trackTripAction('passenger_joined_trip', trip.id?.toString(), storedUser.userId?.toString(), {
+        race_id: trip.race.id,
+        passenger_id: passengerId,
+        departure_city: trip.departureCity,
+        arrival_city: trip.arrivalCity
+      });
+
       const result = response.data;
       toast.success('¡Te has unido al viaje exitosamente!');
-      
       // Recargar los datos del viaje para mostrar el estado actualizado
       await loadTripDetail();
-      
     } catch (error: any) {
       console.error('Error al unirse al viaje:', error);
       const errorMessage = error.response?.data?.message || 'Error al enviar la solicitud';

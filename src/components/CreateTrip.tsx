@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { CreateTripDto } from '../types/trip.types';
 import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
 import { getStoredUser, requireAuth } from '../utils/auth';
+import { trackTripAction } from '../hooks/useGoogleAnalytics';
 
 const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
@@ -123,7 +124,16 @@ const CreateTrip: React.FC = () => {
       // El token se agrega automáticamente por el interceptor
       const response = await axiosAuth.post('/trips', tripData);
 
-      const result = response.data;
+      const result = response.data as { id?: number };
+      
+      // Track successful trip creation
+      trackTripAction('trip_created', result.id?.toString(), storedUser.userId, {
+        race_id: tripData.raceId,
+        departure_city: tripData.departureCity,
+        arrival_city: tripData.arrivalCity,
+        seats: tripData.seats
+      });
+      
       toast.success('¡Viaje creado exitosamente!');
       
       // Redirigir de vuelta a la lista de viajes
@@ -132,6 +142,14 @@ const CreateTrip: React.FC = () => {
       
     } catch (error: any) {
       console.error('Error creando viaje:', error);
+      
+      // Track trip creation error
+      const storedUser = getStoredUser();
+      trackTripAction('trip_creation_error', undefined, storedUser.userId, {
+        race_id: formData.raceId,
+        error_message: error.response?.data?.message || 'Unknown error'
+      });
+      
       const errorMessage = error.response?.data?.message || 'Error inesperado';
       toast.error(errorMessage);
     } finally {
