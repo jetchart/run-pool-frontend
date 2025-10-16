@@ -6,7 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Clock, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CreateTripDto } from '../types/trip.types';
-import { ARGENTINE_PROVINCES } from '../constants/provinces';
+import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
 
 const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
@@ -36,13 +36,10 @@ const CreateTrip: React.FC = () => {
       return;
     }
 
-    // Pre-rellenar raceId y datos de llegada desde la carrera
+    // Solo pre-rellenar raceId, sin autocompletar ciudad/provincia de llegada
     setFormData(prev => ({
       ...prev,
-      raceId: typeof race.id === 'string' ? parseInt(race.id) : race.id,
-      // Autocompletar con la ubicación de la carrera
-      arrivalCity: race.city || '',
-      arrivalProvince: race.province || '' // Por ahora usamos la misma location, puede ser mejorado
+      raceId: typeof race.id === 'string' ? parseInt(race.id) : race.id
     }));
   }, [race, navigate]);
 
@@ -55,10 +52,22 @@ const CreateTrip: React.FC = () => {
       if (numValue < 1 || numValue > 5) return;
     }
 
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'seats' ? parseInt(value) || 5 : value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [name]: name === 'seats' ? parseInt(value) || 5 : value
+      };
+
+      // Si cambió la provincia, limpiar la ciudad correspondiente
+      if (name === 'departureProvince') {
+        newData.departureCity = '';
+      }
+      if (name === 'arrivalProvince') {
+        newData.arrivalCity = '';
+      }
+
+      return newData;
+    });
   };
 
   const validateForm = (): boolean => {
@@ -192,25 +201,8 @@ const CreateTrip: React.FC = () => {
               </div>
             </div>
 
-            {/* Ciudad y Provincia de salida */}
+            {/* Provincia y Ciudad de salida */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  Ciudad de Salida *
-                </label>
-                <input
-                  type="text"
-                  name="departureCity"
-                  value={formData.departureCity}
-                  onChange={handleInputChange}
-                  placeholder="Ej: Montevideo"
-                  required
-                  maxLength={100}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
@@ -231,27 +223,36 @@ const CreateTrip: React.FC = () => {
                   ))}
                 </select>
               </div>
-            </div>
-
-            {/* Ciudad y Provincia de llegada */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  Ciudad de Llegada *
+                  Ciudad de Salida *
                 </label>
-                <input
-                  type="text"
-                  name="arrivalCity"
-                  value={formData.arrivalCity}
+                <select
+                  name="departureCity"
+                  value={formData.departureCity}
                   onChange={handleInputChange}
-                  placeholder="Ej: Ciudad de la carrera"
                   required
-                  maxLength={100}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                  disabled={!formData.departureProvince}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">
+                    {formData.departureProvince ? 'Selecciona una ciudad' : 'Primero selecciona una provincia'}
+                  </option>
+                  {formData.departureProvince && 
+                    getCitiesByProvince(formData.departureProvince as ArgentineProvince).map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))
+                  }
+                </select>
               </div>
-              
+            </div>
+
+            {/* Provincia y Ciudad de llegada */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
@@ -270,6 +271,32 @@ const CreateTrip: React.FC = () => {
                       {province}
                     </option>
                   ))}
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  Ciudad de Llegada *
+                </label>
+                <select
+                  name="arrivalCity"
+                  value={formData.arrivalCity}
+                  onChange={handleInputChange}
+                  required
+                  disabled={!formData.arrivalProvince}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">
+                    {formData.arrivalProvince ? 'Selecciona una ciudad' : 'Primero selecciona una provincia'}
+                  </option>
+                  {formData.arrivalProvince && 
+                    getCitiesByProvince(formData.arrivalProvince as ArgentineProvince).map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
