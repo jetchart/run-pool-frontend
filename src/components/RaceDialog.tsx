@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosAuth from '../lib/axios';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
@@ -8,6 +8,7 @@ import { Calendar, MapPin, ExternalLink, Copy } from 'lucide-react';
 import { RaceType, RACE_TYPE_INFO, DISTANCE_INFO } from '../types/userProfile.types';
 import { useAuth } from '../contexts/AuthContext';
 import { trackRaceAction } from '../hooks/useGoogleAnalytics';
+import { GAAction } from '../constants/ga.enums';
 import { getStoredUser } from '../utils/auth';
 
 declare global {
@@ -27,6 +28,16 @@ interface RaceDialogProps {
 }
 
 export function RaceDialog({ children, race, type }: RaceDialogProps) {
+  // Evento GA4: ver detalle de carrera al abrir el dialog
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    const userId = storedUser?.userId?.toString();
+    trackRaceAction(GAAction.RACE_VIEW_DETAIL, race.id?.toString(), userId, {
+      race_name: race.name,
+      user_type: type,
+      race_location: race.location
+    });
+  }, []);
   const navigate = useNavigate();
   const { userCredential } = useAuth();
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
@@ -46,13 +57,6 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     return d.distance?.shortDescription || d.distance;
   });
 
-  const getTitle = () => {
-    if (type === 'passenger') {
-      return `¿Quieres ir a esta carrera?`;
-    }
-    return `¿Ofreces viaje en auto?`;
-  };
-
   const handleViewTrips = async () => {
     setIsCheckingProfile(true);
     
@@ -60,7 +64,7 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     const userId = storedUser?.userId?.toString();
     
     // Track race interaction
-    trackRaceAction('race_view_trips', race.id?.toString(), userId, {
+  trackRaceAction(GAAction.RACE_VIEW_TRIPS, race.id?.toString(), userId, {
       race_name: race.name,
       user_type: type, // 'passenger' or 'driver'
       race_location: race.location
@@ -146,7 +150,7 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
               const storedUser = getStoredUser();
               const userId = storedUser?.userId?.toString();
               
-              trackRaceAction('race_website_click', race.id?.toString(), userId, {
+              trackRaceAction(GAAction.RACE_WEBSITE_CLICK, race.id?.toString(), userId, {
                 race_name: race.name,
                 website_url: race.website
               });

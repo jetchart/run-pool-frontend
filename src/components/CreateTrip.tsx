@@ -9,6 +9,7 @@ import { CreateTripDto } from '../types/trip.types';
 import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
 import { getStoredUser, requireAuth } from '../utils/auth';
 import { trackTripAction } from '../hooks/useGoogleAnalytics';
+import { GAAction } from '../constants/ga.enums';
 
 const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
@@ -127,7 +128,7 @@ const CreateTrip: React.FC = () => {
       const result = response.data as { id?: number };
       
       // Track successful trip creation
-      trackTripAction('trip_created', result.id?.toString(), storedUser.userId, {
+  trackTripAction(GAAction.TRIP_CREATED, result.id?.toString(), storedUser.userId, {
         race_id: tripData.raceId,
         departure_city: tripData.departureCity,
         arrival_city: tripData.arrivalCity,
@@ -145,7 +146,7 @@ const CreateTrip: React.FC = () => {
       
       // Track trip creation error
       const storedUser = getStoredUser();
-      trackTripAction('trip_creation_error', undefined, storedUser.userId, {
+  trackTripAction(GAAction.TRIP_CREATION_ERROR, undefined, storedUser.userId, {
         race_id: formData.raceId,
         error_message: error.response?.data?.message || 'Unknown error'
       });

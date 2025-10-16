@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { UserCredentialDto } from '@/dtos/user-credential.dto';
 import { toast } from 'sonner';
 import { trackUserAction } from '../hooks/useGoogleAnalytics';
+import { GAAction } from '../constants/ga.enums';
 
 declare global {
   interface ImportMeta {
@@ -38,7 +39,7 @@ export function Login() {
       });
       
       // Track successful login with complete profile
-      trackUserAction('login_success', userId, { 
+  trackUserAction(GAAction.LOGIN_SUCCESS, userId, { 
         has_profile: true,
         login_method: 'google'
       });
@@ -52,7 +53,7 @@ export function Login() {
         });
         
         // Track successful login without complete profile
-        trackUserAction('login_success', userId, { 
+  trackUserAction(GAAction.LOGIN_SUCCESS, userId, { 
           has_profile: false,
           login_method: 'google'
         });
@@ -91,7 +92,7 @@ export function Login() {
     } catch (error) {
       console.error('Error enviando token al backend:', error);
       // Track login error
-      trackUserAction('login_error', undefined, { 
+  trackUserAction(GAAction.LOGIN_ERROR, undefined, { 
         error_type: 'backend_error' 
       });
       toast.error('Error al iniciar sesión', {
@@ -105,7 +106,7 @@ export function Login() {
   const handleGoogleLoginError = () => {
     console.log("Login Failed");
     // Track Google login error
-    trackUserAction('login_error', undefined, { 
+  trackUserAction(GAAction.LOGIN_ERROR, undefined, { 
       error_type: 'google_auth_error' 
     });
     toast.error('Error con Google', {

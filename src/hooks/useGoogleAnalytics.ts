@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga4';
+import { GAHitType, GACategory, GAAction } from '../constants/ga.enums';
 
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GOOGLE_GA4_MEASUREMENT_ID;
 
@@ -25,7 +26,7 @@ export const usePageTracking = (userId?: string) => {
 
   useEffect(() => {
     const pageviewData: any = {
-      hitType: 'pageview',
+      hitType: GAHitType.PAGEVIEW,
       page: location.pathname + location.search,
       title: document.title
     };
@@ -49,12 +50,12 @@ export const useGoogleAnalytics = () => {
       category,
       label,
       value,
-    });
+    }); // No enum, porque es función genérica
   };
 
   const trackPageView = (page_path: string, page_title?: string) => {
     ReactGA.send({ 
-      hitType: 'pageview', 
+      hitType: GAHitType.PAGEVIEW, 
       page: page_path,
       title: page_title 
     });
@@ -67,8 +68,8 @@ export const useGoogleAnalytics = () => {
     label?: string
   ) => {
     ReactGA.event({
-      action: 'timing_complete',
-      category: category || 'Performance',
+      action: GAHitType.TIMING,
+      category: category || GACategory.PERFORMANCE,
       label: label || name,
       value,
     });
@@ -85,7 +86,7 @@ export const useGoogleAnalytics = () => {
 export const trackUserAction = (action: string, userId?: string, details?: any) => {
   ReactGA.event({
     action,
-    category: 'user_interaction',
+    category: GACategory.USER_INTERACTION,
     user_id: userId,
     ...details,
   });
@@ -94,7 +95,7 @@ export const trackUserAction = (action: string, userId?: string, details?: any) 
 export const trackTripAction = (action: string, tripId?: string, userId?: string, details?: any) => {
   ReactGA.event({
     action,
-    category: 'trip_management',
+    category: GACategory.TRIP_MANAGEMENT,
     label: tripId,
     user_id: userId,
     ...details,
@@ -104,7 +105,7 @@ export const trackTripAction = (action: string, tripId?: string, userId?: string
 export const trackRaceAction = (action: string, raceId?: string, userId?: string, details?: any) => {
   ReactGA.event({
     action,
-    category: 'race_interaction',
+    category: GACategory.RACE_INTERACTION,
     label: raceId,
     user_id: userId,
     ...details,

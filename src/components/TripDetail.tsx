@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import carImage from '../assets/car.png';
 import { formatDateTime } from '../constants/dates';
 import { getStoredUser, requireAuth } from '../utils/auth';
+import { GAAction } from '../constants/ga.enums';
 import { trackTripAction } from '@/hooks/useGoogleAnalytics';
 
 const TripDetail: React.FC = () => {
@@ -88,7 +89,7 @@ const TripDetail: React.FC = () => {
       const response = await axiosAuth.delete(`/trips/${trip.id}/passengers/${passengerId}`);
 
       // Track GA4 event: passenger leaves trip
-      trackTripAction('passenger_left_trip', trip.id?.toString(), storedUser.userId?.toString(), {
+  trackTripAction(GAAction.TRIP_PASSENGER_LEFT, trip.id?.toString(), storedUser.userId?.toString(), {
         race_id: trip.race.id,
         passenger_id: passengerId,
         departure_city: trip.departureCity,
@@ -141,7 +142,7 @@ const TripDetail: React.FC = () => {
       const response = await axiosAuth.post('/trips/join', joinTripData);
 
       // Track GA4 event: passenger joins trip
-      trackTripAction('passenger_joined_trip', trip.id?.toString(), storedUser.userId?.toString(), {
+  trackTripAction(GAAction.TRIP_PASSENGER_JOINED, trip.id?.toString(), storedUser.userId?.toString(), {
         race_id: trip.race.id,
         passenger_id: passengerId,
         departure_city: trip.departureCity,
