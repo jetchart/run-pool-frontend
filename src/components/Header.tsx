@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Menu, CarFront, LogOut, User } from 'lucide-react';
+import { Home, Menu, CarFront, LogOut, User, Users } from 'lucide-react';
 import { Button } from './ui/button';
 import { 
   DropdownMenu,
@@ -85,6 +85,10 @@ export function Header() {
                       <User className="mr-2 h-4 w-4" />
                       <span>Mi perfil</span>
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/my-trips')} className="cursor-pointer">
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Mis Viajes</span>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Cerrar sesión</span>
@@ -126,6 +130,10 @@ export function Header() {
                   <DropdownMenuItem onClick={handleProfileClick} className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     <span>Mi perfil</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/my-trips')} className="cursor-pointer">
+                    <Users className="mr-2 h-4 w-4" />
+                    <span>Mis Viajes</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />

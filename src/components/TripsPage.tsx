@@ -2,15 +2,13 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axiosAuth, { axiosPublic } from '../lib/axios';
 import { useAuth } from '../contexts/AuthContext';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
-import { MapPin, Calendar, Star, Users, Plus } from 'lucide-react';
+import { Users, Plus } from 'lucide-react';
 import { TripResponse } from '../types/trip.types';
 import { toast } from 'sonner';
-import { formatDateTime } from '../constants/dates';
 import { checkAuthWithToast } from '../utils/auth';
-import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
+import TripCard from './TripCard';
 
 interface Race {
   id: number | string;
@@ -160,108 +158,10 @@ export function TripsPage() {
       {!isLoading && !isLoadingRace && trips.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {trips.map((trip) => (
-            <Card key={trip.id} className="p-4">
-              {/* Imagen/gráfico de ruta */}
-              <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
-                {/* SVG solo para línea y círculos */}
-                <div className="w-60 h-10 flex items-center justify-center flex-shrink-0">
-                  <svg width="240" height="40" viewBox="0 0 240 40" className="block" style={{ width: '240px', height: '40px' }}>
-                    <path 
-                      d="M25 30 Q80 5 120 25 Q160 40 215 20" 
-                      stroke="#1f2937" 
-                      strokeWidth="3" 
-                      fill="none"
-                    />
-                    <circle cx="25" cy="30" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
-                    <circle cx="215" cy="20" r="6" stroke="#000000" fill="#ffffff" strokeWidth="2" />
-                  </svg>
-                </div>
-                
-                {/* Textos posicionados absolutamente cerca de los círculos */}
-                <span className="absolute text-xs text-gray-700 text-center transform -translate-x-1/2" 
-                      style={{ left: 'calc(50% - 95px)', bottom: '14px' }}>
-                  {trip.departureCity}
-                </span>
-                <span className="absolute text-xs text-gray-700 text-center transform -translate-x-1/2" 
-                      style={{ left: 'calc(50% + 95px)', top: '22px' }}>
-                  {trip.arrivalCity}
-                </span>
-              </div>
-
-              {/* Origen */}
-              <div className="flex items-start mb-3">
-                <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500" />
-                <div>
-                  <div className="font-medium text-sm">{trip.departureCity}</div>
-                  <div className="text-xs text-gray-500">{trip.departureProvince}</div>
-                </div>
-              </div>
-
-              {/* Destino */}
-              <div className="flex items-start mb-3">
-                <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500" />
-                <div>
-                  <div className="font-medium text-sm">
-                    {trip.arrivalCity}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {trip.arrivalProvince}
-                  </div>
-                </div>
-              </div>
-
-              {/* Fecha y hora */}
-              <div className="flex items-center text-sm text-gray-600 mb-4">
-                <Calendar className="w-4 h-4 mr-2" />
-                {formatDateTime(trip.departureDay, trip.departureHour)}
-              </div>
-
-              {/* Driver info */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium mr-3 overflow-hidden">
-                    {trip.driver.pictureUrl ? (
-                      <img 
-                        src={trip.driver.pictureUrl} 
-                        alt={trip.driver.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>{trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}</span>
-                    )}
-                  </div>
-                  <div>
-                    <div className="font-medium text-sm">{trip.driver.name}</div>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <Star className="w-3 h-3 mr-1 fill-current text-yellow-400" />
-                      5.0 (nuevo)
-                    </div>
-                  </div>
-                </div>
-                 <Badge className={getAvailabilityColor(trip.availableSeats)}>
-                <div className="flex items-center text-sm">
-                  <Users className="w-4 h-4 mr-1" />
-                  {getAvailabilityText(trip.availableSeats, trip.seats)}
-                </div>
-                </Badge>
-              </div>
-
-              {/* Descripción si existe */}
-              {trip.description && (
-                <div className="text-xs text-gray-500 mb-4 line-clamp-2">
-                  {trip.description}
-                </div>
-              )}
-
-              {/* Botón */}
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => navigate(`/trips/${trip.id}`)}
-              >
-                Ver viaje
-              </Button>
-            </Card>
+            <TripCard 
+              key={trip.id} 
+              trip={trip}
+            />
           ))}
         </div>
       )}

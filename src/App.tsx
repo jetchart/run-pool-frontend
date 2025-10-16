@@ -16,6 +16,7 @@ import { Login } from './components/Login';
 import { UserProfile } from './components/UserProfile';
 import { UserProfileView } from './components/UserProfileView';
 import { UsersPage } from './components/UsersPage';
+import { MyTripsPage } from './components/MyTripsPage';
 import CreateTrip from './components/CreateTrip';
 import TripDetail from './components/TripDetail';
 import { AuthProvider } from './contexts/AuthContext';
@@ -36,6 +37,7 @@ function App() {
               <Route path="/profile/view" element={<UserProfileView />} />
               <Route path="/profile/view/:userId" element={<UserProfileView />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/my-trips" element={<MyTripsPage />} />
               <Route path="/trips/create" element={<CreateTrip />} />
               <Route path="/trips/:tripId" element={<TripDetail />} />
               <Route path="/style-guide" element={<StyleGuide />} />
