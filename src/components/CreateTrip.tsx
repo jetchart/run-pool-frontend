@@ -22,7 +22,7 @@ const CreateTrip: React.FC = () => {
     arrivalCity: '',
     arrivalProvince: '',
     description: '',
-    seats: 1
+    seats: 5
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -45,18 +45,18 @@ const CreateTrip: React.FC = () => {
     }));
   }, [race, navigate]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     
     // Validaciones específicas
     if (name === 'seats') {
       const numValue = parseInt(value);
-      if (numValue < 1 || numValue > 8) return;
+      if (numValue < 1 || numValue > 5) return;
     }
 
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'seats' ? parseInt(value) || 1 : value
+      [name]: name === 'seats' ? parseInt(value) || 5 : value
     }));
   };
 
@@ -66,8 +66,8 @@ const CreateTrip: React.FC = () => {
       return false;
     }
 
-    if (formData.seats < 1 || formData.seats > 8) {
-      toast.error('Los asientos disponibles deben estar entre 1 y 8');
+    if (formData.seats < 1 || formData.seats > 5) {
+      toast.error('Los asientos disponibles deben estar entre 1 y 5');
       return false;
     }
 
@@ -271,16 +271,19 @@ const CreateTrip: React.FC = () => {
                 <Users className="w-4 h-4" />
                 Asientos Disponibles *
               </label>
-              <input
-                type="number"
+              <select
                 name="seats"
-                value={formData.seats}
+                value={formData.seats.toString()}
                 onChange={handleInputChange}
-                min="1"
-                max="8"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="1">1 asiento</option>
+                <option value="2">2 asientos</option>
+                <option value="3">3 asientos</option>
+                <option value="4">4 asientos</option>
+                <option value="5">5 asientos</option>
+              </select>
             </div>
 
             {/* Descripción */}
