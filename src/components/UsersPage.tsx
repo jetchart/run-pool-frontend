@@ -208,15 +208,17 @@ export function UsersPage() {
                       </p>
                     </div>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleViewProfile(user.id)}
-                    className="flex items-center gap-1"
-                  >
-                    <Eye className="w-4 h-4" />
-                    Ver
-                  </Button>
+                  {user.userProfile && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewProfile(user.id)}
+                      className="flex items-center gap-1"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Ver
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               
