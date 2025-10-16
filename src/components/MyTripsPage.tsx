@@ -64,7 +64,7 @@ export function MyTripsPage() {
       </div>
 
       <div className="mb-4 text-gray-600">
-        {isLoading ? 'Cargando...' : `${trips.length} viajes como pasajero`}
+        {isLoading ? 'Cargando...' : `${trips.length} viajes`}
       </div>
 
       {/* Estado de carga */}
