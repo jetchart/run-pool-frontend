@@ -50,7 +50,7 @@ export const useGoogleAnalytics = () => {
       category,
       label,
       value,
-    }); // No enum, porque es función genérica
+    });
   };
 
   const trackPageView = (page_path: string, page_title?: string) => {
@@ -89,10 +89,12 @@ export const trackUserAction = (
 ) => {
   if (userId) {
     ReactGA.gtag("set", { user_id: userId });
+  } else {
+    ReactGA.gtag("set", { user_id: '1234567890' });
   }
 
   ReactGA.event(action, {
-    category: "USER",     // opcional: si querés mantener agrupación
+    category: GACategory.USER,
     ...details,
   });
 };
@@ -108,8 +110,7 @@ export const trackTripAction = (
   }
 
   ReactGA.event(action, {
-    category: "TRIP",      // opcional
-    trip_id: tripId,       // mejor usar como param personalizado
+    category: GACategory.TRIP,
     ...details,
   });
 };
@@ -125,6 +126,7 @@ export const trackRaceAction = (
   }
 
   ReactGA.event(action, {
+    category: GACategory.RACE,
     race_id: raceId,
     ...details,
   });
