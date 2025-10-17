@@ -109,6 +109,7 @@ export const trackTripAction = (
 
   ReactGA.event(action, {
     category: GACategory.TRIP,
+    trip_id: tripId,
     ...details,
   });
 };
@@ -121,6 +122,7 @@ export const trackRaceAction = (
 ) => {
   if (userId) {
     ReactGA.set({ user_id: userId });
+    }
 
   ReactGA.event(action, {
     category: GACategory.RACE,
