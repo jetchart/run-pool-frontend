@@ -84,20 +84,24 @@ export const useGoogleAnalytics = () => {
 
 // Funciones utilitarias para eventos comunes
 export const trackUserAction = (action: string, userId?: string, details?: any) => {
+  if (userId) {
+    ReactGA.set({ user_id: userId });
+  }
   ReactGA.event({
     action,
     category: GACategory.USER,
-    user_id: userId,
     ...details,
   });
 };
 
 export const trackTripAction = (action: string, tripId?: string, userId?: string, details?: any) => {
+  if (userId) {
+    ReactGA.set({ user_id: userId });
+  }
   ReactGA.event({
     action,
     category: GACategory.TRIP,
     label: tripId,
-    user_id: userId,
     ...details,
   });
 };
@@ -110,4 +114,8 @@ export const trackRaceAction = (action: string, raceId?: string, userId?: string
     user_id: userId,
     ...details,
   });
+  // Setear el user_id global si lo tenés
+  if (userId) {
+    ReactGA.set({ user_id: userId });
+  }
 };
