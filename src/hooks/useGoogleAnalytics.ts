@@ -106,14 +106,18 @@ export const trackTripAction = (action: string, tripId?: string, userId?: string
   });
 };
 
-export const trackRaceAction = (action: string, raceId?: string, userId?: string, details?: any) => {
+export const trackRaceAction = (
+  action: string,
+  raceId?: string,
+  userId?: string,
+  details?: Record<string, any>
+) => {
   if (userId) {
-    ReactGA.set({ user_id: userId });
+    ReactGA.gtag("set", { user_id: userId });
   }
-  ReactGA.event({
-    action,
-    category: GACategory.RACE,
-    label: raceId,
+
+  ReactGA.event(action, {
+    race_id: raceId,
     ...details,
   });
 };
