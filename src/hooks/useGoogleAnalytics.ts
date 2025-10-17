@@ -88,9 +88,7 @@ export const trackUserAction = (
   details?: Record<string, any>
 ) => {
   if (userId) {
-    ReactGA.gtag("set", { user_id: userId });
-  } else {
-    ReactGA.gtag("set", { user_id: '1234567890' });
+    ReactGA.set({ user_id: userId });
   }
 
   ReactGA.event(action, {
@@ -106,7 +104,7 @@ export const trackTripAction = (
   details?: Record<string, any>
 ) => {
   if (userId) {
-    ReactGA.gtag("set", { user_id: userId });
+    ReactGA.set({ user_id: userId });
   }
 
   ReactGA.event(action, {
@@ -122,8 +120,7 @@ export const trackRaceAction = (
   details?: Record<string, any>
 ) => {
   if (userId) {
-    ReactGA.gtag("set", { user_id: userId });
-  }
+    ReactGA.set({ user_id: userId });
 
   ReactGA.event(action, {
     category: GACategory.RACE,
