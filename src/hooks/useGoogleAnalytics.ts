@@ -107,15 +107,13 @@ export const trackTripAction = (action: string, tripId?: string, userId?: string
 };
 
 export const trackRaceAction = (action: string, raceId?: string, userId?: string, details?: any) => {
+  if (userId) {
+    ReactGA.set({ user_id: userId });
+  }
   ReactGA.event({
     action,
     category: GACategory.RACE,
     label: raceId,
-    user_id: userId,
     ...details,
   });
-  // Setear el user_id global si lo tenés
-  if (userId) {
-    ReactGA.set({ user_id: userId });
-  }
 };

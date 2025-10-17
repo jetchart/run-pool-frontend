@@ -28,7 +28,6 @@ interface RaceDialogProps {
 }
 
 export function RaceDialog({ children, race, type }: RaceDialogProps) {
-  // Evento GA4: ver detalle de carrera al abrir el dialog
   useEffect(() => {
     const storedUser = getStoredUser();
     const userId = storedUser?.userId?.toString();
@@ -63,10 +62,9 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     const storedUser = getStoredUser();
     const userId = storedUser?.userId?.toString();
     
-    // Track race interaction
-  trackRaceAction(GAAction.RACE_VIEW_TRIPS, race.id?.toString(), userId, {
+    trackRaceAction(GAAction.RACE_VIEW_TRIPS, race.id?.toString(), userId, {
       race_name: race.name,
-      user_type: type, // 'passenger' or 'driver'
+      user_type: type,
       race_location: race.location
     });
     
