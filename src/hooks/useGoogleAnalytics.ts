@@ -82,26 +82,34 @@ export const useGoogleAnalytics = () => {
   };
 };
 
-// Funciones utilitarias para eventos comunes
-export const trackUserAction = (action: string, userId?: string, details?: any) => {
+export const trackUserAction = (
+  action: string,
+  userId?: string,
+  details?: Record<string, any>
+) => {
   if (userId) {
-    ReactGA.set({ user_id: userId });
+    ReactGA.gtag("set", { user_id: userId });
   }
-  ReactGA.event({
-    action,
-    category: GACategory.USER,
+
+  ReactGA.event(action, {
+    category: "USER",     // opcional: si querés mantener agrupación
     ...details,
   });
 };
 
-export const trackTripAction = (action: string, tripId?: string, userId?: string, details?: any) => {
+export const trackTripAction = (
+  action: string,
+  tripId?: string,
+  userId?: string,
+  details?: Record<string, any>
+) => {
   if (userId) {
-    ReactGA.set({ user_id: userId });
+    ReactGA.gtag("set", { user_id: userId });
   }
-  ReactGA.event({
-    action,
-    category: GACategory.TRIP,
-    label: tripId,
+
+  ReactGA.event(action, {
+    category: "TRIP",      // opcional
+    trip_id: tripId,       // mejor usar como param personalizado
     ...details,
   });
 };
