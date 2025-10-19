@@ -93,7 +93,7 @@ export function Header() {
                     {/* Crear Carrera solo para administradores */}
                     {userCredential?.administrator && (
                       <DropdownMenuItem onClick={() => navigate('/races/create')} className="cursor-pointer">
-                        <Trophy className="mr-2 h-4 w-4" />
+                        <Network className="mr-2 h-4 w-4" />
                         <span>Crear Carrera</span>
                       </DropdownMenuItem>
                     )}
