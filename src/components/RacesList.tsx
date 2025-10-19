@@ -65,7 +65,7 @@ export function RacesList() {
                   <CardContent className="flex-1 flex flex-col p-5">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-base font-semibold">{race.name}</span>
-                      {userCredential?.accessToken && (
+                      {userCredential?.administrator && (
                         <Badge
                           variant="outline"
                           className="flex cursor-pointer items-center gap-1 text-xs ml-auto bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200 hover:text-blue-900 transition-colors"
