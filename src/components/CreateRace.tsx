@@ -196,6 +196,11 @@ const CreateRace: React.FC = () => {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Sitio web *</label>
+              <input type="url" value={form.website} onChange={e => onChange('website', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Provincia *</label>
@@ -234,13 +239,9 @@ const CreateRace: React.FC = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Sitio web *</label>
-              <input type="url" value={form.website} onChange={e => onChange('website', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
-            </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Start Location *</label>
+              <label className="text-sm font-medium">Ubicación a mostrar *</label>
               <input value={form.location} onChange={e => onChange('location', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
             </div>
 
