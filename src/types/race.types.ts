@@ -17,7 +17,6 @@ export interface CreateRaceDto {
   country: string;
   location: string;
   website: string;
-  startLocation: string;
   raceType: RaceType;
   raceDistances: CreateRaceDistance[];
 }
