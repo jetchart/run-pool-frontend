@@ -90,13 +90,6 @@ export function Header() {
                       <Users className="mr-2 h-4 w-4" />
                       <span>Mis Viajes</span>
                     </DropdownMenuItem>
-                    {/* Crear Carrera solo para administradores */}
-                
-                      <DropdownMenuItem onClick={() => navigate('/races/create')} className="cursor-pointer">
-                        <Users className="mr-2 h-4 w-4" />
-                        <span>Crear Carrera</span>
-                      </DropdownMenuItem>
-                    
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Cerrar sesión</span>

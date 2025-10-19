@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { axiosPublic } from '../lib/axios';
 import { SkeletonCard } from './SkeletonCard';
 import { RaceDialog } from './RaceDialog';
-import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp, Edit } from 'lucide-react';
-import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO } from '../types/userProfile.types';
+import { Calendar, MapPin, CarFront, Mountain, HandHelping, ChevronsUp, Edit } from 'lucide-react';
+import { RaceType, RACE_TYPE_INFO, DISTANCE_INFO } from '../types/userProfile.types';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from './ui/button';
 
 export function RacesList() {
   const [races, setRaces] = useState<any[]>([]);
@@ -30,7 +31,18 @@ export function RacesList() {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h3 className="text-left">Próximas Carreras</h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-left">Próximas Carreras</h3>
+        {userCredential?.administrator && (
+          <Button
+            variant="default"
+            className="flex items-center"
+            onClick={() => navigate('/races/create')}
+          >
+            Crear Carrera
+          </Button>
+        )}
+      </div>
       <div className="muted mt-2 mb-6 flex items-center gap-2">
         <span>{races.length} carrera{races.length === 1 ? '' : 's'} disponible{races.length === 1 ? '' : 's'}</span>
       </div>
