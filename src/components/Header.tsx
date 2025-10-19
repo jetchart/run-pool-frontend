@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Menu, CarFront, LogOut, User, Users } from 'lucide-react';
+import { Home, Menu, CarFront, LogOut, User, Users, UserRoundCog, Network } from 'lucide-react';
 import { Button } from './ui/button';
 import { 
   DropdownMenu,
@@ -90,6 +90,13 @@ export function Header() {
                       <Users className="mr-2 h-4 w-4" />
                       <span>Mis Viajes</span>
                     </DropdownMenuItem>
+                    {/* Crear Carrera solo para administradores */}
+                    {userCredential?.administrator && (
+                      <DropdownMenuItem onClick={() => navigate('/races/create')} className="cursor-pointer">
+                        <Network className="mr-2 h-4 w-4" />
+                        <span>Crear Carrera</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Cerrar sesión</span>

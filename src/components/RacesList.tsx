@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { axiosPublic } from '../lib/axios';
 import { SkeletonCard } from './SkeletonCard';
 import { RaceDialog } from './RaceDialog';
-import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp } from 'lucide-react';
+import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp, Edit } from 'lucide-react';
 import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO } from '../types/userProfile.types';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function RacesList() {
   const [races, setRaces] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { userCredential, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
@@ -53,7 +57,6 @@ export function RacesList() {
               const distances = (race.distances || []).map((d: any) => {
                 return DISTANCE_INFO[d.distance as keyof typeof DISTANCE_INFO]?.shortDescription;
               });
-              const inscriptionOpen = race.inscriptionStatus === 'open' || race.inscriptionOpen;
               const description = race.description?.length > 90 ? race.description.slice(0, 87) + '...' : race.description;
               
               return (
@@ -62,11 +65,15 @@ export function RacesList() {
                   <CardContent className="flex-1 flex flex-col p-5">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-base font-semibold">{race.name}</span>
-                      {inscriptionOpen && (
-                        <span className="ml-2 flex items-center gap-1 text-green-600 small">
-                          <CheckCircle className="w-3 h-3 text-green-500" />
-                          Inscripciones abiertas
-                        </span>
+                      {userCredential?.accessToken && (
+                        <Badge
+                          variant="outline"
+                          className="flex cursor-pointer items-center gap-1 text-xs ml-auto bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200 hover:text-blue-900 transition-colors"
+                          onClick={() => race.id && navigate(`/races/${race.id}/update`)}
+                        >
+                          <Edit className="w-3 h-3 text-blue-500" />
+                          Editar
+                        </Badge>
                       )}
                     </div>
                     <span className="text-sm font-normal">{description}</span>
