@@ -20,6 +20,7 @@ import { UsersPage } from './components/UsersPage';
 import { MyTripsPage } from './components/MyTripsPage';
 import CreateTrip from './components/CreateTrip';
 import TripDetail from './components/TripDetail';
+import CreateRace from './components/CreateRace';
 import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from './components/ui/sonner';
 import { usePageTracking, initializeGA, setUserId } from './hooks/useGoogleAnalytics';
@@ -66,6 +67,7 @@ function AppContent() {
           <Route path="/users" element={<UsersPage />} />
           <Route path="/my-trips" element={<MyTripsPage />} />
           <Route path="/trips/create" element={<CreateTrip />} />
+          <Route path="/races/create" element={<CreateRace />} />
           <Route path="/trips/:tripId" element={<TripDetail />} />
           <Route path="/style-guide" element={<StyleGuide />} />
           {/* Página 404 */}
