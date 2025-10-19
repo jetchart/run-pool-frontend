@@ -91,12 +91,12 @@ export function Header() {
                       <span>Mis Viajes</span>
                     </DropdownMenuItem>
                     {/* Crear Carrera solo para administradores */}
-                    {userCredential?.administrator && (
+                
                       <DropdownMenuItem onClick={() => navigate('/races/create')} className="cursor-pointer">
                         <Network className="mr-2 h-4 w-4" />
                         <span>Crear Carrera</span>
                       </DropdownMenuItem>
-                    )}
+                    
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Cerrar sesión</span>
