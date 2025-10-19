@@ -93,7 +93,7 @@ export function Header() {
                     {/* Crear Carrera solo para administradores */}
                 
                       <DropdownMenuItem onClick={() => navigate('/races/create')} className="cursor-pointer">
-                        <Network className="mr-2 h-4 w-4" />
+                        <Users className="mr-2 h-4 w-4" />
                         <span>Crear Carrera</span>
                       </DropdownMenuItem>
                     
