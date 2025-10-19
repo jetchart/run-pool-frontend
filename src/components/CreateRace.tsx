@@ -63,7 +63,6 @@ const CreateRace: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      // Enviar las fechas como YYYY-MM-DD (sin horario) tal como las provee el input type="date"
       const payload = {
         ...form,
         startDate: form.startDate,

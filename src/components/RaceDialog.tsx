@@ -45,7 +45,8 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     weekday: 'long', 
     day: '2-digit', 
     month: 'long', 
-    year: 'numeric' 
+    year: 'numeric',
+    timeZone: 'UTC'
   });
   const distances = (race.distances || []).map((d: any) => {
     // Si distance es un enum, usar directamente DISTANCE_INFO
