@@ -33,16 +33,19 @@ const CreateRace: React.FC = () => {
   });
 
   const onChange = (k: keyof CreateRaceDto, v: any) => {
-    setForm(prev => ({ ...prev, [k]: v }));
-
-    if (k === 'province' || k === 'city') {
-      let newLocation = ``;
-      if (v) {
-          if (k === 'province' && form.city) newLocation = `${form.city}, ${v}`;
-          if (k === 'city' && form.province) newLocation = `${v}, ${form.province}`;
+    setForm(prev => {
+      let updated = { ...prev, [k]: v };
+      // Si cambia la provincia, limpiar ciudad
+      if (k === 'province') {
+        updated.city = '';
+        updated.location = '';
       }
-      setForm(prev => ({ ...prev, location: newLocation }));
-    }
+      // Actualizar location si cambia provincia o ciudad
+      if (k === 'city') {
+        updated.location = `${v}, ${prev.province}`;
+      }
+      return updated;
+    });
   };
 
   const updateDistance = (index: number, value: Distance) => {
@@ -198,7 +201,7 @@ const CreateRace: React.FC = () => {
                 <label className="text-sm font-medium">Provincia *</label>
                 <select
                   value={form.province}
-                  onChange={e => { onChange('province', e.target.value); onChange('city', ''); }}
+                  onChange={e => onChange('province', e.target.value)}
                   required
                   className="w-full px-3 py-2 border rounded-md"
                 >
