@@ -4,7 +4,6 @@ import { SkeletonCard } from './SkeletonCard';
 import { RaceDialog } from './RaceDialog';
 import { Calendar, MapPin, CheckCircle, CarFront, Mountain, HandHelping, ChevronsUp } from 'lucide-react';
 import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO } from '../types/userProfile.types';
-import { formatDateOnly } from '../constants/dates';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 

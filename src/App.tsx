@@ -68,6 +68,7 @@ function AppContent() {
           <Route path="/my-trips" element={<MyTripsPage />} />
           <Route path="/trips/create" element={<CreateTrip />} />
           <Route path="/races/create" element={<CreateRace />} />
+          <Route path="/races/:raceId/update" element={<CreateRace />} />
           <Route path="/trips/:tripId" element={<TripDetail />} />
           <Route path="/style-guide" element={<StyleGuide />} />
           {/* Página 404 */}

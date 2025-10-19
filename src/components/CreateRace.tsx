@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import axiosAuth from '../lib/axios';
+import React, { useState, useEffect } from 'react';
+import axiosAuth, { axiosPublic } from '../lib/axios';
 import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO, type CreateRaceDto, type CreateRaceDistance } from '../types/race.types';
 import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
@@ -12,6 +12,10 @@ const emptyDistance = (): CreateRaceDistance => ({ distanceId: Distance.FIVE_K }
 
 const CreateRace: React.FC = () => {
   const navigate = useNavigate();
+  const { raceId } = useParams<{ raceId: string }>();
+  const isEditing = Boolean(raceId);
+
+  const [isLoadingRace, setIsLoadingRace] = useState(false);
 
   const [form, setForm] = useState<CreateRaceDto>({
     imageUrl: '',
@@ -22,9 +26,8 @@ const CreateRace: React.FC = () => {
     city: '',
     province: '',
     country: 'Argentina',
-    location: '',
     website: '',
-    startLocation: '',
+    location: '',
     raceType: RaceType.STREET,
     raceDistances: [emptyDistance()]
   });
@@ -44,7 +47,7 @@ const CreateRace: React.FC = () => {
   const removeDistance = (index: number) => setForm(prev => ({ ...prev, raceDistances: prev.raceDistances.filter((_, i) => i !== index) }));
 
   const validateForm = (): boolean => {
-    if (!form.imageUrl || !form.name || !form.description || !form.startDate || !form.endDate || !form.city || !form.province || !form.country || !form.location || !form.website || !form.startLocation) {
+    if (!form.imageUrl || !form.name || !form.description || !form.startDate || !form.endDate || !form.city || !form.province || !form.country || !form.website || !form.location) {
       toast.error('Por favor completa todos los campos obligatorios');
       return false;
     }
@@ -57,22 +60,73 @@ const CreateRace: React.FC = () => {
     return true;
   };
 
+  useEffect(() => {
+    // Si estamos en modo edición, cargar la carrera
+    const loadRace = async () => {
+      if (!raceId) return;
+      setIsLoadingRace(true);
+      try {
+        const res = await axiosPublic.get(`/races/${raceId}`);
+        const race = res.data as any;
+
+        // Mapeo de campos del backend al formulario
+        const startDate = race.startDate ? (race.startDate.includes('T') ? race.startDate.split('T')[0] : race.startDate) : '';
+        const endDate = race.endDate ? (race.endDate.includes('T') ? race.endDate.split('T')[0] : race.endDate) : '';
+
+        const raceDistances = ((race.distances) || (race.raceDistances) || []).map((d: any) => {
+          // soportar distintas formas: { distance } | { distanceId } | número
+          const id = d.distance ?? d.distanceId ?? d.id ?? d;
+          return { distanceId: Number(id) } as CreateRaceDistance;
+        });
+
+        setForm({
+          imageUrl: race.imageUrl || '',
+          name: race.name || '',
+          description: race.description || '',
+          startDate,
+          endDate,
+          city: race.city,
+          province: race.province || '',
+          country: race.country || 'Argentina',
+          website: race.website || '',
+            location: race.location || '',
+          raceType: race.raceType ?? RaceType.STREET,
+          raceDistances: raceDistances.length ? raceDistances : [emptyDistance()]
+        });
+      } catch (error: any) {
+        console.error('Error cargando carrera para edición:', error);
+        toast.error('No se pudo cargar la carrera para editar');
+        navigate('/');
+      } finally {
+        setIsLoadingRace(false);
+      }
+    };
+
+    loadRace();
+  }, [raceId, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
     try {
+      // Enviar las fechas usando mediodía UTC para evitar desplazamientos por zona horaria
       const payload = {
         ...form,
-        startDate: form.startDate,
-        endDate: form.endDate,
+        startDate: form.startDate ? `${form.startDate}T12:00:00Z` : form.startDate,
+        endDate: form.endDate ? `${form.endDate}T12:00:00Z` : form.endDate,
       } as CreateRaceDto;
 
-      await axiosAuth.post('/races', payload);
-      toast.success('Carrera creada correctamente');
-      // Redirigir a la lista de carreras
-      navigate('/');
+      if (isEditing && raceId) {
+        await axiosAuth.put(`/races/${raceId}`, payload);
+        toast.success('Carrera actualizada correctamente');
+        navigate(`/races/${raceId}/trips`);
+      } else {
+        await axiosAuth.post('/races', payload);
+        toast.success('Carrera creada correctamente');
+        navigate('/');
+      }
     } catch (error: any) {
       console.error('Error creando carrera:', error);
       const message = error?.response?.data?.message || 'Error inesperado al crear la carrera';
@@ -167,18 +221,13 @@ const CreateRace: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Ubicación *</label>
-              <input value={form.location} onChange={e => onChange('location', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
-            </div>
-
-            <div className="space-y-2">
               <label className="text-sm font-medium">Sitio web *</label>
               <input type="url" value={form.website} onChange={e => onChange('website', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Start Location *</label>
-              <input value={form.startLocation} onChange={e => onChange('startLocation', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+              <input value={form.location} onChange={e => onChange('location', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
             </div>
 
             <div className="space-y-2">
@@ -206,19 +255,19 @@ const CreateRace: React.FC = () => {
               ))}
 
               <div>
-                <Button type="button" size="sm" onClick={addDistance}>Añadir distancia</Button>
+                <Button type="button" onClick={addDistance}>Añadir distancia</Button>
               </div>
             </fieldset>
 
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">Cancelar</Button>
-              <Button type="submit" className="flex-1">Crear Carrera</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+              <Button type="submit" className="flex-1">Guardar</Button>
+             </div>
+           </form>
+         </CardContent>
+       </Card>
+     </div>
+   );
+ };
 
-export default CreateRace;
+ export default CreateRace;
