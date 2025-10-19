@@ -32,7 +32,18 @@ const CreateRace: React.FC = () => {
     raceDistances: [emptyDistance()]
   });
 
-  const onChange = (k: keyof CreateRaceDto, v: any) => setForm(prev => ({ ...prev, [k]: v }));
+  const onChange = (k: keyof CreateRaceDto, v: any) => {
+    setForm(prev => ({ ...prev, [k]: v }));
+
+    if (k === 'province' || k === 'city') {
+      let newLocation = ``;
+      if (v) {
+          if (k === 'province' && form.city) newLocation = `${form.city}, ${v}`;
+          if (k === 'city' && form.province) newLocation = `${v}, ${form.province}`;
+      }
+      setForm(prev => ({ ...prev, location: newLocation }));
+    }
+  };
 
   const updateDistance = (index: number, value: Distance) => {
     setForm(prev => {
