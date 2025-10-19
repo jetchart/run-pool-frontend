@@ -149,9 +149,6 @@ export function Header() {
                 </Button>
               </Link>
             )}
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
           </div>
         </div>
       </div>
