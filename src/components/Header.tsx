@@ -137,10 +137,10 @@ export function Header() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <div className="flex items-center justify-start gap-2 p-2">
                     <div className="flex flex-col space-y-1 leading-none">
-                      <span className="font-medium">{userCredential.name || 'Usuario'}</span>
-                      <span className="w-[200px] truncate text-sm text-muted-foreground">
+                      <div className="font-medium">{userCredential.name || 'Usuario'}</div>
+                      <div className="w-[200px] truncate text-sm text-muted-foreground">
                         {userCredential.email || 'No email'}
-                      </span>
+                      </div>
                     </div>
                   </div>
                   <DropdownMenuSeparator />
