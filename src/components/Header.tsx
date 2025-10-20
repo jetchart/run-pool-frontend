@@ -65,10 +65,18 @@ export function Header() {
               <div className="ml-4">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" >
+                    <Button variant="outline" className="cursor-pointer">
                       <div className="flex items-center justify-center font-medium gap-2">
-                        <User className="w-5 h-5" />
-                        {getInitials(userCredential.name || 'Usuario')}
+                        {userCredential.pictureUrl ? (
+                          <img
+                            src={userCredential.pictureUrl}
+                            alt={userCredential.givenName}
+                            className="w-6 h-6 rounded-full object-cover border"
+                          />
+                        ) : (
+                          <User className="w-5 h-5" />
+                        )}
+                        <span>{userCredential.givenName}</span>
                       </div>
                     </Button>
                   </DropdownMenuTrigger>
