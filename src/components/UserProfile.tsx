@@ -43,7 +43,7 @@ interface BasicInfoData {
 
 interface PreferencesData {
   raceTypes: string[];
-  distances: string[];
+  distances: Distance[];
   travelStyle: string;
 }
 
@@ -104,7 +104,7 @@ export function UserProfile() {
       },
       preferences: {
         raceTypes: profile.preferredRaceTypes?.map((rt: any) => mapRaceTypeToForm(rt.raceType)) || [],
-        distances: profile.preferredDistances?.map((d: any) => mapDistanceToForm(d.distance)) || [],
+        distances: profile.preferredDistances?.map((d: any) => d.distance) || [],
         travelStyle: mapTravelStyleToForm(profile.usuallyTravelRace)
       },
       finalization: {
@@ -226,19 +226,7 @@ export function UserProfile() {
     }
   };
 
-  const mapDistanceToForm = (distance: any): string => {
-    switch (distance) {
-      case 5:
-      case 'FIVE_K': return '5';
-      case 20:
-      case 'TEN_K': return '20';
-      case 21:
-      case 'TWENTY_ONE_K': return '21';
-      case 42:
-      case 'FORTY_TWO_K': return '42';
-      default: return '5';
-    }
-  };
+  // No longer needed: mapDistanceToForm
 
   const mapTravelStyleToForm = (travelStyle: any): string => {
     switch (travelStyle) {
@@ -290,17 +278,8 @@ export function UserProfile() {
     }));
   };
 
-  const mapDistances = (distances: string[]): CreateUserProfileDistanceDto[] => {
-    const distanceMap: { [key: string]: Distance } = {
-      '5': Distance.FIVE_K,      // 5
-      '10': Distance.TEN_K,      // 10
-      '21': Distance.TWENTY_ONE_K, // 21
-      '42': Distance.FORTY_TWO_K, // 42
-    };
-
-    return distances.map(distance => ({
-      distance: distanceMap[distance] || Distance.FIVE_K
-    }));
+  const mapDistances = (distances: Distance[]): CreateUserProfileDistanceDto[] => {
+    return distances.map(distance => ({ distance }));
   };
 
   const buildCompleteDTO = (completeUserData?: any): CreateCompleteUserProfileDto => {
@@ -333,7 +312,7 @@ export function UserProfile() {
       phoneCountryCode: basicInfo.phoneCountryCode || '54',
       phoneNumber: basicInfo.phoneNumber || '',
       preferredRaceTypes: mapRaceTypes(preferences.raceTypes || []),
-      preferredDistances: mapDistances(preferences.distances || [])
+  preferredDistances: mapDistances(preferences.distances || [])
     };
 
     // Manejar información del auto basado en el modo conductor

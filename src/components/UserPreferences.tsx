@@ -9,7 +9,7 @@ interface UserPreferencesProps {
   onBack: () => void;
   initialData?: {
     raceTypes: string[];
-    distances: string[];
+    distances: Distance[];
     travelStyle: string;
   };
   isEditMode?: boolean;
@@ -18,7 +18,7 @@ interface UserPreferencesProps {
 export function UserPreferences({ onNext, onBack, initialData, isEditMode = false }: UserPreferencesProps) {
   const [formData, setFormData] = useState({
     raceTypes: initialData?.raceTypes || [] as string[],
-    distances: initialData?.distances || [] as string[],
+    distances: initialData?.distances || [] as Distance[],
     travelStyle: initialData?.travelStyle || ''
   });
 
@@ -42,7 +42,7 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
     }));
   };
 
-  const handleDistanceToggle = (distance: string) => {
+  const handleDistanceToggle = (distance: Distance) => {
     setFormData(prev => ({
       ...prev,
       distances: prev.distances.includes(distance)
@@ -138,15 +138,15 @@ export function UserPreferences({ onNext, onBack, initialData, isEditMode = fals
                 Podés seleccionar más de una opción
               </span>
               <div className="mt-2 grid grid-cols-2 gap-3">
-                {Object.values(Distance).filter(value => typeof value === 'number').map((distanceValue) => {
+                {[Distance.FIVE_K, Distance.TEN_K, Distance.TWENTY_ONE_K, Distance.FORTY_TWO_K].map((distanceValue) => {
                   const distanceInfo = DISTANCE_INFO[distanceValue as Distance];
                   return (
                     <button
                       key={distanceValue}
                       type="button"
-                      onClick={() => handleDistanceToggle(distanceValue.toString())}
+                      onClick={() => handleDistanceToggle(distanceValue as Distance)}
                       className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                        formData.distances.includes(distanceValue.toString())
+                        formData.distances.includes(distanceValue as Distance)
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
