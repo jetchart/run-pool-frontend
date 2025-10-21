@@ -62,7 +62,7 @@ export function UsersPage() {
       setUsers(response.data as UserListItem[]);
     } catch (error: any) {
       console.error('Error cargando usuarios:', error);
-      const errorMessage = error.response?.data?.message || 'Error al cargar los usuarios';
+      const errorMessage = error.response?.data?.message?.message || 'Error al cargar los usuarios';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);

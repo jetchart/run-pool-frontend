@@ -37,7 +37,7 @@ const TripDetail: React.FC = () => {
 
       setTrip(response.data as TripResponse);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Error al cargar el viaje';
+      const errorMessage = error.response?.data?.message?.message || 'Error al cargar el viaje';
       console.error('Error cargando detalle del viaje:', error);
       toast.error(errorMessage);
       navigate(-1);
@@ -101,7 +101,7 @@ const TripDetail: React.FC = () => {
       await loadTripDetail();
     } catch (error: any) {
       console.error('Error al abandonar el viaje:', error);
-      const errorMessage = error.response?.data?.message || 'Error al abandonar el viaje';
+      const errorMessage = error.response?.data?.message?.message || 'Error al abandonar el viaje';
       toast.error(errorMessage);
     } finally {
       setIsJoining(false);
@@ -155,7 +155,7 @@ const TripDetail: React.FC = () => {
       await loadTripDetail();
     } catch (error: any) {
       console.error('Error al unirse al viaje:', error);
-      const errorMessage = error.response?.data?.message || 'Error al enviar la solicitud';
+      const errorMessage = error.response?.data?.message?.message || 'Error al enviar la solicitud';
       toast.error(errorMessage);
     } finally {
       setIsJoining(false);

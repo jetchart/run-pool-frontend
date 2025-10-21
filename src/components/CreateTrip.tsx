@@ -148,10 +148,10 @@ const CreateTrip: React.FC = () => {
       const storedUser = getStoredUser();
   trackTripAction(GAAction.TRIP_CREATION_ERROR, undefined, storedUser.userId, {
         race_id: formData.raceId,
-        error_message: error.response?.data?.message || 'Unknown error'
+        error_message: error.response?.data?.message?.message || 'Unknown error'
       });
       
-      const errorMessage = error.response?.data?.message || 'Error inesperado';
+      const errorMessage = error.response?.data?.message?.message || 'Error inesperado';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);

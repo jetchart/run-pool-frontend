@@ -33,7 +33,7 @@ export function MyTripsPage() {
       setTrips(response.data as TripResponse[]);
     } catch (error: any) {
       console.error('Error cargando mis viajes:', error);
-      const errorMessage = error.response?.data?.message || 'Error al cargar tus viajes';
+      const errorMessage = error.response?.data?.message?.message || 'Error al cargar tus viajes';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
