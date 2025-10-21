@@ -135,7 +135,7 @@ const CreateRace: React.FC = () => {
       if (isEditing && raceId) {
         await axiosAuth.put(`/races/${raceId}`, payload);
         toast.success('Carrera actualizada correctamente');
-        navigate(`/races/${raceId}/trips`);
+        navigate('/');
       } else {
         await axiosAuth.post('/races', payload);
         toast.success('Carrera creada correctamente');
