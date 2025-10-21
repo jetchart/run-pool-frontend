@@ -121,9 +121,8 @@ const CreateRace: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
+    setIsLoadingRace(true);
     try {
       // Enviar las fechas usando mediodía UTC para evitar desplazamientos por zona horaria
       const payload = {
@@ -131,7 +130,6 @@ const CreateRace: React.FC = () => {
         startDate: form.startDate ? `${form.startDate}T12:00:00Z` : form.startDate,
         endDate: form.endDate ? `${form.endDate}T12:00:00Z` : form.endDate,
       } as CreateRaceDto;
-
       if (isEditing && raceId) {
         await axiosAuth.put(`/races/${raceId}`, payload);
         toast.success('Carrera actualizada correctamente');
@@ -145,6 +143,8 @@ const CreateRace: React.FC = () => {
       console.error('Error creando carrera:', error);
       const message = error?.response?.data?.message || 'Error inesperado al crear la carrera';
       toast.error(message);
+    } finally {
+      setIsLoadingRace(false);
     }
   };
 
@@ -276,7 +276,17 @@ const CreateRace: React.FC = () => {
 
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">Cancelar</Button>
-              <Button type="submit" className="flex-1">Guardar</Button>
+              <Button type="submit" className="flex-1" disabled={isLoadingRace}>
+                {isLoadingRace ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                    </svg>
+                    Guardando...
+                  </span>
+                ) : 'Guardar'}
+              </Button>
              </div>
            </form>
          </CardContent>
