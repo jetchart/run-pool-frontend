@@ -42,7 +42,7 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
 
   return (
     <>
-      <div className="rounded-2xl shadow bg-white overflow-hidden max-w-xs w-full">
+      <div className="rounded-2xl shadow bg-white overflow-hidden max-w-md w-full">
         {/* Imagen con overlay y texto */}
         <div className="h-32 w-full relative overflow-hidden">
           <img src={imageUrl} alt={raceName} className="w-full h-full object-cover" />

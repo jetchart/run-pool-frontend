@@ -13,6 +13,7 @@ export function MyTripsPage() {
   const navigate = useNavigate();
   const [trips, setTrips] = useState<TripResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming');
 
   useEffect(() => {
     loadMyTrips();
@@ -51,6 +52,12 @@ export function MyTripsPage() {
     return trip.driver.id === storedUser.userId ? 'driver' : 'passenger';
   };
 
+  // Filtrado de viajes según tab
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  const upcomingTrips = trips.filter(trip => new Date(trip.departureDay) >= now);
+  const pastTrips = trips.filter(trip => new Date(trip.departureDay) < now);
+
   return (
     <div className="container mx-auto px-4 py-6">
       {/* Header */}
@@ -63,8 +70,20 @@ export function MyTripsPage() {
         </div>
       </div>
 
-      <div className="mb-4 text-gray-600">
-        {isLoading ? 'Cargando...' : `${trips.length} viajes`}
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        <button
+          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${tab === 'upcoming' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-500'}`}
+          onClick={() => setTab('upcoming')}
+        >
+          Próximos viajes ({upcomingTrips.length})
+        </button>
+        <button
+          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${tab === 'past' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-500'}`}
+          onClick={() => setTab('past')}
+        >
+          Viajes pasados ({pastTrips.length})
+        </button>
       </div>
 
       {/* Estado de carga */}
@@ -79,14 +98,16 @@ export function MyTripsPage() {
       )}
 
       {/* Sin viajes */}
-      {!isLoading && trips.length === 0 && (
+      {!isLoading && ((tab === 'upcoming' && upcomingTrips.length === 0) || (tab === 'past' && pastTrips.length === 0)) && (
         <div className="text-center py-12">
           <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No tienes viajes como pasajero
+            No tienes viajes {tab === 'upcoming' ? 'próximos' : 'pasados'}
           </h3>
           <p className="text-gray-500 mb-6">
-            Aún no te has unido a ningún viaje. Explora las carreras disponibles para encontrar viajes.
+            {tab === 'upcoming'
+              ? 'Aún no tienes viajes próximos. Explora las carreras disponibles para encontrar viajes.'
+              : 'No tienes viajes pasados registrados.'}
           </p>
           <Button onClick={() => navigate('/')} className="flex items-center gap-2">
             <ArrowRight className="w-4 h-4" />
@@ -96,9 +117,9 @@ export function MyTripsPage() {
       )}
 
       {/* Lista de viajes */}
-      {!isLoading && trips.length > 0 && (
+      {!isLoading && ((tab === 'upcoming' && upcomingTrips.length > 0) || (tab === 'past' && pastTrips.length > 0)) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map((trip) => (
+          {(tab === 'upcoming' ? upcomingTrips : pastTrips).map((trip) => (
             <TripProfileCard
               key={trip.id}
               trip={trip}
