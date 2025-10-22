@@ -7,7 +7,7 @@ import { Users, ArrowRight } from 'lucide-react';
 import { TripResponse } from '../types/trip.types';
 import { toast } from 'sonner';
 import { requireAuth, getStoredUser } from '../utils/auth';
-import TripCard from './TripCard';
+import { TripProfileCard } from './TripProfileCard';
 
 export function MyTripsPage() {
   const navigate = useNavigate();
@@ -99,11 +99,11 @@ export function MyTripsPage() {
       {!isLoading && trips.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trips.map((trip) => (
-            <TripCard 
-              key={trip.id} 
+            <TripProfileCard
+              key={trip.id}
               trip={trip}
-              showRole={true}
               userRole={getUserRole(trip)}
+              onDetails={() => handleViewTrip(trip.id)}
             />
           ))}
         </div>

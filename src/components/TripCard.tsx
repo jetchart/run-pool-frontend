@@ -8,9 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { MapPin, Calendar, Star, Users, StarIcon, CheckIcon } from 'lucide-react';
+import { MapPin, Calendar, Star, Users} from 'lucide-react';
 import { TripResponse } from '../types/trip.types';
-import { TripRatingModal } from './TripRatingModal';
 import { getStoredUser } from '../utils/auth';
 import { formatDateTime } from '../constants/dates';
 import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
@@ -155,43 +154,7 @@ export const TripCard: React.FC<TripCardProps> = ({
           Ver viaje
         </Button>
 
-      {/* Botón Calificar solo si es pasajero y el viaje ya pasó */}
-      {isPassenger && isPastTrip && trip.ratings?.length === 0 && (
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => setShowRatingModal(true)}
-        >
-          <div className="flex items-center gap-1"><StarIcon/> Calificar</div>
-        </Button>
-      )}
-
-      {/* Botón Calificado */}
-      {isPassenger && isPastTrip && trip.ratings && trip.ratings.length > 0 && (
-        <Button
-          variant="outline"
-          className="w-full mb-2 bg-green-50 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-200 hover:text-green-700"
-        >
-          <div className="flex items-center gap-1"><CheckIcon className="text-green-600"/> Calificado</div>
-        </Button>
-      )}
-
       </Card>
-      {/* Modal de calificación */}
-      {isPassenger && (
-        <TripRatingModal
-          open={showRatingModal}
-          onClose={() => setShowRatingModal(false)}
-          trip={trip}
-          raterId={currentUserId}
-          ratedId={trip.driver.id}
-          ratedName={trip.driver.name}
-          ratedPictureUrl={trip.driver.pictureUrl}
-          fromCity={trip.departureCity}
-          toCity={trip.arrivalCity}
-          ratingType={TripRatingType.PASSENGER_TO_DRIVER}
-        />
-      )}
     </>
   );
 };

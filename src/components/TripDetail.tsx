@@ -18,6 +18,7 @@ const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<TripResponse | null>(null);
+  const [isPastTrip, setIsPastTrip] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isJoining, setIsJoining] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
@@ -48,7 +49,15 @@ const TripDetail: React.FC = () => {
 
   useEffect(() => {
     loadTripDetail();
-  }, [tripId]);
+  }, [tripId]);  
+  
+  useEffect(() => {
+      if (!trip) return;
+      const tripDay = new Date(trip.departureDay);
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      setIsPastTrip(tripDay <= today);
+  }, [trip]);
 
   // Función para abrir el modal de perfil
   const handleOpenProfile = (userId: number) => {
@@ -474,7 +483,7 @@ const TripDetail: React.FC = () => {
                 // Verificar si el usuario actual está en el viaje como pasajero
                 const isPassenger = trip.passengers.some(p => p.passenger.id === currentUserId);
                 
-                if (!isDriver && isPassenger) {
+                if (!isDriver && isPassenger && !isPastTrip) {
                   return (
                     <Button 
                       onClick={handleLeaveTrip}
@@ -488,7 +497,7 @@ const TripDetail: React.FC = () => {
                 }
                 
                 // Usuario no está en el viaje, mostrar botón para unirse
-                if (!isPassenger) {
+                if (!isPassenger && !isPastTrip) {
                 return (
                   <Button 
                     onClick={handleJoinTrip}
