@@ -146,8 +146,7 @@ export const TripCard: React.FC<TripCardProps> = ({
         </div>
       )}
 
-      {/* Botón Calificar */}
-      {!isPastTrip && (
+      {/* Botón Ver Viaje */}
         <Button
           variant="outline" 
           className="w-full mb-2"
@@ -155,7 +154,6 @@ export const TripCard: React.FC<TripCardProps> = ({
         >
           Ver viaje
         </Button>
-      )}
 
       {/* Botón Calificar solo si es pasajero y el viaje ya pasó */}
       {isPassenger && isPastTrip && trip.ratings?.length === 0 && (
