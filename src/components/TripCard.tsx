@@ -1,10 +1,17 @@
-import React from 'react';
+// Enum para el tipo de calificación
+export enum TripRatingType {
+  DRIVER_TO_PASSENGER = 'driver_to_passenger',
+  PASSENGER_TO_DRIVER = 'passenger_to_driver',
+}
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { MapPin, Calendar, Star, Users } from 'lucide-react';
+import { MapPin, Calendar, Star, Users, StarIcon, CheckIcon } from 'lucide-react';
 import { TripResponse } from '../types/trip.types';
+import { TripRatingModal } from './TripRatingModal';
+import { getStoredUser } from '../utils/auth';
 import { formatDateTime } from '../constants/dates';
 import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
 
@@ -21,8 +28,20 @@ export const TripCard: React.FC<TripCardProps> = ({
 }) => {
   const navigate = useNavigate();
 
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const storedUser = getStoredUser();
+  const currentUserId = storedUser?.userId;
+  const isPassenger = userRole === 'passenger';
+
+  // Comparar solo la fecha (sin hora)
+  const tripDate = new Date(trip.departureDay);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const isPastTrip = tripDate <= today;
+
   return (
-    <Card className="p-4">
+    <>
+      <Card className="p-4">
       {/* Imagen/gráfico de ruta */}
       <div className="h-24 bg-gray-100 rounded-lg mb-4 flex items-center justify-center relative overflow-hidden">
         {/* SVG solo para línea y círculos */}
@@ -127,15 +146,55 @@ export const TripCard: React.FC<TripCardProps> = ({
         </div>
       )}
 
-      {/* Botón */}
-      <Button 
-        variant="outline" 
-        className="w-full"
-        onClick={() => navigate(`/trips/${trip.id}`)}
-      >
-        Ver viaje
-      </Button>
-    </Card>
+      {/* Botón Calificar */}
+      {!isPastTrip && (
+        <Button
+          variant="outline" 
+          className="w-full mb-2"
+          onClick={() => navigate(`/trips/${trip.id}`)}
+        >
+          Ver viaje
+        </Button>
+      )}
+
+      {/* Botón Calificar solo si es pasajero y el viaje ya pasó */}
+      {isPassenger && isPastTrip && trip.ratings?.length === 0 && (
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setShowRatingModal(true)}
+        >
+          <div className="flex items-center gap-1"><StarIcon/> Calificar</div>
+        </Button>
+      )}
+
+      {/* Botón Calificado */}
+      {isPassenger && isPastTrip && trip.ratings && trip.ratings.length > 0 && (
+        <Button
+          variant="outline"
+          className="w-full mb-2 bg-green-50 border-green-200 text-green-700 hover:bg-green-50 hover:border-green-200 hover:text-green-700"
+        >
+          <div className="flex items-center gap-1"><CheckIcon className="text-green-600"/> Calificado</div>
+        </Button>
+      )}
+
+      </Card>
+      {/* Modal de calificación */}
+      {isPassenger && (
+        <TripRatingModal
+          open={showRatingModal}
+          onClose={() => setShowRatingModal(false)}
+          trip={trip}
+          raterId={currentUserId}
+          ratedId={trip.driver.id}
+          ratedName={trip.driver.name}
+          ratedPictureUrl={trip.driver.pictureUrl}
+          fromCity={trip.departureCity}
+          toCity={trip.arrivalCity}
+          ratingType={TripRatingType.PASSENGER_TO_DRIVER}
+        />
+      )}
+    </>
   );
 };
 

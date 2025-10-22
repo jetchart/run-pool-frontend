@@ -1,3 +1,5 @@
+import { TripRatingType } from "@/components/TripCard";
+
 // Trip related types
 export interface CreateTripDto {
   driverId: number;
@@ -10,6 +12,18 @@ export interface CreateTripDto {
   arrivalProvince: string;
   description?: string;
   seats: number;
+}
+
+export interface TripRatingResponseDto {
+  id: number;
+  tripId: number;
+  raterId: number;
+  ratedId: number;
+  type: TripRatingType;
+  rating: number;
+  comment?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface TripResponse {
@@ -61,6 +75,7 @@ export interface TripResponse {
   }[];
   createdAt: Date;
   deletedAt?: Date;
+  ratings?: TripRatingResponseDto[];
 }
 
 // DTO for joining a trip

@@ -18,7 +18,7 @@ export function RacesList() {
 
   useEffect(() => {
     setIsLoading(true);
-    axiosPublic.get('/races')
+    axiosPublic.get('/races/past-or-today')
       .then(response => {
         setRaces(response.data as any[]);
         setIsLoading(false);
