@@ -104,6 +104,7 @@ export function MyTripsPage() {
               trip={trip}
               userRole={getUserRole(trip)}
               onDetails={() => handleViewTrip(trip.id)}
+              onRated={loadMyTrips}
             />
           ))}
         </div>

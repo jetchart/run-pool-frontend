@@ -2,6 +2,7 @@ export interface TripProfileCardProps {
   trip: TripResponse;
   userRole: 'driver' | 'passenger';
   onDetails: () => void;
+  onRated?: () => void; // callback para recargar trips
 }
 import React, { useState } from 'react';
 import { Badge } from './ui/badge';
@@ -12,7 +13,7 @@ import { TripRatingModal } from './TripRatingModal';
 import { TripRatingType } from './TripCard';
 import { getStoredUser } from '../utils/auth';
 
-export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole, onDetails }) => {
+export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole, onDetails, onRated }) => {
   const imageUrl = trip.race?.imageUrl || '/default-race.jpg';
   const raceName = trip.race?.name || '';
   const raceDate = trip.race?.startDate ? new Date(trip.race.startDate).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
@@ -32,6 +33,12 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
   const today = new Date();
   today.setHours(0,0,0,0);
   const isPastTrip = tripDay <= today;
+
+  // Handler para cerrar el modal y recargar trips si corresponde
+  const handleCloseRatingModal = () => {
+    setShowRatingModal(false);
+    if (onRated) onRated();
+  };
 
   return (
     <>
@@ -103,7 +110,7 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
       {isPassenger && (
         <TripRatingModal
           open={showRatingModal}
-          onClose={() => setShowRatingModal(false)}
+          onClose={handleCloseRatingModal}
           trip={trip}
           raterId={currentUserId}
           ratedId={trip.driver.id}
