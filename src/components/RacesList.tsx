@@ -76,7 +76,10 @@ export function RacesList() {
                   <img src={imgSrc} alt={race.name} className="h-48 w-full object-cover object-center" />
                   <CardContent className="flex-1 flex flex-col p-5">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-base font-semibold">{race.name}</span>
+                      <span className="text-xl font-semibold">{race.name}</span>
+                      {race.trips.length > 0 && (
+                        <Badge className="ml-auto bg-orange-100 text-orange-700 border-orange-300">{race.trips.length} {race.trips.length === 1 ? 'viaje' : 'viajes'}</Badge>
+                      )}
                       {userCredential?.administrator && (
                           <div className="flex gap-2 ml-auto">
                             <Badge
@@ -141,16 +144,9 @@ export function RacesList() {
                       {race.website && (
                         <div className="flex items-center gap-2">
                           <RaceDialog race={race} type="passenger">
-                            <button className="text-primary bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
+                            <button className="text-primary cursor-pointer bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
                               <HandHelping className="w-5 h-5" />
                               Quiero ir
-                            </button>
-                          </RaceDialog>
-                          
-                          <RaceDialog race={race} type="driver">
-                            <button className="text-primary bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
-                              <CarFront className="w-5 h-5" />
-                              Voy en auto
                             </button>
                           </RaceDialog>
                         </div>
