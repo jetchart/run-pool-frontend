@@ -478,13 +478,13 @@ const TripDetail: React.FC = () => {
                     </div>
                     <div className="flex-1 text-sm">
                       {passenger.passenger.name}
+                        {passenger.status === TripPassengerStatus.CONFIRMED && (
+                          <Badge className="ml-2 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Confirmado</Badge>
+                        )}
+                        {passenger.status === TripPassengerStatus.PENDING && (
+                          <Badge className="ml-2 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold">Pendiente</Badge>
+                        )}
                     </div>
-                    {passenger.status === TripPassengerStatus.CONFIRMED && (
-                      <Badge className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Confirmado</Badge>
-                    )}
-                    {passenger.status === TripPassengerStatus.PENDING && (
-                      <Badge className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold">Pendiente</Badge>
-                    )}
                     {passenger.status === TripPassengerStatus.PENDING && (
                       (() => {
                         const storedUser = getStoredUser();
