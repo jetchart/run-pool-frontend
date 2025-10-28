@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Clock, Users } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { CreateTripDto } from '../types/trip.types';
+import { TripType } from '../enums/trip-type.enum';
 import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
 import { getStoredUser, requireAuth } from '../utils/auth';
 import { trackTripAction } from '../hooks/useGoogleAnalytics';
@@ -26,7 +27,8 @@ const CreateTrip: React.FC = () => {
     arrivalCity: '',
     arrivalProvince: '',
     description: '',
-    seats: 5
+    seats: 5,
+    tripType: TripType.OUTBAND
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -187,6 +189,22 @@ const CreateTrip: React.FC = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Tipo de viaje: Ida o Vuelta */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                Tipo de viaje *
+              </label>
+              <select
+                name="tripType"
+                value={formData.tripType}
+                onChange={handleInputChange}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value={TripType.OUTBAND}>Ida</option>
+                <option value={TripType.RETURN}>Vuelta</option>
+              </select>
+            </div>
             {/* Fecha y Hora */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">

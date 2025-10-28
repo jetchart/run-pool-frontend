@@ -13,6 +13,7 @@ import { TripResponse } from '../types/trip.types';
 import { getStoredUser } from '../utils/auth';
 import { formatDateTime } from '../constants/dates';
 import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
+import { TripType } from '@/enums/trip-type.enum';
 
 interface TripCardProps {
   trip: TripResponse;
@@ -79,6 +80,10 @@ export const TripCard: React.FC<TripCardProps> = ({
           </Badge>
         </div>
       )}
+
+      <Badge variant="default" className=' mb-2 flex justify-end'>
+        {trip.tripType === TripType.OUTBAND ? 'Ida' : 'Vuelta'}
+      </Badge>
 
       {/* Origen */}
       <div className="flex items-start mb-3">

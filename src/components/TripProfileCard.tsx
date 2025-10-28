@@ -12,6 +12,7 @@ import { TripResponse } from '../types/trip.types';
 import { TripRatingModal } from './TripRatingModal';
 import { TripRatingType } from './TripCard';
 import { getStoredUser } from '../utils/auth';
+import { TripType } from '@/enums/trip-type.enum';
 
 export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole, onDetails, onRated }) => {
   const imageUrl = trip.race?.imageUrl || '/default-race.jpg';
@@ -60,9 +61,14 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
         {/* Card body */}
         <div className="px-4 pb-4 pt-2 mt-2">
           <div className="flex items-center justify-between mb-2">
-            <Badge variant={userRole === 'driver' ? 'default' : 'secondary'} className="text-xs px-3 py-1">
-              {userRole === 'driver' ? 'Conductor' : 'Pasajero'}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant={userRole === 'driver' ? 'default' : 'secondary'} className="text-xs px-3 py-1">
+                {userRole === 'driver' ? 'Conductor' : 'Pasajero'}
+              </Badge>
+              <Badge variant="outline" >
+                {trip.tripType === TripType.OUTBAND ? 'Ida' : 'Vuelta'}
+              </Badge>
+            </div>
             <span className="text-xs text-gray-500 font-medium">{tripDate}</span>
           </div>
           <div className="mb-2">

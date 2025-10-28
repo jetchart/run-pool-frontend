@@ -1,5 +1,6 @@
 import { TripRatingType } from "@/components/TripCard";
 import { TripPassengerStatus } from "../enums/trip-passenger-status.enum";
+import { TripType } from "../enums/trip-type.enum";
 
 // Trip related types
 export interface CreateTripDto {
@@ -13,6 +14,7 @@ export interface CreateTripDto {
   arrivalProvince: string;
   description?: string;
   seats: number;
+  tripType: TripType;
 }
 
 export interface TripRatingResponseDto {
@@ -79,6 +81,7 @@ export interface TripResponse {
   createdAt: Date;
   deletedAt?: Date;
   ratings?: TripRatingResponseDto[];
+  tripType: TripType;
 }
 
 // DTO for joining a trip
@@ -94,6 +97,7 @@ export interface TripPassengerResponse {
   passengerId: number;
   status: TripPassengerStatus;
   createdAt: Date;
+  tripType?: TripType;
 }
 
 // Form data interface for the CreateTrip component
@@ -107,4 +111,5 @@ export interface TripFormData {
   arrivalProvince: string;
   description: string;
   seats: string;
+  tripType: TripType;
 }
