@@ -3,9 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosAuth from '../lib/axios';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
+import { Badge } from './ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan, Mail, MessageCircle, CarFront, Eye } from 'lucide-react';
-import { TripResponse, JoinTripDto } from '../types/trip.types';
+import { ArrowLeft, MapPin, Clock, Star, Users, User, Car, Caravan, Mail, MessageCircle, CarFront, Eye, CheckIcon, XIcon} from 'lucide-react';
+import { TripResponse, JoinTripDto, TripPassengerResponse } from '../types/trip.types';
+import { TripPassengerStatus } from '../enums/trip-passenger-status.enum';
 import { UserProfileView } from './UserProfileView';
 import { toast } from 'sonner';
 import carImage from '../assets/car.png';
@@ -69,6 +71,17 @@ const TripDetail: React.FC = () => {
   const handleCloseProfile = () => {
     setIsProfileModalOpen(false);
     setSelectedUserId(null);
+  };
+
+  // Función para aceptar/rechazar pasajero
+  const handlePassengerStatus = async (tripPassengerId: number, status: TripPassengerStatus) => {
+    try {
+      await axiosAuth.put(`/trips/trip-passengers/${tripPassengerId}?status=${status}`);
+      toast.success(`Pasajero ${status === TripPassengerStatus.CONFIRMED ? 'aceptado' : 'rechazado'}`);
+      await loadTripDetail();
+    } catch (error: any) {
+      toast.error('Error al actualizar el estado del pasajero');
+    }
   };
 
   // Función para abandonar el viaje
@@ -388,11 +401,11 @@ const TripDetail: React.FC = () => {
                             >
                               {/* Círculo del asiento */}
                               <div className={`
-                                w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold overflow-hidden
+                                w-10 h-10 rounded-full border-3 flex items-center justify-center text-sm font-bold overflow-hidden
                                 ${isOccupied 
-                                  ? isDriver 
-                                    ? 'border-black' 
-                                    : 'border-green-600'
+                                  ? passenger.status === TripPassengerStatus.CONFIRMED 
+                                    ? 'border-green-600' 
+                                    : 'border-yellow-600'
                                   : 'bg-gray-100 border-gray-300 text-gray-400 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-500 transition-colors'
                                 }
                               `}>
@@ -406,7 +419,7 @@ const TripDetail: React.FC = () => {
                                   ) : (
                                     <div className={`
                                       w-full h-full rounded-full flex items-center justify-center
-                                      ${isDriver ? 'bg-gray-800 text-white' : 'bg-green-500 text-white'}
+                                      ${passenger.status === TripPassengerStatus.CONFIRMED ? 'bg-green-800 text-white' : 'bg-yellow-500 text-white'}
                                     `}>
                                       <span>
                                         {passenger.passenger.givenName?.[0]}{passenger.passenger.familyName?.[0]}
@@ -429,12 +442,12 @@ const TripDetail: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-center gap-4 text-xs">
                     <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-gray-800 border border-black"></div>
-                      <span className="text-gray-500">Conductor</span>
+                      <div className="w-5 h-5 rounded-full bg-yellow-500"></div>
+                      <span className="text-gray-500">Pendiente</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-5 h-5 rounded-full bg-green-500"></div>
-                      <span className="text-gray-500">Pasajero</span>
+                      <span className="text-gray-500">Confirmado</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-5 h-5 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center">
@@ -453,10 +466,10 @@ const TripDetail: React.FC = () => {
                 {trip.passengers.map((passenger, index) => (
                   <div 
                     key={passenger.id} 
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200"
-                    onClick={() => handleOpenProfile(passenger.passenger.id)}
+                    className="flex items-center gap-3 p-3 rounded-lg transition-colors border border-transparent"
                   >
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-medium">
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-sm font-medium"
+                      onClick={() => handleOpenProfile(passenger.passenger.id)}>
                         <img 
                           src={passenger.passenger.pictureUrl} 
                           alt={passenger.passenger.name}
@@ -466,6 +479,32 @@ const TripDetail: React.FC = () => {
                     <div className="flex-1 text-sm">
                       {passenger.passenger.name}
                     </div>
+                    {passenger.status === TripPassengerStatus.CONFIRMED && (
+                      <Badge className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold">Confirmado</Badge>
+                    )}
+                    {passenger.status === TripPassengerStatus.PENDING && (
+                      <Badge className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-semibold">Pendiente</Badge>
+                    )}
+                    {passenger.status === TripPassengerStatus.PENDING && (
+                      (() => {
+                        const storedUser = getStoredUser();
+                        const currentUserId = storedUser?.userId;
+                        const isDriver = currentUserId === trip.driver.id;
+                        if (isDriver) {
+                          return (
+                            <div className="flex gap-2">
+                              <Badge  className='bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold cursor-pointer' onClick={() => handlePassengerStatus(passenger.id, TripPassengerStatus.CONFIRMED)}>
+                                <CheckIcon/>
+                              </Badge>
+                              <Badge className='bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold cursor-pointer' onClick={() => handlePassengerStatus(passenger.id, TripPassengerStatus.REJECTED)}>
+                                <XIcon/>
+                              </Badge>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()
+                    )}
                     {passenger.passenger.id === trip.driver.id && <CarFront className="w-4 h-4 text-gray-400" />}
                     {passenger.passenger.id !== trip.driver.id && <User className="w-4 h-4 text-gray-400" />}
                   </div>
