@@ -78,7 +78,12 @@ export function RacesList() {
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xl font-semibold">{race.name}</span>
                       {race.trips.length > 0 && (
-                        <Badge className="ml-auto bg-orange-100 text-orange-700 border-orange-300">{race.trips.length} {race.trips.length === 1 ? 'viaje' : 'viajes'}</Badge>
+                          <Badge
+                            className="ml-auto bg-orange-100 text-orange-700 border-orange-300 cursor-pointer hover:bg-orange-200 transition-colors"
+                            onClick={() => navigate(`/races/${race.id}/trips`)}
+                          >
+                            {race.trips.length} {race.trips.length === 1 ? 'viaje' : 'viajes'}
+                          </Badge>
                       )}
                       {userCredential?.administrator && (
                           <div className="flex gap-2 ml-auto">
@@ -143,7 +148,7 @@ export function RacesList() {
                     <div className="flex pt-2 items-center justify-around">
                       {race.website && (
                         <div className="flex items-center gap-2">
-                          <RaceDialog race={race} type="passenger">
+                          <RaceDialog race={race}>
                             <button className="text-primary cursor-pointer bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
                               <HandHelping className="w-5 h-5" />
                               Quiero ir

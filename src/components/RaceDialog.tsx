@@ -24,16 +24,14 @@ declare global {
 interface RaceDialogProps {
   children: ReactNode;
   race: any;
-  type: 'passenger' | 'driver';
 }
 
-export function RaceDialog({ children, race, type }: RaceDialogProps) {
+export function RaceDialog({ children, race}: RaceDialogProps) {
   useEffect(() => {
     const storedUser = getStoredUser();
     const userId = storedUser?.userId?.toString();
     trackRaceAction(GAAction.RACE_VIEW_DETAIL, race.id?.toString(), userId, {
       race_name: race.name,
-      user_type: type,
       race_location: race.location
     });
   }, []);
@@ -65,7 +63,6 @@ export function RaceDialog({ children, race, type }: RaceDialogProps) {
     
     trackRaceAction(GAAction.RACE_VIEW_TRIPS, race.id?.toString(), userId, {
       race_name: race.name,
-      user_type: type,
       race_location: race.location
     });
     
