@@ -172,7 +172,7 @@ const TripDetail: React.FC = () => {
       });
 
       const result = response.data;
-      toast.success('¡Te has unido al viaje exitosamente!');
+      toast.success('¡Tu solicitud para unirte al viaje ha sido enviada exitosamente!');
       // Recargar los datos del viaje para mostrar el estado actualizado
       await loadTripDetail();
     } catch (error: any) {
