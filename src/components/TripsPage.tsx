@@ -9,6 +9,7 @@ import { TripResponse } from '../types/trip.types';
 import { toast } from 'sonner';
 import { checkAuthWithToast } from '../utils/auth';
 import TripCard from './TripCard';
+import RaceHeader from './RaceHeader';
 
 interface Race {
   id: number | string;
@@ -108,12 +109,10 @@ export function TripsPage() {
 
   return (
     <div className="container mx-auto px-4 py-6">
+          {race && <RaceHeader race={race} />}
       {/* Header con título y botón crear viaje */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {race?.name || 'Viajes disponibles'}
-          </h1>
           <div className="text-gray-600">
             {(isLoading || isLoadingRace) ? 'Cargando...' : `${trips.length} viajes disponibles`}
           </div>

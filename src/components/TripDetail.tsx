@@ -15,6 +15,7 @@ import { formatDateTime } from '../constants/dates';
 import { getStoredUser, requireAuth } from '../utils/auth';
 import { GAAction } from '../constants/ga.enums';
 import { trackTripAction } from '@/hooks/useGoogleAnalytics';
+import RaceHeader from './RaceHeader';
 
 const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -213,18 +214,16 @@ const TripDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Button
+      <Button
           variant="outline"
           size="sm"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver
         </Button>
-      </div>
+      <RaceHeader race={trip.race} />
 
       {/* Información del conductor */}
       <div className="flex items-center gap-4 mb-8">

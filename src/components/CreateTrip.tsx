@@ -11,6 +11,7 @@ import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from
 import { getStoredUser, requireAuth } from '../utils/auth';
 import { trackTripAction } from '../hooks/useGoogleAnalytics';
 import { GAAction } from '../constants/ga.enums';
+import RaceHeader from './RaceHeader';
 
 const CreateTrip: React.FC = () => {
   const navigate = useNavigate();
@@ -162,30 +163,20 @@ const CreateTrip: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-2xl">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Button
+      <Button
           variant="outline"
           size="sm"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver
         </Button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Crear Nuevo Viaje
-          </h1>
-          <p className="text-gray-600">
-            {race?.name || 'Carrera'}
-          </p>
-        </div>
-      </div>
+      {race && <RaceHeader race={race} />}
 
       <Card>
         <CardHeader>
-          <CardTitle>Información del Viaje</CardTitle>
+          <CardTitle>Crear viaje</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
