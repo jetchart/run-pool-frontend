@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { axiosPublic } from '../lib/axios';
 import { SkeletonCard } from './SkeletonCard';
 import { RaceDialog } from './RaceDialog';
-import { Calendar, MapPin, CarFront, Mountain, HandHelping, ChevronsUp, Edit, Trash } from 'lucide-react';
+import { Calendar, MapPin, CarFront, Mountain, HandHelping, ChevronsUp, Edit, Trash, ExternalLink } from 'lucide-react';
 import { RaceType, RACE_TYPE_INFO, DISTANCE_INFO } from '../types/userProfile.types';
 import { Badge } from './ui/badge';
 import { Card, CardContent } from './ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from './ui/button';
+import { getStoredUser } from '@/utils/auth';
+import { GAAction } from '@/constants/ga.enums';
+import { trackRaceAction } from '@/hooks/useGoogleAnalytics';
 
 export function RacesList() {
   const [races, setRaces] = useState<any[]>([]);
@@ -145,18 +148,38 @@ export function RacesList() {
                         {race.location}
                       </span>
                     </div>
-                    <div className="flex pt-2 items-center justify-around">
+                    {/* Enlace a página del evento */}
                       {race.website && (
-                        <div className="flex items-center gap-2">
-                          <RaceDialog race={race}>
-                            <button className="text-primary cursor-pointer bg-secondary small inline-flex items-center gap-1 px-4 py-3 rounded-3xl border hover:bg-secondary/80 transition-colors">
-                              <HandHelping className="w-5 h-5" />
-                              Quiero ir
-                            </button>
-                          </RaceDialog>
-                        </div>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            const storedUser = getStoredUser();
+                            const userId = storedUser?.userId?.toString();
+                            
+                            trackRaceAction(GAAction.RACE_WEBSITE_CLICK, race.id?.toString(), userId, {
+                              race_name: race.name,
+                              website_url: race.website
+                            });
+                            window.open(race.website, '_blank');
+                          }}
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Página del evento
+                        </Button>
                       )}
-                    </div>
+                      {/* Ver viajes disponibles */}
+                        <div className="mt-4">
+                            <Button
+                              variant="default" 
+                              className="w-full cursor-pointer" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                navigate(`/races/${race.id}/trips`);
+                              }}
+                            >
+                              Ver viajes disponibles
+                            </Button>
+                        </div>
                   </CardContent>
                 </Card>
               );

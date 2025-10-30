@@ -114,60 +114,6 @@ export function Login() {
     });
   };
 
-  const handleLogout = () => {
-    // Track logout
-  trackUserAction(GAAction.USER_LOGOUT, getStoredUser()?.id, { 
-        has_profile: true,
-        login_method: 'google'
-      });
-    setUserCredential(null);
-    navigate('/login');
-  };
-
-  // Si ya está logueado, mostrar estado de usuario
-  if (userCredential) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
-              <Zap className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">RunPool</h1>
-          </div>
-
-          <Card className="p-8 shadow-sm">
-            <div className="text-center">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                ¡Hola, {userCredential.name}!
-              </h2>
-              <p className="text-gray-600 text-sm mb-6">
-                Sesión iniciada correctamente
-              </p>
-              
-              <div className="space-y-4">
-                <Button
-                  onClick={() => navigate('/profile')}
-                  className="w-full bg-black hover:bg-gray-800 text-white"
-                >
-                  Ir al perfil
-                </Button>
-                
-                <Button
-                  onClick={handleLogout}
-                  variant="outline"
-                  className="w-full border border-gray-300 hover:bg-gray-50"
-                >
-                  Cerrar sesión
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex items-center justify-center p-4">
