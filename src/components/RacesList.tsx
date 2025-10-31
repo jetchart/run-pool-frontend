@@ -12,6 +12,7 @@ import { Button } from './ui/button';
 import { getStoredUser } from '@/utils/auth';
 import { GAAction } from '@/constants/ga.enums';
 import { trackRaceAction } from '@/hooks/useGoogleAnalytics';
+import ExpandableText from './ExpandableText';
 
 export function RacesList() {
   const [races, setRaces] = useState<any[]>([]);
@@ -118,7 +119,7 @@ export function RacesList() {
                           </div>
                       )}
                     </div>
-                    <span className="text-sm font-normal">{description}</span>
+                    <span className="text-sm font-normal"><ExpandableText text={race.description} maxLength={100} /></span>
                     <div className="flex flex-wrap gap-2 mt-3 mb-3">
                       {race.raceType == RaceType.STREET && (
                         <Badge variant="outline">
