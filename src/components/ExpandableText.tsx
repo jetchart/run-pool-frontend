@@ -17,7 +17,7 @@ export default function ExpandableText({ text, maxLength, className }: Expandabl
       {isLong && (
         <button
           type="button"
-          className="ml-2 text-blue-600 hover:underline text-xs font-medium"
+          className="ml-2 cursor-pointer text-blue-600 hover:underline text-xs font-medium"
           onClick={() => setExpanded((e) => !e)}
         >
           {expanded ? 'Ver menos' : 'Ver más'}
