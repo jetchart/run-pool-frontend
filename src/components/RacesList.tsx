@@ -73,8 +73,6 @@ export function RacesList() {
               const distances = (race.distances || []).map((d: any) => {
                 return DISTANCE_INFO[d.distance as keyof typeof DISTANCE_INFO]?.shortDescription;
               });
-              const description = race.description?.length > 90 ? race.description.slice(0, 87) + '...' : race.description;
-              
               return (
                 <Card key={race.id} className="rounded-2xl flex flex-col overflow-hidden transition hover:shadow-lg">
                   <img src={imgSrc} alt={race.name} className="h-48 w-full object-cover object-center" />
@@ -150,37 +148,35 @@ export function RacesList() {
                       </span>
                     </div>
                     {/* Enlace a página del evento */}
-                      {race.website && (
-                        <Button 
-                          variant="outline" 
-                          onClick={() => {
-                            const storedUser = getStoredUser();
-                            const userId = storedUser?.userId?.toString();
-                            
-                            trackRaceAction(GAAction.RACE_WEBSITE_CLICK, race.id?.toString(), userId, {
-                              race_name: race.name,
-                              website_url: race.website
-                            });
-                            window.open(race.website, '_blank');
-                          }}
-                        >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Página del evento
-                        </Button>
-                      )}
-                      {/* Ver viajes disponibles */}
-                        <div className="mt-4">
-                            <Button
-                              variant="default" 
-                              className="w-full cursor-pointer" 
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigate(`/races/${race.id}/trips`);
-                              }}
-                            >
-                              Ver viajes disponibles
-                            </Button>
-                        </div>
+                    {race.website && (
+                      <div className="flex items-center gap-1 mb-2 cursor-pointer group"
+                        onClick={() => {
+                          const storedUser = getStoredUser();
+                          const userId = storedUser?.userId?.toString();
+                          trackRaceAction(GAAction.RACE_WEBSITE_CLICK, race.id?.toString(), userId, {
+                            race_name: race.name,
+                            website_url: race.website
+                          });
+                          window.open(race.website, '_blank');
+                        }}
+                      >
+                        <ExternalLink className="w-4 h-4 text-black group-hover:text-blue-600 transition-colors" />
+                        <span className="text-xs text-blue-700 group-hover:underline">Página del evento</span>
+                      </div>
+                    )}
+                    {/* Ver viajes disponibles */}
+                      <div className="mt-4">
+                          <Button
+                            variant="default" 
+                            className="w-full cursor-pointer" 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              navigate(`/races/${race.id}/trips`);
+                            }}
+                          >
+                            Ver viajes disponibles
+                          </Button>
+                      </div>
                   </CardContent>
                 </Card>
               );
