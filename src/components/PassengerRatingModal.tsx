@@ -118,7 +118,7 @@ export const PassengerRatingModal: React.FC<PassengerRatingModalProps> = ({
         <Button
           className="w-full mt-2"
           onClick={handleSubmitAll}
-          disabled={isSubmitting || passengers.every(p => !ratings[p.id])}
+          disabled={isSubmitting || passengers.length === 0 || !passengers.every(p => !!ratings[p.id])}
         >
           {isSubmitting ? 'Enviando...' : 'Enviar todas las valoraciones'}
         </Button>
