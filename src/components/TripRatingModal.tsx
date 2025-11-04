@@ -6,6 +6,7 @@ import axiosAuth from '../lib/axios';
 import { toast } from 'sonner';
 
 import { TripRatingType } from './TripCard';
+import { RaceHeader } from './RaceHeader';
 
 interface TripRatingModalProps {
   open: boolean;
@@ -63,6 +64,7 @@ export const TripRatingModal: React.FC<TripRatingModalProps> = ({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md w-full">
+        <RaceHeader race={trip?.race} />
         <DialogHeader>
           <DialogTitle>Calificar tu viaje</DialogTitle>
         </DialogHeader>

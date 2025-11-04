@@ -13,6 +13,7 @@ import { TripRatingModal } from './TripRatingModal';
 import { TripRatingType } from './TripCard';
 import { getStoredUser } from '../utils/auth';
 import { TripType } from '@/enums/trip-type.enum';
+import { PassengerRatingModal } from './PassengerRatingModal';
 
 export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole, onDetails, onRated }) => {
   const imageUrl = trip.race?.imageUrl || '/default-race.jpg';
@@ -27,6 +28,7 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
 
   // Calificación
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showPassengerRatingModal, setShowPassengerRatingModal] = useState(false);
   const storedUser = getStoredUser();
   const currentUserId = storedUser?.userId;
   const isPassenger = userRole === 'passenger';
@@ -38,6 +40,11 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
   // Handler para cerrar el modal y recargar trips si corresponde
   const handleCloseRatingModal = () => {
     setShowRatingModal(false);
+    if (onRated) onRated();
+  };
+  const handleOpenPassengerRatingModal = () => setShowPassengerRatingModal(true);
+  const handleClosePassengerRatingModal = () => {
+    setShowPassengerRatingModal(false);
     if (onRated) onRated();
   };
 
@@ -100,9 +107,19 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
               <StarIcon className="w-4 h-4"/><span className="text-xs">Calificar</span>
             </button>
           )}
-
+          {/* Botón para conductor calificar pasajeros */}
+          {userRole === 'driver' && isPastTrip && trip.ratings?.length === 0 && trip.passengers && trip.passengers.length > 0 && (
+            trip.passengers.some(p => p.passenger.id !== currentUserId) && (
+              <button
+                className="w-full mt-3 flex items-center justify-center gap-1 border border-gray-300 rounded-lg py-1 text-sm hover:bg-gray-50"
+                onClick={handleOpenPassengerRatingModal}
+              >
+                <StarIcon className="w-4 h-4"/><span className="text-xs">Calificar</span>
+              </button>
+            )
+          )}
           {/* Botón Calificado */}
-          {isPassenger && isPastTrip && trip.ratings && trip.ratings.length > 0 && (
+          {isPastTrip && trip.ratings && trip.ratings.length > 0 && (
             <button
               className="w-full mt-3 flex items-center justify-center gap-1 border border-green-200 bg-green-50 text-green-700 rounded-lg py-1"
               disabled
@@ -125,6 +142,17 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
           fromCity={trip.departureCity}
           toCity={trip.arrivalCity}
           ratingType={TripRatingType.PASSENGER_TO_DRIVER}
+        />
+      )}
+      {/* Modal de calificación de pasajeros para conductor */}
+      {userRole === 'driver' && (
+        <PassengerRatingModal
+          open={showPassengerRatingModal}
+          onClose={handleClosePassengerRatingModal}
+          tripId={trip.id}
+          passengers={trip.passengers.filter(p => p.passenger.id !== currentUserId).map(p => ({ id: p.passenger.id, name: p.passenger.name, pictureUrl: p.passenger.pictureUrl }))}
+          driverId={trip.driver.id}
+          race={trip.race}
         />
       )}
     </>
