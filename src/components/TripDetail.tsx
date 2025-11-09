@@ -16,6 +16,7 @@ import { getStoredUser, requireAuth } from '../utils/auth';
 import { GAAction } from '../constants/ga.enums';
 import { trackTripAction } from '@/hooks/useGoogleAnalytics';
 import RaceHeader from './RaceHeader';
+import { UserAverageRating } from './UserAverageRating';
 
 const TripDetail: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -225,33 +226,23 @@ const TripDetail: React.FC = () => {
         </Button>
       <RaceHeader race={trip.race} />
 
-      {/* Información del conductor */}
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center text-xl font-medium">
-            <img 
-              src={trip.driver.pictureUrl} 
-              alt={trip.driver.name}
-              className="w-full h-full object-cover"
-            />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold">{trip.driver.name}</h1>
-          <div className="flex items-center text-gray-600">
-            <Star className="w-4 h-4 mr-1 fill-current text-yellow-400" />
-            4.8 • 3 calificaciones
-          </div>
-          <button 
-            className="text-blue-600 text-sm hover:underline mt-1 flex items-center gap-1"
-            onClick={() => handleOpenProfile(trip.driver.id)}
-          >
-            Ver perfil del conductor
-          </button>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Columna izquierda - Detalles del viaje */}
         <div className="space-y-6">
+          {/* Información del conductor */}
+          <Card className="mb-8">
+            <CardContent className="p-6 flex flex-col items-start gap-4">
+              <UserAverageRating userId={trip.driver.id} className="" />
+              <div className="flex flex-col">
+                <button 
+                  className="text-blue-600 text-sm hover:underline mt-1 flex items-center gap-1"
+                  onClick={() => handleOpenProfile(trip.driver.id)}
+                >
+                  Ver perfil del conductor
+                </button>
+              </div>
+            </CardContent>
+          </Card>
           {/* Detalles del viaje */}
           <Card>
             <CardContent className="p-6">

@@ -14,6 +14,7 @@ import { getStoredUser } from '../utils/auth';
 import { formatDateTime } from '../constants/dates';
 import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
 import { TripType } from '@/enums/trip-type.enum';
+import { UserAverageRating } from './UserAverageRating';
 
 interface TripCardProps {
   trip: TripResponse;
@@ -69,6 +70,12 @@ export const TripCard: React.FC<TripCardProps> = ({
         </span>
       </div>
 
+      {/* Conductor */}
+      <div className="flex flex-col gap-4 mb-4 align-center">
+        <UserAverageRating userId={trip.driver.id}/>
+        <hr/>
+      </div>
+
       {/* Badge de rol si se especifica */}
       {showRole && userRole && (
         <div className="mb-3">
@@ -113,28 +120,7 @@ export const TripCard: React.FC<TripCardProps> = ({
         {formatDateTime(trip.departureDay, trip.departureHour)}
       </div>
 
-      {/* Driver info */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium mr-3 overflow-hidden">
-            {trip.driver.pictureUrl ? (
-              <img 
-                src={trip.driver.pictureUrl} 
-                alt={trip.driver.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span>{trip.driver.givenName?.[0]}{trip.driver.familyName?.[0]}</span>
-            )}
-          </div>
-          <div>
-            <div className="font-medium text-sm">{trip.driver.name}</div>
-            <div className="flex items-center text-xs text-gray-500">
-              <Star className="w-3 h-3 mr-1 fill-current text-yellow-400" />
-              5.0 (nuevo)
-            </div>
-          </div>
-        </div>
         <Badge className={getAvailabilityColor(trip.availableSeats)}>
           <div className="flex items-center text-sm">
             <Users className="w-4 h-4 mr-1" />
