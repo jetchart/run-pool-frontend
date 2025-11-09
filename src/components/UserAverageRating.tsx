@@ -47,7 +47,7 @@ export const UserAverageRating: React.FC<UserAverageRatingProps> = ({ userId, cl
         <div className="font-bold text-lg text-black">{data.user.name}</div>
         <div className="flex items-center text-base text-gray-800 gap-2">
           <Star className="w-4 h-4 text-yellow-400" fill="#facc15" />
-          <span className="text-gray-800 font-semibold">{data.average.toFixed(1)}</span>
+          <span className="text-gray-600 font-semibold">{data.average.toFixed(1)}</span>
           <span>&bull;</span>
           <span className="text-sm text-gray-500">{data.ratingsCount === 1 ? '1 calificación' : `${data.ratingsCount} calificaciones`}</span>
         </div>
