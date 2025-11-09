@@ -8,6 +8,7 @@ import { TripResponse } from '../types/trip.types';
 import { toast } from 'sonner';
 import { requireAuth, getStoredUser } from '../utils/auth';
 import { TripProfileCard } from './TripProfileCard';
+import { TripPassengerStatus } from '@/enums/trip-passenger-status.enum';
 
 export function MyTripsPage() {
   const navigate = useNavigate();
@@ -55,12 +56,12 @@ export function MyTripsPage() {
   // Filtrado de viajes según tab
   const now = new Date();
   now.setHours(0,0,0,0);
-  const upcomingTrips = trips.filter(trip => new Date(trip.departureDay) >= now);
+  const upcomingTrips = trips.filter(trip => new Date(trip.departureDay) >= now && trip.passengers.some(p => p.status === TripPassengerStatus.CONFIRMED));
   const pastTrips = trips.filter(trip => new Date(trip.departureDay) < now);
   const storedUser = getStoredUser();
   const pendingTrips = trips.filter(trip =>
     trip.passengers.some(p =>
-      p.passenger.id === storedUser?.userId && p.status === 'PENDING'
+      p.passenger.id === storedUser?.userId && p.status === TripPassengerStatus.PENDING
     )
   );
 
