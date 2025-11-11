@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { useAuth } from '../contexts/AuthContext';
+import { usePendingTripsCount } from '../hooks/usePendingTripsCount';
 
 declare global {
   interface ImportMeta {
@@ -24,6 +25,7 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { userCredential, logout } = useAuth();
+  const pendingTripsCount = usePendingTripsCount();
 
   const handleLogout = () => {
     logout();
@@ -78,6 +80,11 @@ export function Header() {
                         )}
                         <span>{userCredential.givenName}</span>
                       </div>
+                      {pendingTripsCount > 0 && (
+                        <span className="w-5 h-5 flex items-center justify-center bg-yellow-500 text-white text-xs font-bold rounded-full">
+                          {pendingTripsCount}
+                        </span>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -97,6 +104,11 @@ export function Header() {
                     <DropdownMenuItem onClick={() => navigate('/my-trips')} className="cursor-pointer">
                       <Users className="mr-2 h-4 w-4" />
                       <span>Mis Viajes</span>
+                      {pendingTripsCount > 0 && (
+                        <span className="ml-2 w-5 h-5 flex items-center justify-center bg-yellow-500 text-white text-xs font-bold rounded-full">
+                          {pendingTripsCount}
+                        </span>
+                      )}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -132,6 +144,11 @@ export function Header() {
                         )}
                         <span>{userCredential.givenName}</span>
                       </div>
+                      {pendingTripsCount > 0 && (
+                        <span className="w-5 h-5 flex items-center justify-center bg-yellow-500 text-white text-xs font-bold rounded-full">
+                          {pendingTripsCount}
+                        </span>
+                      )}
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -151,6 +168,11 @@ export function Header() {
                   <DropdownMenuItem onClick={() => navigate('/my-trips')} className="cursor-pointer">
                     <Users className="mr-2 h-4 w-4" />
                     <span>Mis Viajes</span>
+                    {pendingTripsCount > 0 && (
+                      <span className="ml-2 w-5 h-5 flex items-center justify-center bg-yellow-500 text-white text-xs font-bold rounded-full">
+                        {pendingTripsCount}
+                      </span>
+                    )}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />

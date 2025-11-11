@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { requireAuth, getStoredUser } from '../utils/auth';
 import { TripProfileCard } from './TripProfileCard';
 import { TripPassengerStatus } from '@/enums/trip-passenger-status.enum';
+import { getUpcomingTrips, getPastTrips, getPendingTrips } from '../utils/tripFilters';
 
 export function MyTripsPage() {
   const navigate = useNavigate();
@@ -57,13 +58,10 @@ export function MyTripsPage() {
   const now = new Date();
   now.setHours(0,0,0,0);
   const storedUser = getStoredUser();
-  const upcomingTrips = trips.filter(trip => new Date(trip.departureDay) >= now && trip.passengers.some(p => p.passenger.id === storedUser?.userId && p.status === TripPassengerStatus.CONFIRMED));
-  const pastTrips = trips.filter(trip => new Date(trip.departureDay) < now);
-  const pendingTrips = trips.filter(trip =>
-    trip.passengers.some(p =>
-      (trip.driver.id === storedUser?.userId || p.passenger.id === storedUser?.userId) && new Date(trip.departureDay) >= now && p.status === TripPassengerStatus.PENDING
-    )
-  );
+  const userId = storedUser?.userId;
+  const upcomingTrips = getUpcomingTrips(trips, userId, now);
+  const pastTrips = getPastTrips(trips, now);
+  const pendingTrips = getPendingTrips(trips, userId, now);
 
   return (
     <div className="container mx-auto px-4 py-6">
