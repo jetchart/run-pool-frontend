@@ -56,12 +56,12 @@ export function MyTripsPage() {
   // Filtrado de viajes según tab
   const now = new Date();
   now.setHours(0,0,0,0);
-  const upcomingTrips = trips.filter(trip => new Date(trip.departureDay) >= now && trip.passengers.some(p => p.status === TripPassengerStatus.CONFIRMED));
-  const pastTrips = trips.filter(trip => new Date(trip.departureDay) < now);
   const storedUser = getStoredUser();
+  const upcomingTrips = trips.filter(trip => new Date(trip.departureDay) >= now && trip.passengers.some(p => p.passenger.id === storedUser?.userId && p.status === TripPassengerStatus.CONFIRMED));
+  const pastTrips = trips.filter(trip => new Date(trip.departureDay) < now);
   const pendingTrips = trips.filter(trip =>
     trip.passengers.some(p =>
-      p.passenger.id === storedUser?.userId && p.status === TripPassengerStatus.PENDING
+      (trip.driver.id === storedUser?.userId || p.passenger.id === storedUser?.userId) && new Date(trip.departureDay) >= now && p.status === TripPassengerStatus.PENDING
     )
   );
 

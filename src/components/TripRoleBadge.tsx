@@ -16,7 +16,7 @@ export const TripRoleBadge: React.FC<TripRoleBadgeProps> = ({ trip }) => {
   const isPassenger = !isDriver && trip.passengers.some(p => p.passenger.id === currentUserId);
 
   if (isDriver) {
-    const driverTemplate = <Badge className="bg-green-100 text-green-800 border-green-300"><CarFront /> Sos conductor</Badge>;
+    const driverTemplate = <Badge className="bg-green-100 text-green-800 border-green-300"><CarFront /> Conductor</Badge>;
     const pendingApprovals = trip.passengers.some(p => p.status === TripPassengerStatus.PENDING);
     if (pendingApprovals) {
       return <div className='flex gap-2'> {driverTemplate} <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300"><TriangleAlert /> Aprobaciones pendientes</Badge></div>;
@@ -26,7 +26,7 @@ export const TripRoleBadge: React.FC<TripRoleBadgeProps> = ({ trip }) => {
   if (isPassenger) {
     const passengerObj = trip.passengers.find(p => p.passenger.id === currentUserId);
     if (passengerObj?.status === TripPassengerStatus.CONFIRMED) {
-      return <Badge className="bg-green-100 text-green-800 border-green-300"><UserIcon /> Sos pasajero</Badge>;
+      return <Badge className="bg-green-100 text-green-800 border-green-300"><UserIcon /> Pasajero</Badge>;
     }
     if (passengerObj?.status === TripPassengerStatus.PENDING) {
       return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300"><TriangleAlert /> Esperando aprobación</Badge>;
