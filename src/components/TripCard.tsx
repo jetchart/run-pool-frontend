@@ -15,24 +15,24 @@ import { formatDateTime } from '../constants/dates';
 import { getAvailabilityColor, getAvailabilityText } from '../utils/styles';
 import { TripType } from '@/enums/trip-type.enum';
 import { UserAverageRating } from './UserAverageRating';
+import { TripPassengerStatus } from '@/enums/trip-passenger-status.enum';
+import { TripRoleBadge } from './TripRoleBadge';
+import { TripTypeBadge } from './TripTypeBadge';
 
 interface TripCardProps {
   trip: TripResponse;
-  showRole?: boolean; // Para mostrar si es conductor o pasajero
-  userRole?: 'driver' | 'passenger'; // Rol del usuario actual
 }
 
 export const TripCard: React.FC<TripCardProps> = ({ 
   trip, 
-  showRole = false, 
-  userRole 
 }) => {
   const navigate = useNavigate();
 
   const [showRatingModal, setShowRatingModal] = useState(false);
   const storedUser = getStoredUser();
   const currentUserId = storedUser?.userId;
-  const isPassenger = userRole === 'passenger';
+  const isDriver = trip.driver.id === currentUserId;
+  const isPassenger = !isDriver && trip.passengers.some(p => p.passenger.id === currentUserId);
 
   // Comparar solo la fecha (sin hora)
   const tripDate = new Date(trip.departureDay);
@@ -76,21 +76,10 @@ export const TripCard: React.FC<TripCardProps> = ({
         <hr/>
       </div>
 
-      {/* Badge de rol si se especifica */}
-      {showRole && userRole && (
-        <div className="mb-3">
-          <Badge 
-            variant={userRole === 'driver' ? 'default' : 'secondary'}
-            className="text-xs"
-          >
-            {userRole === 'driver' ? 'Conductor' : 'Pasajero'}
-          </Badge>
-        </div>
-      )}
-
-      <Badge variant="default" className=' mb-2 flex justify-end'>
-        {trip.tripType === TripType.OUTBAND ? 'Ida' : 'Vuelta'}
-      </Badge>
+      <div className="flex items-center gap-2 mb-2 justify-between">
+        <TripTypeBadge trip={trip} />
+        <TripRoleBadge trip={trip} />
+      </div>
 
       {/* Origen */}
       <div className="flex items-start mb-3">

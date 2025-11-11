@@ -6,7 +6,7 @@ export interface TripProfileCardProps {
 }
 import React, { useState } from 'react';
 import { Badge } from './ui/badge';
-import { Calendar, StarIcon, CheckIcon } from 'lucide-react';
+import { Calendar, StarIcon, CheckIcon, ArrowBigRight, ArrowBigLeft } from 'lucide-react';
 
 import { TripResponse } from '../types/trip.types';
 import { TripRatingModal } from './TripRatingModal';
@@ -14,6 +14,8 @@ import { TripRatingType } from './TripCard';
 import { getStoredUser } from '../utils/auth';
 import { TripType } from '@/enums/trip-type.enum';
 import { PassengerRatingModal } from './PassengerRatingModal';
+import { TripRoleBadge } from './TripRoleBadge';
+import { TripTypeBadge } from './TripTypeBadge';
 
 export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole, onDetails, onRated }) => {
   const imageUrl = trip.race?.imageUrl || '/default-race.jpg';
@@ -69,14 +71,12 @@ export const TripProfileCard: React.FC<TripProfileCardProps> = ({ trip, userRole
         <div className="px-4 pb-4 pt-2 mt-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Badge variant={userRole === 'driver' ? 'default' : 'secondary'} className="text-xs px-3 py-1">
-                {userRole === 'driver' ? 'Conductor' : 'Pasajero'}
-              </Badge>
-              <Badge variant="outline" >
-                {trip.tripType === TripType.OUTBAND ? 'Ida' : 'Vuelta'}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <TripTypeBadge trip={trip} />
+              </div>
+              <span className="text-xs text-gray-500 font-medium">{tripDate}</span>
             </div>
-            <span className="text-xs text-gray-500 font-medium">{tripDate}</span>
+            <TripRoleBadge trip={trip} />
           </div>
           <div className="mb-2">
             <div className="text-xs text-gray-500 font-medium mb-1">Salida</div>
