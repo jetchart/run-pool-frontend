@@ -89,7 +89,7 @@ export function MyTripsPage() {
           className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${tab === 'pending' ? 'bg-gray-200 text-yellow-900' : 'bg-gray-100 text-gray-500'}`}
           onClick={() => setTab('pending')}
         >
-          Viajes pendientes de confirmación ({pendingTrips.length})
+          Viajes a confirmar ({pendingTrips.length})
         </button>
         <button
           className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${tab === 'past' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-500'}`}
