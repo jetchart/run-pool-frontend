@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axiosAuth from '../lib/axios';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -13,9 +13,16 @@ import { getUpcomingTrips, getPastTrips, getPendingTrips } from '../utils/tripFi
 
 export function MyTripsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [trips, setTrips] = useState<TripResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [tab, setTab] = useState<'upcoming' | 'past' | 'pending'>('upcoming');
+  const [tab, setTab] = useState<'upcoming' | 'past' | 'pending'>(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam === 'pending') return 'pending';
+    if (tabParam === 'past') return 'past';
+    return 'upcoming';
+  });
 
   useEffect(() => {
     loadMyTrips();
@@ -84,7 +91,7 @@ export function MyTripsPage() {
           Próximos viajes ({upcomingTrips.length})
         </button>
         <button
-          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${tab === 'pending' ? 'bg-gray-200 text-yellow-900' : 'bg-gray-100 text-gray-500'}`}
+          className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${tab === 'pending' ? 'bg-gray-200 text-text-900' : 'bg-gray-100 text-gray-500'}`}
           onClick={() => setTab('pending')}
         >
           Viajes a confirmar ({pendingTrips.length})

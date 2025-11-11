@@ -46,6 +46,14 @@ export function Header() {
     navigate(`/profile/view/`);
   };
 
+  const handleMyTripsClick = () => {
+    if (pendingTripsCount > 0) {
+      navigate('/my-trips?tab=pending');
+    } else {
+      navigate('/my-trips');
+    }
+  };
+
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -101,7 +109,7 @@ export function Header() {
                       <User className="mr-2 h-4 w-4" />
                       <span>Mi perfil</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/my-trips')} className="cursor-pointer">
+                    <DropdownMenuItem onClick={handleMyTripsClick} className="cursor-pointer">
                       <Users className="mr-2 h-4 w-4" />
                       <span>Mis Viajes</span>
                       {pendingTripsCount > 0 && (
@@ -165,7 +173,7 @@ export function Header() {
                     <User className="mr-2 h-4 w-4" />
                     <span>Mi perfil</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/my-trips')} className="cursor-pointer">
+                  <DropdownMenuItem onClick={handleMyTripsClick} className="cursor-pointer">
                     <Users className="mr-2 h-4 w-4" />
                     <span>Mis Viajes</span>
                     {pendingTripsCount > 0 && (
