@@ -71,7 +71,7 @@ export function RacesList() {
                 timeZone: 'UTC'
               });
               const distances = (race.distances || []).map((d: any) => {
-                return DISTANCE_INFO[d.distance as keyof typeof DISTANCE_INFO]?.shortDescription;
+                return d.distance + 'K';
               });
               return (
                 <Card key={race.id} className="rounded-2xl flex flex-col overflow-hidden transition hover:shadow-lg">

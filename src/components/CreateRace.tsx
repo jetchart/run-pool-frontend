@@ -5,10 +5,10 @@ import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO, type CreateRaceDto, type CreateRaceDistance } from '../types/race.types';
+import { RaceType, RACE_TYPE_INFO, type CreateRaceDto, type CreateRaceDistance } from '../types/race.types';
 import { ARGENTINE_PROVINCES, getCitiesByProvince, type ArgentineProvince } from '../constants/provinces';
 
-const emptyDistance = (): CreateRaceDistance => ({ distanceId: Distance.FIVE_K });
+const emptyDistance = (): CreateRaceDistance => ({ distance: 5 });
 
 const CreateRace: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const CreateRace: React.FC = () => {
     website: '',
     location: '',
     raceType: RaceType.STREET,
-    raceDistances: [emptyDistance()]
+  raceDistances: [emptyDistance()]
   });
 
   const onChange = (k: keyof CreateRaceDto, v: any) => {
@@ -48,10 +48,10 @@ const CreateRace: React.FC = () => {
     });
   };
 
-  const updateDistance = (index: number, value: Distance) => {
+  const updateDistance = (index: number, value: number) => {
     setForm(prev => {
       const d = [...prev.raceDistances];
-      d[index] = { distanceId: value } as CreateRaceDistance;
+      d[index] = { distance: value } as CreateRaceDistance;
       return { ...prev, raceDistances: d };
     });
   };
@@ -89,8 +89,8 @@ const CreateRace: React.FC = () => {
 
         const raceDistances = ((race.distances) || (race.raceDistances) || []).map((d: any) => {
           // soportar distintas formas: { distance } | { distanceId } | número
-          const id = d.distance ?? d.distanceId ?? d.id ?? d;
-          return { distanceId: Number(id) } as CreateRaceDistance;
+          const value = d.distance;
+          return { distance: Number(value) } as CreateRaceDistance;
         });
 
         setForm({
@@ -258,13 +258,17 @@ const CreateRace: React.FC = () => {
               <legend className="text-sm font-medium">Distancias</legend>
               {form.raceDistances.map((d, i) => (
                 <div key={i} className="space-y-2">
-                  <div className="flex">
-                    <select value={String(d.distanceId)} onChange={e => updateDistance(i, Number(e.target.value) as Distance)} className="px-2 py-1 border rounded-md">
-                      {Object.entries(DISTANCE_INFO).map(([key, info]) => (
-                        <option key={key} value={key}>{info.shortDescription}</option>
-                      ))}
-                    </select>
-                      <Button type="button" variant="ghost" onClick={() => removeDistance(i)} disabled={form.raceDistances.length === 1}>Eliminar</Button>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      value={d.distance}
+                      onChange={e => updateDistance(i, Number(e.target.value))}
+                      className="px-2 py-1 border rounded-md w-24"
+                      placeholder="Distancia (km)"
+                      required
+                    />
+                    <Button type="button" variant="ghost" onClick={() => removeDistance(i)} disabled={form.raceDistances.length === 1}>Eliminar</Button>
                   </div>
                 </div>
               ))}

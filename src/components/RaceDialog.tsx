@@ -47,12 +47,10 @@ export function RaceDialog({ children, race}: RaceDialogProps) {
     timeZone: 'UTC'
   });
   const distances = (race.distances || []).map((d: any) => {
-    // Si distance es un enum, usar directamente DISTANCE_INFO
     if (typeof d.distance === 'number') {
       return DISTANCE_INFO[d.distance as keyof typeof DISTANCE_INFO]?.shortDescription || d.distance;
     }
-    // Retrocompatibilidad con el formato anterior
-    return d.distance?.shortDescription || d.distance;
+    return d.distance;
   });
 
   const handleViewTrips = async () => {

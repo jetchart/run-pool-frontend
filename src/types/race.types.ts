@@ -1,9 +1,9 @@
-import { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO } from './userProfile.types';
+import { RaceType, RACE_TYPE_INFO } from './userProfile.types';
 
-export { RaceType, RACE_TYPE_INFO, Distance, DISTANCE_INFO };
+export { RaceType, RACE_TYPE_INFO };
 
 export interface CreateRaceDistance {
-  distanceId: Distance;
+  distance: number;
 }
 
 export interface CreateRaceDto {
