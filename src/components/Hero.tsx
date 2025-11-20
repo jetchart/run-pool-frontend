@@ -1,46 +1,77 @@
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Hero: React.FC = () => {
+  const { userCredential } = useAuth();
   return (
-    <section className="relative w-full min-h-[calc(100vh-4.1rem)] flex items-center justify-center overflow-hidden">
-      {/* Imagen Hero de fondo */}
-      <img
-        src="/hero-desktop.png"
-        alt="Hero background"
-        className="absolute inset-0 w-full h-full object-cover object-center z-0"
-      />
+    <>
+      {/* Desktop Hero */}
+      <section className="relative w-full min-h-[calc(100vh-4.1rem)] flex items-center justify-center overflow-hidden hidden md:flex">
+        <img
+          src="/hero-desktop.png"
+          alt="Hero background"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0"
+        />
+        <div className="relative z-20 flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto px-6">
+          <div className="flex-1 flex flex-col md:items-start items-center justify-center gap-6 w-full md:max-w-none max-w-md mx-auto px-4 py-6">
+            <img
+              src="/logo.png"
+              alt="RunPool Logo"
+              className="w-40 h-auto mb-2 md:mx-0 mx-auto"
+            />
+            <h1 className="text-5xl font-bold text-white leading-tight mb-2 md:text-left text-center">
+              Viajá a tu <br /> próxima carrera
+            </h1>
+            <p className="text-xl text-white/90 mb-6 md:text-left text-center md:max-w-lg">
+              Ofrece o encontrá viajes en auto hasta la línea de largada de todas las carreras de Argentina.
+            </p>
+            <div className="flex flex-row gap-4 w-auto">
+              {!userCredential && (
+                <a href="/login">
+                  <button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-md shadow transition">Iniciar sesión</button>
+                </a>
+              )}
+              <a href="/races">
+                <button className="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-md border border-white/30 transition">Ver todas las carreras</button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Contenido principal */}
-      <div className="relative z-20 flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto px-6">
-        {/* Logo y textos */}
-        <div className="flex-1 flex flex-col items-start justify-center gap-6">
-          {/* Logo */}
+      {/* Mobile Hero */}
+      <section className="relative w-full min-h-[calc(100vh-4.1rem)] flex items-center justify-center overflow-hidden md:hidden">
+        <img
+          src="/hero-desktop.png"
+          alt="Hero background"
+          className="absolute inset-0 w-full h-full object-cover object-center z-0"
+        />
+        <div className="relative z-20 flex flex-col items-center justify-center w-full max-w-md mx-auto px-4 py-6">
           <img
             src="/logo.png"
             alt="RunPool Logo"
-            className="w-40 h-auto mb-2"
+            className="w-32 h-auto mb-2 mx-auto"
           />
-          {/* Título */}
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-2">
+          <h1 className="text-4xl font-bold text-white leading-tight mb-2 text-center">
             Viajá a tu <br /> próxima carrera
           </h1>
-          {/* Subtítulo */}
-          <p className="text-lg md:text-xl text-white/90 mb-6 max-w-lg">
+          <p className="text-base text-white/90 mb-6 text-center">
             Ofrece o encontrá viajes en auto hasta la línea de largada de todas las carreras de Argentina.
           </p>
-          {/* Botones */}
-          <div className="flex gap-4">
-            <a href="/login">
-              <button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-md shadow transition">Iniciar sesión</button>
-            </a>
-            <a href="/races">
-              <button className="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-md border border-white/30 transition">Ver todas las carreras</button>
+          <div className="flex flex-col gap-3 w-full">
+            {!userCredential && (
+              <a href="/login" className="w-full">
+                <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-md shadow transition text-lg">Iniciar sesión</button>
+              </a>
+            )}
+            <a href="/races" className="w-full">
+              <button className="w-full bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-md border border-white/30 transition text-lg">Ver todas las carreras</button>
             </a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
-};
+}
 
 export default Hero;
