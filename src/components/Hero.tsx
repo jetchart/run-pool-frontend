@@ -12,7 +12,7 @@ const Hero: React.FC = () => {
           alt="Hero background"
           className="absolute inset-0 w-full h-full object-cover object-center z-0"
         />
-        <div className="relative z-20 flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto px-6">
+        <div className="relative z-20  flex flex-col md:flex-row items-center justify-center w-full max-w-5xl mx-auto px-6">
           <div className="flex-1 flex flex-col md:items-start items-center justify-center gap-6 w-full md:max-w-none max-w-md mx-auto px-4 py-6">
             <img
               src="/logo.png"
@@ -28,7 +28,7 @@ const Hero: React.FC = () => {
             <div className="flex flex-row gap-4 w-auto">
               {!userCredential && (
                 <a href="/login">
-                  <button className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-md shadow transition">Iniciar sesión</button>
+                  <button className="bg-orange-600 hover:bg-orange-700 text-black font-semibold px-6 py-3 rounded-md shadow transition">Iniciar sesión</button>
                 </a>
               )}
               <a href="/races">
@@ -46,13 +46,15 @@ const Hero: React.FC = () => {
           alt="Hero background"
           className="absolute inset-0 w-full h-full object-cover object-center z-0"
         />
-        <div className="relative z-20 flex flex-col items-center justify-center w-full max-w-md mx-auto px-4 py-6">
+        {/* Overlay para opacidad */}
+        <div className="absolute inset-0 bg-black/50 z-10" />
+        <div className="relative z-20 flex flex-col items-center justify-center w-full max-w-md mb-10 mx-auto px-4 py-6">
           <img
             src="/logo.png"
             alt="RunPool Logo"
             className="w-32 h-auto mb-2 mx-auto"
           />
-          <h1 className="text-4xl font-bold text-white leading-tight mb-2 text-center">
+          <h1 className="ml-10 mr-10 text-5xl font-bold text-white leading-tight mb-2 text-center">
             Viajá a tu <br /> próxima carrera
           </h1>
           <p className="text-base text-white/90 mb-6 text-center">
@@ -61,7 +63,7 @@ const Hero: React.FC = () => {
           <div className="flex flex-col gap-3 w-full">
             {!userCredential && (
               <a href="/login" className="w-full">
-                <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-3 rounded-md shadow transition text-lg">Iniciar sesión</button>
+                <button className="w-full bg-orange-600 hover:bg-orange-700 text-black font-semibold px-6 py-3 rounded-md shadow transition text-lg">Iniciar sesión</button>
               </a>
             )}
             <a href="/races" className="w-full">
