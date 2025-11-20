@@ -26,6 +26,7 @@ import { Toaster } from './components/ui/sonner';
 import { usePageTracking, initializeGA, setUserId } from './hooks/useGoogleAnalytics';
 import { useEffect } from 'react';
 import { getStoredUser } from './utils/auth';
+import Hero from './components/Hero';
 
 function App() {
   // Inicializar Google Analytics al cargar la app
@@ -58,7 +59,8 @@ function AppContent() {
       <Header />
       <main className="flex-1">
         <Routes>
-          <Route path="/" element={<RacesList />} />
+          <Route path="/" element={<Hero />} />
+          <Route path="/races" element={<RacesList />} />
           <Route path="/races/:raceId/trips" element={<TripsPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<UserProfile />} />
