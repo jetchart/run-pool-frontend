@@ -32,6 +32,8 @@ const CreateRace: React.FC = () => {
   });
   const [image, setImage] = useState<File | null>(null);
   const [imageThumbnail, setImageThumbnail] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 
   const onChange = (k: keyof CreateRaceDto, v: any) => {
     setForm(prev => {
@@ -62,10 +64,6 @@ const CreateRace: React.FC = () => {
   const removeDistance = (index: number) => setForm(prev => ({ ...prev, raceDistances: prev.raceDistances.filter((_, i) => i !== index) }));
 
   const validateForm = (): boolean => {
-    if (!image || !imageThumbnail) {
-      toast.error('Debes subir dos imágenes: principal y thumbnail');
-      return false;
-    }
     if (!form.name || !form.description || !form.startDate || !form.endDate || !form.city || !form.province || !form.country || !form.website || !form.location) {
       toast.error('Por favor completa todos los campos obligatorios');
       return false;
@@ -93,7 +91,6 @@ const CreateRace: React.FC = () => {
         const endDate = race.endDate ? (race.endDate.includes('T') ? race.endDate.split('T')[0] : race.endDate) : '';
 
         const raceDistances = ((race.distances) || (race.raceDistances) || []).map((d: any) => {
-          // soportar distintas formas: { distance } | { distanceId } | número
           const value = d.distance;
           return { distance: Number(value) } as CreateRaceDistance;
         });
@@ -107,10 +104,23 @@ const CreateRace: React.FC = () => {
           province: race.province || '',
           country: race.country || 'Argentina',
           website: race.website || '',
-            location: race.location || '',
+          location: race.location || '',
           raceType: race.raceType ?? RaceType.STREET,
           raceDistances: raceDistances.length ? raceDistances : [emptyDistance()]
         });
+
+        // Imagen principal
+        if (race.image && race.image.data) {
+          const bytes = new Uint8Array(race.image.data);
+          const blob = new Blob([bytes], { type: 'image/png' });
+          setImageUrl(URL.createObjectURL(blob));
+        }
+        // Thumbnail
+        if (race.imageThumbnail && race.imageThumbnail.data) {
+          const bytes = new Uint8Array(race.imageThumbnail.data);
+          const blob = new Blob([bytes], { type: 'image/png' });
+          setThumbnailUrl(URL.createObjectURL(blob));
+        }
       } catch (error: any) {
         console.error('Error cargando carrera para edición:', error);
         toast.error('No se pudo cargar la carrera para editar');
@@ -142,8 +152,23 @@ const CreateRace: React.FC = () => {
           formData.append(key, value as any);
         }
       });
-      if (image) formData.append('files', image);
-      if (imageThumbnail) formData.append('files', imageThumbnail);
+      // Imagen principal
+      if (image) {
+        formData.append('files', image);
+      } else if (imageUrl) {
+        // Si no hay nueva, enviar la actual (buffer)
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        formData.append('files', blob, 'actual.png');
+      }
+      // Thumbnail
+      if (imageThumbnail) {
+        formData.append('files', imageThumbnail);
+      } else if (thumbnailUrl) {
+        const response = await fetch(thumbnailUrl);
+        const blob = await response.blob();
+        formData.append('files', blob, 'actual_thumbnail.png');
+      }
       if (isEditing && raceId) {
         await axiosAuth.put(`/races/${raceId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -194,20 +219,36 @@ const CreateRace: React.FC = () => {
                   onChange={e => {
                     const file = e.target.files?.[0] || null;
                     setImage(file);
+                    if (imageUrl) {
+                      URL.revokeObjectURL(imageUrl);
+                      setImageUrl(null);
+                    }
                   }}
                   className="w-full px-3 py-2 border rounded-md"
-                  required
+                  required={!isEditing}
                 />
-                {image && (
-                  <div className="flex gap-2 mt-2 items-center">
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={image.name}
-                      style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
-                    />
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">{image.name}</span>
-                  </div>
-                )}
+                {image
+                  ? (
+                    <div className="flex gap-2 mt-2 items-center">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={image.name}
+                        style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
+                      />
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">{image.name}</span>
+                    </div>
+                  )
+                  : imageUrl && (
+                    <div className="flex gap-2 mt-2 items-center">
+                      <img
+                        src={imageUrl}
+                        alt="Imagen actual"
+                        style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
+                      />
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">Actual</span>
+                    </div>
+                  )
+                }
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Thumbnail *</label>
@@ -217,20 +258,36 @@ const CreateRace: React.FC = () => {
                   onChange={e => {
                     const file = e.target.files?.[0] || null;
                     setImageThumbnail(file);
+                    if (thumbnailUrl) {
+                      URL.revokeObjectURL(thumbnailUrl);
+                      setThumbnailUrl(null);
+                    }
                   }}
                   className="w-full px-3 py-2 border rounded-md"
-                  required
+                  required={!isEditing}
                 />
-                {imageThumbnail && (
-                  <div className="flex gap-2 mt-2 items-center">
-                    <img
-                      src={URL.createObjectURL(imageThumbnail)}
-                      alt={imageThumbnail.name}
-                      style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
-                    />
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">{imageThumbnail.name}</span>
-                  </div>
-                )}
+                {imageThumbnail
+                  ? (
+                    <div className="flex gap-2 mt-2 items-center">
+                      <img
+                        src={URL.createObjectURL(imageThumbnail)}
+                        alt={imageThumbnail.name}
+                        style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
+                      />
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">{imageThumbnail.name}</span>
+                    </div>
+                  )
+                  : thumbnailUrl && (
+                    <div className="flex gap-2 mt-2 items-center">
+                      <img
+                        src={thumbnailUrl}
+                        alt="Thumbnail actual"
+                        style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
+                      />
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">Actual</span>
+                    </div>
+                  )
+                }
               </div>
 
               <div className="space-y-2">
