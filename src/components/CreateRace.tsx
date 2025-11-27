@@ -61,10 +61,10 @@ const CreateRace: React.FC = () => {
   const removeDistance = (index: number) => setForm(prev => ({ ...prev, raceDistances: prev.raceDistances.filter((_, i) => i !== index) }));
 
   const validateForm = (): boolean => {
-    /*if (files.length !== 2) {
+    if (files.length > 0 && files.length !== 2) {
       toast.error('Debes subir dos imágenes: principal y thumbnail');
       return false;
-    }*/
+    }
     if (!form.name || !form.description || !form.startDate || !form.endDate || !form.city || !form.province || !form.country || !form.website || !form.location) {
       toast.error('Por favor completa todos los campos obligatorios');
       return false;
