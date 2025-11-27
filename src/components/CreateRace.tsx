@@ -30,7 +30,8 @@ const CreateRace: React.FC = () => {
     raceType: RaceType.STREET,
     raceDistances: [emptyDistance()]
   });
-  const [files, setFiles] = useState<File[]>([]);
+  const [image, setImage] = useState<File | null>(null);
+  const [imageThumbnail, setImageThumbnail] = useState<File | null>(null);
 
   const onChange = (k: keyof CreateRaceDto, v: any) => {
     setForm(prev => {
@@ -61,7 +62,7 @@ const CreateRace: React.FC = () => {
   const removeDistance = (index: number) => setForm(prev => ({ ...prev, raceDistances: prev.raceDistances.filter((_, i) => i !== index) }));
 
   const validateForm = (): boolean => {
-    if (files.length > 0 && files.length !== 2) {
+    if (!image || !imageThumbnail) {
       toast.error('Debes subir dos imágenes: principal y thumbnail');
       return false;
     }
@@ -141,7 +142,8 @@ const CreateRace: React.FC = () => {
           formData.append(key, value as any);
         }
       });
-      files.forEach(file => formData.append('files', file));
+      if (image) formData.append('files', image);
+      if (imageThumbnail) formData.append('files', imageThumbnail);
       if (isEditing && raceId) {
         await axiosAuth.put(`/races/${raceId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -185,23 +187,48 @@ const CreateRace: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Imágenes *</label>
+                <label className="text-sm font-medium">Imagen principal *</label>
                 <input
                   type="file"
                   accept="image/*"
-                  multiple
                   onChange={e => {
-                    const filesArr = Array.from(e.target.files || []);
-                    setFiles(filesArr.slice(0, 2));
+                    const file = e.target.files?.[0] || null;
+                    setImage(file);
                   }}
                   className="w-full px-3 py-2 border rounded-md"
+                  required
                 />
-                <small className="text-xs text-gray-500">Subí dos imágenes: principal y thumbnail</small>
-                {files.length > 0 && (
-                  <div className="flex gap-2 mt-2">
-                    {files.map((file, idx) => (
-                      <span key={idx} className="text-xs bg-gray-100 px-2 py-1 rounded">{file.name}</span>
-                    ))}
+                {image && (
+                  <div className="flex gap-2 mt-2 items-center">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={image.name}
+                      style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
+                    />
+                    <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">{image.name}</span>
+                  </div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Thumbnail *</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={e => {
+                    const file = e.target.files?.[0] || null;
+                    setImageThumbnail(file);
+                  }}
+                  className="w-full px-3 py-2 border rounded-md"
+                  required
+                />
+                {imageThumbnail && (
+                  <div className="flex gap-2 mt-2 items-center">
+                    <img
+                      src={URL.createObjectURL(imageThumbnail)}
+                      alt={imageThumbnail.name}
+                      style={{ height: 64, width: 'auto', borderRadius: 8, border: '1px solid #eee' }}
+                    />
+                    <span className="text-xs bg-gray-100 px-2 py-1 rounded mt-1">{imageThumbnail.name}</span>
                   </div>
                 )}
               </div>
