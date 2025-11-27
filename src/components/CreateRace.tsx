@@ -18,7 +18,6 @@ const CreateRace: React.FC = () => {
   const [isLoadingRace, setIsLoadingRace] = useState(false);
 
   const [form, setForm] = useState<CreateRaceDto>({
-    imageUrl: '',
     name: '',
     description: '',
     startDate: '',
@@ -29,8 +28,9 @@ const CreateRace: React.FC = () => {
     website: '',
     location: '',
     raceType: RaceType.STREET,
-  raceDistances: [emptyDistance()]
+    raceDistances: [emptyDistance()]
   });
+  const [files, setFiles] = useState<File[]>([]);
 
   const onChange = (k: keyof CreateRaceDto, v: any) => {
     setForm(prev => {
@@ -61,7 +61,11 @@ const CreateRace: React.FC = () => {
   const removeDistance = (index: number) => setForm(prev => ({ ...prev, raceDistances: prev.raceDistances.filter((_, i) => i !== index) }));
 
   const validateForm = (): boolean => {
-    if (!form.imageUrl || !form.name || !form.description || !form.startDate || !form.endDate || !form.city || !form.province || !form.country || !form.website || !form.location) {
+    if (files.length !== 2) {
+      toast.error('Debes subir dos imágenes: principal y thumbnail');
+      return false;
+    }
+    if (!form.name || !form.description || !form.startDate || !form.endDate || !form.city || !form.province || !form.country || !form.website || !form.location) {
       toast.error('Por favor completa todos los campos obligatorios');
       return false;
     }
@@ -94,7 +98,6 @@ const CreateRace: React.FC = () => {
         });
 
         setForm({
-          imageUrl: race.imageUrl || '',
           name: race.name || '',
           description: race.description || '',
           startDate,
@@ -130,12 +133,25 @@ const CreateRace: React.FC = () => {
         startDate: form.startDate ? `${form.startDate}T12:00:00Z` : form.startDate,
         endDate: form.endDate ? `${form.endDate}T12:00:00Z` : form.endDate,
       } as CreateRaceDto;
+      const formData = new FormData();
+      Object.entries(payload).forEach(([key, value]) => {
+        if (key === 'raceDistances') {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value as any);
+        }
+      });
+      files.forEach(file => formData.append('files', file));
       if (isEditing && raceId) {
-        await axiosAuth.put(`/races/${raceId}`, payload);
+        await axiosAuth.put(`/races/${raceId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         toast.success('Carrera actualizada correctamente');
         navigate('/');
       } else {
-        await axiosAuth.post('/races', payload);
+        await axiosAuth.post('/races', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
         toast.success('Carrera creada correctamente');
         navigate('/');
       }
@@ -169,8 +185,26 @@ const CreateRace: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Imagen (URL) *</label>
-                <input value={form.imageUrl} onChange={e => onChange('imageUrl', e.target.value)} required className="w-full px-3 py-2 border rounded-md" />
+                <label className="text-sm font-medium">Imágenes *</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  required
+                  onChange={e => {
+                    const filesArr = Array.from(e.target.files || []);
+                    setFiles(filesArr.slice(0, 2));
+                  }}
+                  className="w-full px-3 py-2 border rounded-md"
+                />
+                <small className="text-xs text-gray-500">Subí dos imágenes: principal y thumbnail</small>
+                {files.length > 0 && (
+                  <div className="flex gap-2 mt-2">
+                    {files.map((file, idx) => (
+                      <span key={idx} className="text-xs bg-gray-100 px-2 py-1 rounded">{file.name}</span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">

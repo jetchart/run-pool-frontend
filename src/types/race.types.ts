@@ -7,7 +7,6 @@ export interface CreateRaceDistance {
 }
 
 export interface CreateRaceDto {
-  imageUrl: string;
   name: string;
   description: string;
   startDate: string;

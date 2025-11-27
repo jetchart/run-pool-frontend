@@ -5,7 +5,7 @@ import { Card, CardContent } from './ui/card';
 interface RaceHeaderProps {
   race: {
     name: string;
-    imageUrl?: string;
+    imageThumbnail?: any;
     startDate?: string | Date;
     location?: string;
   };
@@ -20,14 +20,20 @@ const formatDate = (date?: string | Date) => {
 };
 
 export const RaceHeader: React.FC<RaceHeaderProps> = ({ race }) => {
+
+  const buffer = race.imageThumbnail?.data;
+  const bytes = new Uint8Array(buffer);
+  const blob = new Blob([bytes], { type: "image/png" });
+  const imageUrl = URL.createObjectURL(blob);
+
   return (
           <Card className="mb-6">
             <CardContent className="py-6">
               {/* Mobile: imagen y título en fila, fecha y location debajo */}
               <div className="flex flex-row items-center gap-4 sm:hidden">
-                {race.imageUrl && (
+                {imageUrl && (
                   <img
-                    src={race.imageUrl}
+                    src={imageUrl}
                     alt={race.name}
                     className="w-20 h-20 object-cover rounded-xl shadow"
                   />
@@ -50,9 +56,9 @@ export const RaceHeader: React.FC<RaceHeaderProps> = ({ race }) => {
               </div>
               {/* Desktop: imagen, título, fecha y location en fila */}
               <div className="hidden sm:flex flex-row items-center gap-6">
-                {race.imageUrl && (
+                {imageUrl && (
                   <img
-                    src={race.imageUrl}
+                    src={imageUrl}
                     alt={race.name}
                     className="w-24 h-24 object-cover rounded-xl shadow"
                   />

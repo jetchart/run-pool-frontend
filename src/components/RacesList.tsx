@@ -19,7 +19,7 @@ export function RacesList() {
   const [isLoading, setIsLoading] = useState(true);
   const { userCredential, logout } = useAuth();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     setIsLoading(true);
     axiosPublic.get('/races/past-or-today')
@@ -61,7 +61,10 @@ export function RacesList() {
               <div className="col-span-full text-center muted">No hay carreras disponibles.</div>
             )}
             {races.map((race: any) => {
-              const imgSrc = race.imageUrl || '';
+              const buffer = race.image.data;
+              const bytes = new Uint8Array(buffer);
+              const blob = new Blob([bytes], { type: "image/png" });
+              const imageUrl = URL.createObjectURL(blob);
               const startDate = new Date(race.startDate);
               const dateStr = startDate.toLocaleDateString('es-AR', { 
                 weekday: 'long', 
@@ -75,7 +78,7 @@ export function RacesList() {
               });
               return (
                 <Card key={race.id} className="rounded-2xl flex flex-col overflow-hidden transition hover:shadow-lg">
-                  <img src={imgSrc} alt={race.name} className="h-48 w-full object-cover object-center" />
+                    <img src={imageUrl} alt={race.name} className="h-48 w-full object-cover object-center" />
                   <CardContent className="flex-1 flex flex-col p-5">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xl font-semibold">{race.name}</span>
