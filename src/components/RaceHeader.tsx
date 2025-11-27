@@ -21,10 +21,13 @@ const formatDate = (date?: string | Date) => {
 
 export const RaceHeader: React.FC<RaceHeaderProps> = ({ race }) => {
 
-  const buffer = race.imageThumbnail?.data;
-  const bytes = new Uint8Array(buffer);
-  const blob = new Blob([bytes], { type: "image/png" });
-  const imageUrl = URL.createObjectURL(blob);
+  let imageUrl = null;
+  if (race.imageThumbnail) {
+    const buffer = race.imageThumbnail?.data;
+    const bytes = new Uint8Array(buffer);
+    const blob = new Blob([bytes], { type: "image/png" });
+    imageUrl = URL.createObjectURL(blob);
+  }
 
   return (
           <Card className="mb-6">
